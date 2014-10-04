@@ -3277,6 +3277,40 @@ function Rect:onDraw(index, xOff, yOff, xFlip, yFlip)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Line
+--
+-- Class to draw a line. <br>
+-- NOTE: This uses immediate mode drawing and so has a high performance impact when
+-- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
+-- wish to minimize draw calls.
+----------------------------------------------------------------------------------------------------
+Line = class(DrawableObject)
+M.Line = Line
+
+function Line:init(startPoint, endPoint)
+    local dx = math.abs(startPoint.x - endPoint.x)
+    local dy = math.abs(startPoint.y - endPoint.y)
+    
+    self._vertices = {startPoint.x, startPoint.y,
+                      endPoint.x,    endPoint.y}
+    DrawableObject.init(self, dx, dy)
+end
+
+---
+-- This is the function called when drawing.
+-- @param index index of DrawCallback.
+-- @param xOff xOff of DrawCallback.
+-- @param yOff yOff of DrawCallback.
+-- @param xFlip xFlip of DrawCallback.
+-- @param yFlip yFlip of the Prop.
+function Line:onDraw(index, xOff, yOff, xFlip, yFlip)
+    local w, h, d = self:getSize()
+
+    MOAIGfxDevice.setPenColor(self:getColor())
+    MOAIDraw.drawLine(self._vertices)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type Texture
 --
 -- Texture class.
