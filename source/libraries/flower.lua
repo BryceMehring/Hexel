@@ -3287,13 +3287,14 @@ end
 Line = class(DrawableObject)
 M.Line = Line
 
-function Line:init(startPoint, endPoint)
-    local dx = math.abs(startPoint.x - endPoint.x)
-    local dy = math.abs(startPoint.y - endPoint.y)
+function Line:init(vertices)
+    DrawableObject.init(self, 1, 1)
     
-    self._vertices = {startPoint.x, startPoint.y,
-                      endPoint.x,    endPoint.y}
-    DrawableObject.init(self, dx, dy)
+    self._vertices = {}
+    for i, v in ipairs(vertices) do
+        table.insert(self._vertices, v.x)
+        table.insert(self._vertices, v.y)
+    end
 end
 
 ---
@@ -3304,8 +3305,6 @@ end
 -- @param xFlip xFlip of DrawCallback.
 -- @param yFlip yFlip of the Prop.
 function Line:onDraw(index, xOff, yOff, xFlip, yFlip)
-    local w, h, d = self:getSize()
-
     MOAIGfxDevice.setPenColor(self:getColor())
     MOAIDraw.drawLine(self._vertices)
 end
