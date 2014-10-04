@@ -53,6 +53,9 @@ function createMenuItem(item, itemWidth, itemHeight)
     rect:setColor(0, 0, 0.5, 1)
 
     local label = flower.Label(item.title, itemWidth, itemHeight)
+    if not item.scene then
+        label:setColor(0.35, 0.35, 0.35, 1)
+    end
 
     local menuItem = flower.Group(layer, itemWidth, itemHeight)
     menuItem.data = item

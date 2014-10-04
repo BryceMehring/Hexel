@@ -3,7 +3,7 @@ module(..., package.seeall)
 -- import
 local flower = flower
 
-local hexagonAngle = 0.523598776
+local hexagonAngle = math.rad(30)
 local sideLength = 25
 
 local hexHeight = math.sin(hexagonAngle) * sideLength
