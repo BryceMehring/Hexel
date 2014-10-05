@@ -66,14 +66,13 @@ MOAISim.setBoostThreshold(0)
 -- Debugging
 --------------------------------------------------------------------------------
 
--- Show bounds of MOAIProp
---[[
+--[[ Show bounds of MOAIProp
 MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX, 1, 1, 1, 1, 1 )
 MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_LAYOUT, 1, 0, 0, 1, 1 )
 MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_BASELINES, 1, 1, 0, 0, 1 )
 MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_MODEL_BOUNDS, 2, 1, 1, 1 )
 MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 )
-]]
+
 
 -- 
 MOAISim.setHistogramEnabled(true)
@@ -91,5 +90,6 @@ timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
         MOAISim.reportLeaks()
     end)
 timer:start()
+--]]
 
 return M

@@ -1,4 +1,5 @@
 module(..., package.seeall)
+require "utilities/extensions/math"
 
 -- import
 local flower = flower
@@ -29,6 +30,7 @@ end
 
 local group = nil
 local layer = nil
+local timer = nil
 
 function onCreate(e)
     
@@ -43,14 +45,28 @@ function onCreate(e)
     
     for i=1, 14 do
         for j=1, 14 do
-            group:addChild(flower.Line(CreateHexVertices({x = i * hexRectangleWidth + (j % 2) * hexRadius,
-                                                          y = j * (sideLength + hexHeight)})))
+            local hexTile = flower.Line(CreateHexVertices({x = i * hexRectangleWidth + (j % 4) * hexRadius,
+                                                           y = j * (sideLength + hexHeight)}))
+            group:addChild(hexTile)
         end
     end
+    
+    timer = flower.Executors.callLoopTime(3.0, function()
+        -- TODO: maybe this could be pushed into flower?
+        for i, v in ipairs(group.children) do
+            local r, g, b = v:getColor()
+            local randomR, randomG, randomB = unpack(math.generateRandomNumbers(0.3, 1, 3))
+            v:moveColor(randomR - r, randomG - g, randomB - b, 1.0, 1.0)
+        end
+    end)
     
 end
 
 function onStart(e)
+end
+
+function onStop(e)
+    flower.Executors.cancel(timer)
 end
 
 function onResize(e)

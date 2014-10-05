@@ -103,10 +103,6 @@ function onCreate(e)
 end
 
 function onStart(e)
-    -- debug
-    MOAISim.forceGarbageCollection()
-    MOAISim.reportHistogram()
-
 end
 
 function onResize(e)

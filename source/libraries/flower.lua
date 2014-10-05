@@ -497,6 +497,13 @@ function Executors.callLaterFrame(frame, func, ...)
     return thread
 end
 
+--- Prevents the callback on a MOAITimer object and stops it
+-- @param timer to stop
+function Executors.cancel(timer)
+    timer:setListener(MOAITimer.EVENT_STOP, function() end)
+    timer:stop()
+end
+
 ---
 -- Run the specified function once, in a coroutine, after a specified delay in seconds.
 -- @param time Delay seconds.
@@ -2289,6 +2296,7 @@ function Group:setPriority(priority)
         v:setPriority(priority)
     end
 end
+
 
 ----------------------------------------------------------------------------------------------------
 -- @type Scene
