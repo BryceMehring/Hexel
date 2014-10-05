@@ -3295,14 +3295,19 @@ end
 Line = class(DrawableObject)
 M.Line = Line
 
-function Line:init(vertices)
+function Line:init(vertices, fillLine)
     DrawableObject.init(self, 1, 1)
-    
+  
     self._vertices = {}
+    self._drawFunction = fillLine and MOAIDraw.fillFan or MOAIDraw.drawLine
     for i, v in ipairs(vertices) do
         table.insert(self._vertices, v.x)
         table.insert(self._vertices, v.y)
     end
+end
+
+function Line:isFillLine()
+    return self._drawFunction == MOAIDraw.fillFan
 end
 
 ---
@@ -3314,7 +3319,7 @@ end
 -- @param yFlip yFlip of the Prop.
 function Line:onDraw(index, xOff, yOff, xFlip, yFlip)
     MOAIGfxDevice.setPenColor(self:getColor())
-    MOAIDraw.drawLine(self._vertices)
+    self._drawFunction(self._vertices)
 end
 
 ----------------------------------------------------------------------------------------------------

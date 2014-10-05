@@ -46,17 +46,19 @@ function onCreate(e)
     for i=1, 14 do
         for j=1, 14 do
             local hexTile = flower.Line(CreateHexVertices({x = i * hexRectangleWidth + (j % 4) * hexRadius,
-                                                           y = j * (sideLength + hexHeight)}))
+                                                           y = j * (sideLength + hexHeight)}),  i >= 5 and i <= 10 and j >= 5 and j <= 10)
             group:addChild(hexTile)
         end
     end
     
-    timer = flower.Executors.callLoopTime(3.0, function()
+    timer = flower.Executors.callLoopTime(3, function()
         -- TODO: maybe this could be pushed into flower?
         for i, v in ipairs(group.children) do
             local r, g, b = v:getColor()
             local randomR, randomG, randomB = unpack(math.generateRandomNumbers(0.1, 0.9, 3))
-            v:moveColor(randomR - r, randomG - g, randomB - b, 1.0, 1.0)
+            local moveTime = v:isFillLine() and 1.0 or 0.5
+            
+            v:moveColor(randomR - r, randomG - g, randomB - b, 1.0, moveTime)
         end
     end)
     
