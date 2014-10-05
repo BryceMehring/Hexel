@@ -55,7 +55,7 @@ function onCreate(e)
         -- TODO: maybe this could be pushed into flower?
         for i, v in ipairs(group.children) do
             local r, g, b = v:getColor()
-            local randomR, randomG, randomB = unpack(math.generateRandomNumbers(0.3, 1, 3))
+            local randomR, randomG, randomB = unpack(math.generateRandomNumbers(0.1, 0.9, 3))
             v:moveColor(randomR - r, randomG - g, randomB - b, 1.0, 1.0)
         end
     end)
