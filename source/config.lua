@@ -38,7 +38,7 @@ flower.Font.DEFAULT_POINTS = 24
 
 -- Set the texture filter of default
 --flower.Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
-flower.Texture.DEFAULT_FILTER = MOAITexture.GL_NEAREST
+flower.Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
 
 -- Setting of the behavior of the InputMgr
 -- Whether to fire a touch event on the desktop environment

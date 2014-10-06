@@ -2781,15 +2781,19 @@ M.MapImage = MapImage
 -- @param tileHeight (option) The size of the tile
 -- @param spacing (option) The spacing of the tile
 -- @param margin (option) The margin of the tile
-function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
+function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, radius, spacing, margin)
     SheetImage.init(self, texture)
 
     self.grid = MOAIGrid.new()
     self:setGrid(self.grid)
-
+    
     if gridWidth and gridHeight and tileWidth and tileHeight then
-        self:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
+        self:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, radius, spacing, margin)
     end
+end
+
+function MapImage:setShape(shape)
+    self.grid:setShape(shape)
 end
 
 ---
@@ -2800,8 +2804,12 @@ end
 -- @param tileHeight The size of the tile
 -- @param spacing (option) The spacing of the tile
 -- @param margin (option) The margin of the tile
-function MapImage:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
-    self.grid:setSize(gridWidth, gridHeight, tileWidth, tileHeight)
+function MapImage:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, radius, spacing, margin)
+    if radius then
+        self.grid:initHexGrid(gridWidth, gridHeight, radius)
+    else
+        self.grid:setSize(gridWidth, gridHeight, tileWidth, tileHeight)
+    end
     self:setTileSize(tileWidth, tileHeight, spacing, margin)
 end
 
@@ -3297,7 +3305,7 @@ M.Line = Line
 
 function Line:init(vertices, fillLine)
     DrawableObject.init(self, 1, 1)
-  
+    
     self._vertices = {}
     self._drawFunction = fillLine and MOAIDraw.fillFan or MOAIDraw.drawLine
     for i, v in ipairs(vertices) do

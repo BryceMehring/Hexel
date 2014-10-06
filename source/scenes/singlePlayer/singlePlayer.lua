@@ -1,75 +1,48 @@
 module(..., package.seeall)
-require "utilities/extensions/math"
 
 -- import
 local flower = flower
 
-local hexagonAngle = math.rad(30)
-local sideLength = 25
-
-local hexHeight = math.sin(hexagonAngle) * sideLength
-local hexRadius = math.cos(hexagonAngle) * sideLength
-local hexRectangleHeight = sideLength + 2 * hexHeight
-local hexRectangleWidth = 2 * hexRadius
-
--- TODO: move this somewhere else
--- derived from: https://gist.github.com/zackthehuman/1867663
-local function CreateHexVertices(face)
-    
-    local vertices = {}
-    vertices[1] = {x = face.x + hexRadius, y = face.y }
-    vertices[2] = {x = face.x + hexRectangleWidth, y = face.y + hexHeight}
-    vertices[3] = {x = face.x + hexRectangleWidth, y = face.y + hexHeight + sideLength}
-    vertices[4] = {x = face.x + hexRadius, y = face.y + hexRectangleHeight}
-    vertices[5] = {x = face.x, y = face.y + sideLength + hexHeight}
-    vertices[6] = {x = face.x, y = face.y + hexHeight}
-    vertices[7] = vertices[1]
-    
-    return vertices
-end
-
 local group = nil
 local layer = nil
 local timer = nil
+local grid = nil
 
 function onCreate(e)
-    
     -- TODO: clean this up
 
     layer = flower.Layer()
-    layer:setTouchEnabled(true)
+    --layer:setTouchEnabled(true) TODO: get this working
     scene:addChild(layer)
     
-    -- TODO: draw hex grid here
-    group = flower.Group(layer)
+    local width = 8
+    local height = 15
     
-    for i=1, 14 do
-        for j=1, 14 do
-            local hexTile = flower.Line(CreateHexVertices({x = i * hexRectangleWidth + (j % 4) * hexRadius,
-                                                           y = j * (sideLength + hexHeight)}),  i >= 5 and i <= 10 and j >= 5 and j <= 10)
-            group:addChild(hexTile)
+    grid = flower.MapImage("hex-tiles.png", width, height, 128, 111, 32)
+    grid:setShape(MOAIGridSpace.HEX_SHAPE)
+    grid:setLayer(layer)
+    --[[grid:setRows{
+        {1, 2, 3, 4, 2, 3, 3, 3},
+        {1, 1, 3, 2, 2, 3, 3, 3},
+        {4, 1, 1, 2, 2, 3, 3, 3},
+        {2, 2, 3, 2, 2, 3, 3, 3},
+        {2, 2, 3, 2, 2, 3, 3, 3},
+    }]]
+    
+    -- Randomly fill the grid
+    for i=1, width do
+        for j=1, height do
+            grid:setTile(i,j, math.random(1, 4))
         end
     end
     
-    timer = flower.Executors.callLoopTime(3, function()
-        -- TODO: maybe this could be pushed into flower?
-        for i, v in ipairs(group.children) do
-            local r, g, b = v:getColor()
-            local randomR, randomG, randomB = unpack(math.generateRandomNumbers(0.1, 0.9, 3))
-            local moveTime = v:isFillLine() and 1.0 or 0.5
-            
-            v:moveColor(randomR - r, randomG - g, randomB - b, 1.0, moveTime)
-        end
-    end)
-    
+    grid:setRepeat(true, true)
+    grid:setPos(0,50)
+
 end
 
 function onStart(e)
 end
 
 function onStop(e)
-    flower.Executors.cancel(timer)
-end
-
-function onResize(e)
 end
