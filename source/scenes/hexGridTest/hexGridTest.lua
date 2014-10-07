@@ -1,12 +1,15 @@
+-- TODO: clean this up
+
 module(..., package.seeall)
 
 -- import
 local flower = flower
 
-local group = nil
 local layer = nil
-local timer = nil
 local grid = nil
+local mode = nil
+local width = 150
+local height = 300
 
 function addTouchEventListeners(item)
     item:addEventListener("touchDown", item_onTouchDown)
@@ -16,16 +19,14 @@ function addTouchEventListeners(item)
 end
 
 function onCreate(e)
-    -- TODO: clean this up
-
+    mode = e.data.params and e.data.params.mode or "default"
+    
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
-    local width = 15
-    local height = 30
-    
-    grid = flower.MapImage("hex-tiles.png", width, height, 128, 111, 32)
+    -- Create hex grid
+    grid = flower.MapImage("hex-tiles.png", width, height, 128, 111, 16)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
     grid:setLayer(layer)
     --[[grid:setRows{
@@ -39,16 +40,48 @@ function onCreate(e)
     -- Randomly fill the grid
     for i=1, width do
         for j=1, height do
-            grid:setTile(i,j, math.random(1, 4))
+            grid:setTile(i,j, math.random(1, 6))
         end
     end
     
     grid:setRepeat(true, true)
     grid:setPos(0,50)
     
+    -- Make the grid touchable
     addTouchEventListeners(grid)
-
 end
+
+function rippleOut(pos)
+    local radius = 0
+    local randomTile = math.random(1, 5)
+    local directions = {
+        {x = 0, y = 1},
+        {x = 1, y = 0},
+        {x = 0, y =-1},
+        {x = -1,y = 0},
+    }
+    
+    local function UpdateTile(newX, newY, newTile)
+        newX, newY = grid.grid:wrapCoord ( newX, newY )
+        grid:setTile(newX, newY, newTile)
+    end
+    
+    while radius < 10 do
+        for i, dir in ipairs(directions) do
+            if i == 1 or i == 3 then
+                radius = radius + 2
+            end
+            
+            for j=1, radius do
+                pos.x = pos.x + dir.x
+                pos.y = pos.y + dir.y
+                
+                flower.Executors.callLaterTime(radius / 50, UpdateTile, pos.x, pos.y, randomTile)
+            end
+        end
+    end
+end
+        
 
 function onStart(e)
 end
@@ -73,7 +106,11 @@ function item_onTouchDown(e)
     xCoord, yCoord = grid.grid:wrapCoord ( xCoord, yCoord )
     
     -- Move to the next color
-    grid:setTile(xCoord, yCoord, grid:getTile(xCoord, yCoord) % 5 + 1)
+    if mode == "pattern" then
+        rippleOut({x = xCoord, y = yCoord})
+    elseif mode == "default" then
+        grid:setTile(xCoord, yCoord, grid:getTile(xCoord, yCoord) % 5 + 1)
+    end
     
     prop.touchDown = true
     prop.touchIdx = e.idx

@@ -118,7 +118,7 @@ function menuItem_onTouchDown(e)
     local t = e.target
     local data = t and t.data
     if data and data.scene then
-        local childScene = flower.openScene(data.scene, {animation = data.openAnime})
+        local childScene = flower.openScene(data.scene, {animation = data.openAnime, params = data.params})
         if childScene then
             selectedData = data
             createBackButton(childScene)
