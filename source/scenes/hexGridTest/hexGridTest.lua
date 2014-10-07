@@ -61,9 +61,9 @@ function rippleOut(pos)
         {x = -1,y = 0},
     }
     
-    local function UpdateTile(newX, newY, newTile)
+    local function UpdateTile(newX, newY)
         newX, newY = grid.grid:wrapCoord ( newX, newY )
-        grid:setTile(newX, newY, newTile)
+        grid:setTile(newX, newY, randomTile)
     end
     
     while radius < 10 do
@@ -76,7 +76,7 @@ function rippleOut(pos)
                 pos.x = pos.x + dir.x
                 pos.y = pos.y + dir.y
                 
-                flower.Executors.callLaterTime(radius / 50, UpdateTile, pos.x, pos.y, randomTile)
+                flower.Executors.callLaterTime(radius / 50, UpdateTile, pos.x, pos.y)
             end
         end
     end
