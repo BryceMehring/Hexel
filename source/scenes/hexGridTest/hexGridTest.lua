@@ -20,13 +20,13 @@ end
 
 function onCreate(e)
     mode = e.data.params and e.data.params.mode or "default"
-    
+
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
     -- Create hex grid
-    grid = flower.MapImage("hex-tiles.png", width, height, 128, 111, 16)
+    grid = flower.MapImage("hex-tiles.png", width, height, 128, 112, 16)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
     grid:setLayer(layer)
     --[[grid:setRows{
