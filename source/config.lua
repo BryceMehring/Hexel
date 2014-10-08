@@ -13,7 +13,7 @@ local screenHeight = MOAIEnvironment.verticalResolution or 480
 local viewScale = math.floor(math.max(math.min(screenWidth / 320, screenHeight / 480), 1))
 
 -- Resources setting
-flower.Resources.addResourceDirectory("../assets")
+flower.Resources.addResourceDirectory("assets/")
 
 -- Set the screen size
 flower.DEFAULT_SCREEN_WIDTH = screenWidth

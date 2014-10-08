@@ -1,2 +1,2 @@
-luajit pack.lua ../source
-luajit -b singleFile.lua hexel
+luajit pack.lua ../
+luajit -b singleFile.lua data
