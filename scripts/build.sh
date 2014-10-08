@@ -1,2 +1,2 @@
-lua pack.lua ../source
-luac -p singleFile.lua
+luajit pack.lua ../source
+luajit -b singleFile.lua hexel
