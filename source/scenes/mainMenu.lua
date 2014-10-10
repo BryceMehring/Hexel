@@ -100,6 +100,20 @@ function onCreate(e)
     createMenuList()
     
     flower.Runtime:addEventListener("resize", onResize)
+    
+    view = widget.UIView {
+        scene = scene
+    }
+    
+    button1 = widget.Button {
+        size = {200, 50},
+        pos = {10, 300},
+        text = "Test1",
+        parent = view,
+        onClick = nil,
+        onDown = nil,
+        onUp = nil,
+    }
 end
 
 function onStart(e)
