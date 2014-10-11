@@ -1,6 +1,13 @@
 module(..., package.seeall)
 
 --------------------------------------------------------------------------------
+-- Imports
+--------------------------------------------------------------------------------
+
+local flower = flower
+local widget = widget
+
+--------------------------------------------------------------------------------
 -- Constraints
 --------------------------------------------------------------------------------
 
@@ -14,28 +21,32 @@ local ITEM_HEIGHT = 60
 
 local selectedData = nil
 local backButton = nil
+local view = nil
 
 --------------------------------------------------------------------------------
 -- Functions
 --------------------------------------------------------------------------------
 
--- TODO: convert this to use the new widget library
 function createBackButton(childScene)
-    local layer = flower.Layer()
-    layer:setTouchEnabled(true)
-    childScene:addChild(layer)
     
-    local rect = flower.Rect(100, ITEM_HEIGHT)
-    rect:setColor(0, 0, 0.5, 1)
-    rect:setLayer(layer)
-    
-    local label = flower.Label("Back", 100, ITEM_HEIGHT)
-    
-    backButton = flower.Group(layer)
-    backButton:setPos(flower.viewWidth - 100, 0)
-    backButton:addChild(rect)
-    backButton:addChild(label)
-    backButton:addEventListener("touchDown", backButton_onTouchDown)
+    -- Create view for this child state
+    -- TODO: this view should be created elsewhere
+    local childView = widget.UIView {
+        scene = childScene,
+        layout = widget.BoxLayout {
+            align = {"right", "top"},
+        },
+        children = {{
+            widget.Button {
+                size = {100, 50},
+                text = "Back",
+                onClick = function()
+                    flower.closeScene({animation = selectedData.closeAnime})
+                    selectedData = nil
+                end,
+            },
+        }},
+    }
 end
 
 -- Populates the main menu with buttons for their corresponding state.
@@ -98,14 +109,4 @@ function onCreate(e)
 end
 
 function onStart(e)
-end
-
-function backButton_onTouchDown(e)
-    if flower.SceneMgr.transitioning then
-        return
-    end
-    
-    flower.closeScene({animation = selectedData.closeAnime})
-    selectedData = nil
-    backButton = nil
 end
