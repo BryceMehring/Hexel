@@ -40,7 +40,6 @@ end
 
 -- Populates the main menu with buttons for their corresponding state.
 function createMenuList()
-    menuList = {}
     
     local function onClickCallback(item)
         if item.scene then
@@ -61,6 +60,7 @@ function createMenuList()
             end,
             enabled = item.scene ~= nil,
         }
+        
         view:addChild(menuItem)
     end
 end
