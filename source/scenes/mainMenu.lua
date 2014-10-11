@@ -27,12 +27,10 @@ local view = nil
 -- Functions
 --------------------------------------------------------------------------------
 
-function createBackButton(childScene)
-    
-    -- Create view for this child state
-    -- TODO: this view should be created elsewhere
-    local childView = widget.UIView {
-        scene = childScene,
+-- Create view for a child state wtih a back button
+function createChildView()
+    return widget.UIView {
+        scene = nil,
         layout = widget.BoxLayout {
             align = {"right", "top"},
         },
@@ -54,10 +52,11 @@ function createMenuList()
     
     local function onClickCallback(item)
         if item.scene then
-            local childScene = flower.openScene(item.scene, {animation = item.openAnime, params = item.params})
+            local childView = createChildView()
+            local childScene = flower.openScene(item.scene, {animation = item.openAnime, params = item.params, view = childView})
             if childScene then
+                childView:setScene(childScene)
                 selectedData = item
-                createBackButton(childScene)
             end
         end
     end

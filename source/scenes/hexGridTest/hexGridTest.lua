@@ -25,6 +25,9 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
+    -- Build GUI from parent view
+    local view = e.data.view
+    
     -- Create hex grid
     grid = flower.MapImage("hex-tiles.png", width, height, 128, 112, 16)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
