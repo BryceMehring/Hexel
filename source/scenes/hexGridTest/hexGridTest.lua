@@ -11,6 +11,9 @@ local mode = nil
 local width = 50
 local height = 100
 
+local lives = 20
+local score = 0
+
 -- TODO: Move this logic elsewhere for finding neighbors
 local neighbors = {
     hex = {
@@ -64,8 +67,35 @@ function onCreate(e)
     grid:setRepeat(false, false)
     grid:setPos(0,50)
     
+    button1 = widget.Button {
+        size = {flower.viewWidth/6, 39},
+        --pos = {flower.viewWidth - 100, 50},
+        text = "Toggle Mode",
+        parent = view,
+        onClick = function()--updateButton,
+            if mode == "default" then
+                mode = "pattern"
+            else
+                mode = "default"
+            end
+            score = score + 10
+            statusUI:setText(updateStatus())
+        end,
+    }
+    
+    statusUI = widget.TextBox {
+         size = {flower.viewWidth/6, 50},
+         text = updateStatus(),
+         textSize = 10,
+         parent = view,
+    }
+    
     -- Make the grid touchable
     addTouchEventListeners(grid)
+end
+
+function updateStatus()
+   return "Lives: "..lives.."\nScore: "..score.."\nPaint Mode: "..mode
 end
 
 function rippleOut(pos, length)   
