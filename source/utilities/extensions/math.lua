@@ -20,3 +20,26 @@ function math.generateRandomNumbers(min, max, n)
     
     return numberList
 end
+
+---
+-- Rearranges the elements of the list randomly.
+-- @param the table to be randomized
+function math.shuffle(list)
+    if type(list) ~= "table" then
+        return
+    end
+    
+    for i=1, #list do
+        local randomElement = math.random(1, #list)
+        list[i], list[randomElement] = list[randomElement], list[i]
+    end
+end
+
+-- Rearranges the elements in list randomly.
+-- @param the table to be randomized
+-- @return randomized copy of the list
+function math.shuffleCopy(list)
+    local listCopy = flower.table.copy(list)
+    math.shuffle(listCopy)
+    return listCopy
+end
