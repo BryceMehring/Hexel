@@ -8,8 +8,36 @@ local flower = flower
 local layer = nil
 local grid = nil
 local mode = nil
-local width = 150
-local height = 300
+local width = 50
+local height = 100
+
+-- TODO: Move this logic elsewhere for finding neighbors 
+local neighbors = {
+    hex = {
+        {
+           {0, 2},
+           {1, 1},
+           {1, -1},
+           {0, -2},
+           {0, -1},
+           {0, 1},
+        },
+        {
+            {0, 2},
+            {0, 1},
+            {0, -1},
+            {0, -2},
+            {-1, -1},
+            {-1, 1}
+        }
+    }
+}
+
+-- Return a list of offsets for the tiles neighbors
+function getHexNeighbors(pos)
+    local parity = pos.y % 2 == 0 and 1 or 2
+    return neighbors.hex[parity]
+end 
 
 function addTouchEventListeners(item)
     item:addEventListener("touchDown", item_onTouchDown)
@@ -32,20 +60,16 @@ function onCreate(e)
     grid = flower.MapImage("hex-tiles.png", width, height, 128, 112, 16)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
     grid:setLayer(layer)
-    --[[grid:setRows{
-        {1, 2, 3, 4, 2, 3, 3, 3},
-        {1, 1, 3, 2, 2, 3, 3, 3},
-        {4, 1, 1, 2, 2, 3, 3, 3},
-        {2, 2, 3, 2, 2, 3, 3, 3},
-        {2, 2, 3, 2, 2, 3, 3, 3},
-    }]]
     
-    -- Randomly fill the grid
-    for i=1, width do
-        for j=1, height do
-            grid:setTile(i,j, math.random(1, 6))
+    -- Randomly fill the grid only in the pattern mode
+    if mode == "pattern" then
+        for i=1, width do
+            for j=1, height do
+                grid:setTile(i,j, math.random(1, 6))
+            end
         end
     end
+     
     
     grid:setRepeat(true, true)
     grid:setPos(0,50)
@@ -60,8 +84,8 @@ function rippleOut(pos)
     local directions = {
         {x = 0, y = 1},
         {x = 1, y = 0},
-        {x = 0, y =-1},
-        {x = -1,y = 0},
+        {x = 0, y = -1},
+        {x = -1, y = 0},
     }
     
     local function UpdateTile(newX, newY)
@@ -84,7 +108,6 @@ function rippleOut(pos)
         end
     end
 end
-        
 
 function onStart(e)
 end
@@ -112,7 +135,13 @@ function item_onTouchDown(e)
     if mode == "pattern" then
         rippleOut({x = xCoord, y = yCoord})
     elseif mode == "default" then
-        grid:setTile(xCoord, yCoord, grid:getTile(xCoord, yCoord) % 5 + 1)
+        local nearbyTiles = getHexNeighbors({x = xCoord, y = yCoord})
+        local randomColor = math.random(1,4)
+        grid:setTile(xCoord, yCoord, randomColor)
+        for i, v in ipairs(nearbyTiles) do
+            local newX, newY = grid.grid:wrapCoord ( xCoord + v[1], yCoord + v[2] )
+            grid:setTile(newX, newY, randomColor)
+        end
     end
     
     prop.touchDown = true
