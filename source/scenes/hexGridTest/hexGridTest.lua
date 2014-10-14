@@ -61,18 +61,24 @@ function onCreate(e)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
     grid:setLayer(layer)
     
-    grid:setRepeat(true, true)
+    grid:setRepeat(false, false)
     grid:setPos(0,50)
     
     -- Make the grid touchable
     addTouchEventListeners(grid)
 end
 
-function rippleOut(pos, length)
-    local randomTile = math.random(1, 4)
+function rippleOut(pos, length)   
+    local function ValidTile(pos)
+        return grid:getTile(pos.x, pos.y) ~= 3
+    end
     
+    --[[if not ValidTile(pos) then
+        return
+    end]]
+    
+    local randomTile = math.random(1, 4)
     local function UpdateTile(newX, newY)
-        newX, newY = grid.grid:wrapCoord ( newX, newY )
         grid:setTile(newX, newY, randomTile)
     end
     
@@ -91,10 +97,12 @@ function rippleOut(pos, length)
         local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
             local newPos = {x = currentNode.position.x + dir[1], y = currentNode.position.y + dir[2]}
-            local key = newPos.x  .. newPos.y
+            local key = newPos.x .. newPos.y
             if not visited[key] then
-                visited[key] = true
-                table.insert(list, {position = newPos, depth = currentNode.depth + 1})
+                if ValidTile(newPos) then
+                    visited[key] = true
+                    table.insert(list, {position = {x = newPos.x, y = newPos.y}, depth = currentNode.depth + 1})
+                end
             end
         end
         
@@ -122,7 +130,6 @@ function item_onTouchDown(e)
     x, y = prop:worldToModel(x, y)
     
     local xCoord, yCoord = grid.grid:locToCoord(x, y)
-    xCoord, yCoord = grid.grid:wrapCoord ( xCoord, yCoord )
     
     rippleOut({x = xCoord, y = yCoord}, mode == "pattern" and 100 or 8)
     
