@@ -15,20 +15,20 @@ local height = 100
 local neighbors = {
     hex = {
         {
-           {0, 2},
-           {1, 1},
-           {1, -1},
-           {0, -2},
-           {0, -1},
-           {0, 1},
+            {x = 0, y = 2},
+            {x = 0, y = -2},
+            {x = 0, y = -1},
+            {x = 0, y = 1},
+            {x = 1, y = -1},
+            {x = 1, y = 1},
         },
         {
-            {0, 2},
-            {0, 1},
-            {0, -1},
-            {0, -2},
-            {-1, -1},
-            {-1, 1}
+            {x = 0, y = 2},
+            {x = 0, y = -2},
+            {x = 0, y = -1},
+            {x = 0, y = 1},
+            {x = -1, y = -1},
+            {x = -1, y = 1}
         }
     }
 }
@@ -96,13 +96,11 @@ function rippleOut(pos, length)
         
         local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
-            local newPos = {x = currentNode.position.x + dir[1], y = currentNode.position.y + dir[2]}
+            local newPos = {x = currentNode.position.x + dir.x, y = currentNode.position.y + dir.y}
             local key = newPos.x .. newPos.y
-            if not visited[key] then
-                if ValidTile(newPos) then
-                    visited[key] = true
-                    table.insert(list, {position = {x = newPos.x, y = newPos.y}, depth = currentNode.depth + 1})
-                end
+            if ValidTile(newPos) and not visited[key] then
+                visited[key] = true
+                table.insert(list, {position = newPos, depth = currentNode.depth + 1})
             end
         end
         
