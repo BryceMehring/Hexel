@@ -11,7 +11,7 @@ local mode = nil
 local width = 50
 local height = 100
 
--- TODO: Move this logic elsewhere for finding neighbors 
+-- TODO: Move this logic elsewhere for finding neighbors
 local neighbors = {
     hex = {
         {
@@ -61,16 +61,6 @@ function onCreate(e)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
     grid:setLayer(layer)
     
-    -- Randomly fill the grid only in the pattern mode
-    if mode == "pattern" then
-        for i=1, width do
-            for j=1, height do
-                grid:setTile(i,j, math.random(1, 6))
-            end
-        end
-    end
-     
-    
     grid:setRepeat(true, true)
     grid:setPos(0,50)
     
@@ -78,34 +68,37 @@ function onCreate(e)
     addTouchEventListeners(grid)
 end
 
-function rippleOut(pos)
-    local radius = 0
-    local randomTile = math.random(1, 5)
-    local directions = {
-        {x = 0, y = 1},
-        {x = 1, y = 0},
-        {x = 0, y = -1},
-        {x = -1, y = 0},
-    }
+function rippleOut(pos, length)
+    local randomTile = math.random(1, 4)
     
     local function UpdateTile(newX, newY)
         newX, newY = grid.grid:wrapCoord ( newX, newY )
         grid:setTile(newX, newY, randomTile)
     end
     
-    while radius < 10 do
+    local visited = {}
+    local list = {}
+    
+    table.insert(list, {position = pos, depth = 1})
+    
+    local counter = 1
+    while #list > 0 and counter < length do
+        local currentNode = list[1]
+        table.remove(list, 1)
+        
+        flower.Executors.callLaterTime(currentNode.depth / 20, UpdateTile, currentNode.position.x, currentNode.position.y)
+        
+        local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
-            if i == 1 or i == 3 then
-                radius = radius + 2
-            end
-            
-            for j=1, radius do
-                pos.x = pos.x + dir.x
-                pos.y = pos.y + dir.y
-                
-                flower.Executors.callLaterTime(radius / 50, UpdateTile, pos.x, pos.y)
+            local newPos = {x = currentNode.position.x + dir[1], y = currentNode.position.y + dir[2]}
+            local key = newPos.x  .. newPos.y
+            if not visited[key] then
+                visited[key] = true
+                table.insert(list, {position = newPos, depth = currentNode.depth + 1})
             end
         end
+        
+        counter = counter + 1
     end
 end
 
@@ -131,18 +124,7 @@ function item_onTouchDown(e)
     local xCoord, yCoord = grid.grid:locToCoord(x, y)
     xCoord, yCoord = grid.grid:wrapCoord ( xCoord, yCoord )
     
-    -- Move to the next color
-    if mode == "pattern" then
-        rippleOut({x = xCoord, y = yCoord})
-    elseif mode == "default" then
-        local nearbyTiles = getHexNeighbors({x = xCoord, y = yCoord})
-        local randomColor = math.random(1,4)
-        grid:setTile(xCoord, yCoord, randomColor)
-        for i, v in ipairs(nearbyTiles) do
-            local newX, newY = grid.grid:wrapCoord ( xCoord + v[1], yCoord + v[2] )
-            grid:setTile(newX, newY, randomColor)
-        end
-    end
+    rippleOut({x = xCoord, y = yCoord}, mode == "pattern" and 100 or 8)
     
     prop.touchDown = true
     prop.touchIdx = e.idx
@@ -178,7 +160,7 @@ function item_onTouchMove(e)
 end
 
 function item_onTouchCancel(e)
-    
+
     local prop = e.prop
     if prop == nil or not prop.touchDown then
         return
