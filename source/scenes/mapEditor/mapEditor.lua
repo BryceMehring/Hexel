@@ -158,7 +158,7 @@ function rippleOut(pos, length)
         local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
             local newPos = {x = currentNode.position.x + dir.x, y = currentNode.position.y + dir.y}
-            local key = newPos.x .. newPos.y
+            local key = newPos.x + newPos.y * (width + 1)
             if ValidTile(newPos) and not visited[key] then
                 visited[key] = true
                 table.insert(list, {position = newPos, depth = currentNode.depth + 1})
