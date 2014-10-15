@@ -131,7 +131,9 @@ end
 
 function rippleOut(pos, length)   
     local function ValidTile(pos)
-        return grid:getTile(pos.x, pos.y) ~= 3
+        return pos.x >= 1 and pos.x <= width and
+               pos.y >= 1 and pos.y <= height and
+               grid:getTile(pos.x, pos.y) ~= 3
     end
     
     --[[if not ValidTile(pos) then
