@@ -7,7 +7,7 @@ local flower = flower
 
 local layer = nil
 local grid = nil
-local mode = nil
+local mode = "default"
 local width = 50
 local height = 100
 
@@ -40,7 +40,7 @@ local neighbors = {
 function getHexNeighbors(pos)
     local parity = pos.y % 2 == 0 and 1 or 2
     return neighbors.hex[parity]
-end 
+end
 
 function addTouchEventListeners(item)
     item:addEventListener("touchDown", item_onTouchDown)
@@ -50,15 +50,21 @@ function addTouchEventListeners(item)
 end
 
 function onCreate(e)
-    mode = e.data.params and e.data.params.mode or "default"
 
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
+
+    buildGrid()
     
     -- Build GUI from parent view
-    local view = e.data.view
+    buildGUI(e.data.view)
     
+    -- Make the grid touchable
+    addTouchEventListeners(grid)
+end
+
+function buildGrid()
     -- Create hex grid
     grid = flower.MapImage("hex-tiles.png", width, height, 128, 112, 16)
     grid:setShape(MOAIGridSpace.HEX_SHAPE)
@@ -66,32 +72,57 @@ function onCreate(e)
     
     grid:setRepeat(false, false)
     grid:setPos(0,50)
-    
-    button1 = widget.Button {
-        size = {flower.viewWidth/6, 39},
+end
+
+function buildGUI(view)
+    local buttonSize = {flower.viewWidth/6, 39}
+    toggleButton = widget.Button {
+        size = buttonSize,
         --pos = {flower.viewWidth - 100, 50},
         text = "Toggle Mode",
         parent = view,
         onClick = function()--updateButton,
-            if mode == "default" then
-                mode = "pattern"
-            else
-                mode = "default"
-            end
+            mode = mode == "default" and "pattern" or "default"
             score = score + 10
             statusUI:setText(updateStatus())
         end,
     }
     
+    clearButton = widget.Button {
+        size = buttonSize,
+        text = "Clear Grid",
+        parent = view,
+        onClick = function()
+            grid.grid:fill(5)
+        end,
+    }
+    
+    saveButton = widget.Button {
+        size = buttonSize,
+        text = "Save Grid",
+        parent = view,
+        onClick = function()
+            -- TODO: implement
+        end,
+        enabled = false,
+    }
+    
+    loadButton = widget.Button {
+        size = buttonSize,
+        text = "Load Grid",
+        parent = view,
+        onClick = function()
+            -- TODO: implement
+        end,
+        enabled = false,
+    }
+    
     statusUI = widget.TextBox {
-         size = {flower.viewWidth/6, 50},
+         size = {buttonSize[1], 50},
          text = updateStatus(),
          textSize = 10,
          parent = view,
     }
-    
-    -- Make the grid touchable
-    addTouchEventListeners(grid)
 end
 
 function updateStatus()
