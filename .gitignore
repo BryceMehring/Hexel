@@ -10,3 +10,6 @@ $RECYCLE.BIN/
 
 # ZeroBrane backup files
 *.bak
+
+# Hexel grid save
+*.sav

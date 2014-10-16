@@ -1,18 +1,12 @@
--- TODO: clean this up
+-- TODO: clean this up!
 
 module(..., package.seeall)
 
 -- import
 local flower = flower
 
+-- local variables
 local layer = nil
-local grid = nil
-local mode = "default"
-local width = 50
-local height = 100
-
-local lives = 20
-local score = 0
 
 -- TODO: Move this logic elsewhere for finding neighbors
 local neighbors = {
@@ -42,72 +36,91 @@ function getHexNeighbors(pos)
     return neighbors.hex[parity]
 end
 
-function addTouchEventListeners(item)
-    item:addEventListener("touchDown", item_onTouchDown)
-    item:addEventListener("touchUp", item_onTouchUp)
-    item:addEventListener("touchMove", item_onTouchMove)
-    item:addEventListener("touchCancel", item_onTouchCancel)
+-- MapEditor singleton
+MapEditor = {}
+MapEditor.texture = "hex-tiles.png"
+MapEditor.width = 50
+MapEditor.height = 100
+MapEditor.tileWidth = 128
+MapEditor.tileHeight = 112
+MapEditor.radius = 16
+MapEditor.saveFile = "grid.sav"
+MapEditor.currentAlgorithm = 1
+MapEditor.currentColor = 1
+MapEditor.algorithms = {}
+
+function MapEditor.buildGrid(params)
+    params = params or {}
+    MapEditor.texture = params.texture or MapEditor.texture
+    MapEditor.width = params.width or MapEditor.width
+    MapEditor.height = params.height or MapEditor.height
+    MapEditor.tileWidth = params.tileWidth or MapEditor.tileWidth
+    MapEditor.tileHeight = params.tileHeight or MapEditor.tileHeight
+    MapEditor.radius = params.radius or MapEditor.radius
+    
+    MapEditor.grid = flower.MapImage(MapEditor.texture,
+                                      MapEditor.width, 
+                                      MapEditor.height,
+                                      MapEditor.tileWidth,
+                                      MapEditor.tileHeight,
+                                      MapEditor.radius)
+                                  
+    MapEditor.grid:setShape(MOAIGridSpace.HEX_SHAPE)
+    MapEditor.grid:setLayer(layer)
 end
 
-function onCreate(e)
-
-    layer = flower.Layer()
-    layer:setTouchEnabled(true)
-    scene:addChild(layer)
-
-    buildGrid()
-    
-    -- Build GUI from parent view
-    buildGUI(e.data.view)
-    
-    -- Make the grid touchable
-    addTouchEventListeners(grid)
-end
-
-function buildGrid()
-    -- Create hex grid
-    grid = flower.MapImage("hex-tiles.png", width, height, 128, 112, 16)
-    grid:setShape(MOAIGridSpace.HEX_SHAPE)
-    grid:setLayer(layer)
-    
-    grid:setRepeat(false, false)
-    grid:setPos(0,50)
-end
-
-function buildGUI(view)
+function MapEditor.buildGUI(view)
     local buttonSize = {flower.viewWidth/6, 39}
-    toggleButton = widget.Button {
+    MapEditor.toggleModeButton = widget.Button {
         size = buttonSize,
-        --pos = {flower.viewWidth - 100, 50},
         text = "Toggle Mode",
         parent = view,
-        onClick = function()--updateButton,
-            mode = mode == "default" and "pattern" or "default"
-            score = score + 10
-            statusUI:setText(updateStatus())
+        onClick = function()
+            
+            -- Loop over all algorithms
+            MapEditor.currentAlgorithm = (MapEditor.currentAlgorithm + 1)
+            
+            if MapEditor.currentAlgorithm > #MapEditor.algorithms then
+                MapEditor.currentAlgorithm = 1
+            end
+            
+            MapEditor.statusUI:setText(MapEditor._updateStatus())
         end,
     }
     
-    clearButton = widget.Button {
+    MapEditor.toggleColorModeButton = widget.Button {
+        size = buttonSize,
+        text = "Toggle Color",
+        parent = view,
+        onClick = function()
+            MapEditor.currentColor = MapEditor.currentColor + 1
+            if MapEditor.currentColor > 5 then
+                MapEditor.currentColor = 1
+            end
+            MapEditor.statusUI:setText(MapEditor._updateStatus())
+        end,
+    }
+    
+    MapEditor.clearButton = widget.Button {
         size = buttonSize,
         text = "Clear Grid",
         parent = view,
         onClick = function()
-            grid.grid:fill(5)
+            MapEditor.grid.grid:fill(5)
         end,
     }
     
-    saveButton = widget.Button {
+    MapEditor.saveButton = widget.Button {
         size = buttonSize,
         text = "Save Grid",
         parent = view,
         onClick = function()
-            -- TODO: implement
+            MapEditor.serializeGrid(saveFile)
         end,
-        enabled = false,
+        enabled = true,
     }
     
-    loadButton = widget.Button {
+    MapEditor.loadButton = widget.Button {
         size = buttonSize,
         text = "Load Grid",
         parent = view,
@@ -117,33 +130,50 @@ function buildGUI(view)
         enabled = false,
     }
     
-    statusUI = widget.TextBox {
-         size = {buttonSize[1], 50},
-         text = updateStatus(),
+    MapEditor.statusUI = widget.TextBox {
+         size = {buttonSize[1], 70},
+         text = MapEditor._updateStatus(),
          textSize = 10,
          parent = view,
     }
 end
 
-function updateStatus()
-   return "Lives: "..lives.."\nScore: "..score.."\nPaint Mode: "..mode
+-- Load/Save grid to file
+function MapEditor.serializeGrid(file, streamIn)
+    file = file or MapEditor.saveFile
+    streamIn = streamIn or false
+    local fileStream = MOAIFileStream.new()
+    local success = fileStream:open(file, streamIn and MOAIFileStream.READ or MOAIFileStream.READ_WRITE_NEW)
+    if success then
+        if streamIn then
+            MapEditor.grid.grid:streamTilesIn(fileStream)
+        else
+            MapEditor.grid.grid:streamTilesOut(fileStream)
+        end
+        fileStream:close()
+    end
 end
 
-function rippleOut(pos, length)   
+function MapEditor._updateStatus()
+   return "\nPaint Mode: " .. MapEditor.currentAlgorithm ..
+          "\nColor Mode: " .. MapEditor.currentColor
+end
+
+function MapEditor.onTouchDown(pos)
+    MapEditor.algorithms[MapEditor.currentAlgorithm](pos)
+end
+
+-- TODO: move these painting algorithms into another file
+function MapEditor._algorithmRippleOut(pos)
     local function ValidTile(pos)
-        return pos.x >= 1 and pos.x <= width and
-               pos.y >= 1 and pos.y <= height and
-               grid:getTile(pos.x, pos.y) ~= 3
+        return pos.x >= 1 and pos.x <= MapEditor.width and
+               pos.y >= 1 and pos.y <= MapEditor.height and
+               MapEditor.grid:getTile(pos.x, pos.y) ~= 3
     end
     
     --[[if not ValidTile(pos) then
         return
     end]]
-    
-    local randomTile = math.random(1, 4)
-    local function UpdateTile(newX, newY)
-        grid:setTile(newX, newY, randomTile)
-    end
     
     local visited = {}
     local list = {}
@@ -151,16 +181,16 @@ function rippleOut(pos, length)
     table.insert(list, {position = pos, depth = 1})
     
     local counter = 1
-    while #list > 0 and counter < length do
+    while #list > 0 and counter < 100 do
         local currentNode = list[1]
         table.remove(list, 1)
         
-        flower.Executors.callLaterTime(currentNode.depth / 20, UpdateTile, currentNode.position.x, currentNode.position.y)
+        flower.Executors.callLaterTime(currentNode.depth / 20, MapEditor._algorithmFillSingleTile, currentNode.position)
         
         local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
             local newPos = {x = currentNode.position.x + dir.x, y = currentNode.position.y + dir.y}
-            local key = newPos.x + newPos.y * (width + 1)
+            local key = newPos.x + newPos.y * (MapEditor.width + 1)
             if ValidTile(newPos) and not visited[key] then
                 visited[key] = true
                 table.insert(list, {position = newPos, depth = currentNode.depth + 1})
@@ -171,10 +201,47 @@ function rippleOut(pos, length)
     end
 end
 
+function MapEditor._algorithmFillSingleTile(pos, tile)
+    tile = tile or MapEditor.currentColor
+    MapEditor.grid:setTile(pos.x, pos.y, tile)
+end
+
+-- Create a list of all algorithms that the map editor supports
+for k, v in pairs(MapEditor) do
+    if type(v) == "function" and string.match(k, "^_algorithm") then
+        table.insert(MapEditor.algorithms, v)
+    end
+end
+
+function onCreate(e)
+
+    layer = flower.Layer()
+    layer:setTouchEnabled(true)
+    scene:addChild(layer)
+
+    MapEditor.buildGrid()
+    
+    -- Build GUI from parent view
+    MapEditor.buildGUI(e.data.view)
+    
+    MapEditor.serializeGrid(saveFile, true)
+    
+    -- Make the grid touchable
+    -- TODO: move this code into the map editor
+    addTouchEventListeners(MapEditor.grid)
+end
+
 function onStart(e)
 end
 
 function onStop(e)
+end
+
+function addTouchEventListeners(item)
+    item:addEventListener("touchDown", item_onTouchDown)
+    item:addEventListener("touchUp", item_onTouchUp)
+    item:addEventListener("touchMove", item_onTouchMove)
+    item:addEventListener("touchCancel", item_onTouchCancel)
 end
 
 function item_onTouchDown(e)
@@ -183,16 +250,17 @@ function item_onTouchDown(e)
     if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
         return
     end
-    
+
     -- Convert screen space into hex space
     local x = e.wx
     local y = e.wy
     x, y = layer:wndToWorld(x, y)
     x, y = prop:worldToModel(x, y)
     
-    local xCoord, yCoord = grid.grid:locToCoord(x, y)
+    -- TODO: move this into the map editor
+    local xCoord, yCoord = MapEditor.grid.grid:locToCoord(x, y)
     
-    rippleOut({x = xCoord, y = yCoord}, mode == "pattern" and 100 or 8)
+    MapEditor.onTouchDown({x = xCoord, y = yCoord})
     
     prop.touchDown = true
     prop.touchIdx = e.idx
