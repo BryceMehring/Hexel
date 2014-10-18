@@ -2,39 +2,13 @@
 
 module(..., package.seeall)
 
+require "gridNeighbors"
+
 -- import
 local flower = flower
 
 -- local variables
 local layer = nil
-
--- TODO: Move this logic elsewhere for finding neighbors
-local neighbors = {
-    hex = {
-        {
-            {x = 0, y = 2},
-            {x = 0, y = -2},
-            {x = 0, y = -1},
-            {x = 0, y = 1},
-            {x = 1, y = -1},
-            {x = 1, y = 1},
-        },
-        {
-            {x = 0, y = 2},
-            {x = 0, y = -2},
-            {x = 0, y = -1},
-            {x = 0, y = 1},
-            {x = -1, y = -1},
-            {x = -1, y = 1}
-        }
-    }
-}
-
--- Return a list of offsets for the tiles neighbors
-function getHexNeighbors(pos)
-    local parity = pos.y % 2 == 0 and 1 or 2
-    return neighbors.hex[parity]
-end
 
 -- MapEditor singleton
 MapEditor = {}
