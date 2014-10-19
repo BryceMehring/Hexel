@@ -3,6 +3,14 @@ module(..., package.seeall)
 MAP_LIST = require "maps/mapList"
 ITEM_HEIGHT = 32
 
+function createChildView()
+    return widget.UIView {
+        scene = nil,
+        layout = widget.BoxLayout {
+            align = {"right", "top"},
+        },
+    }
+end
 
 function createMenuList()
     menuList = {}
@@ -80,9 +88,16 @@ function menuItem_onTouchDown(e)
     local t = e.target
     local data = t and t.data
     if data and data.path then
-        local input = assert(io.input(data.path))
-        local dataz = input:read("*a")
-        input:close()
-        print(dataz)
+        dofile( data.path )
+        local childView = createChildView()
+        local childScene = flower.openScene("scenes/game", {animation = "fade", params = nil, view = childView})
+        if childScene then
+            childView:setScene(childScene)
+            selectedData = item
+        end
+        --local input = assert(io.input(data.path))
+        --local dataz = input:read("*a")
+        --input:close()
+        --print(dataz)
     end
 end
