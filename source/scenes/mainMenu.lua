@@ -31,12 +31,13 @@ local view = nil
 function createChildView()
     return widget.UIView {
         scene = nil,
-        layout = widget.BoxLayout {
+        --[[layout = widget.BoxLayout {
             align = {"right", "top"},
-        },
+        },--]]
         children = {{
             widget.Button {
-                size = {100, 50},
+                pos = {flower.viewWidth - flower.viewWidth/6, 0},
+                size = {flower.viewWidth/6, 39},
                 text = "Back",
                 onClick = function()
                     flower.closeScene({animation = selectedData.closeAnime})

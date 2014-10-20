@@ -45,7 +45,10 @@ end
 
 function MapEditor.buildGUI(view)
     local buttonSize = {flower.viewWidth/6, 39}
+    local xPosition = flower.viewWidth - flower.viewWidth/6
+    
     MapEditor.toggleModeButton = widget.Button {
+        pos = {xPosition, 39},
         size = buttonSize,
         text = "Toggle Mode",
         parent = view,
@@ -62,20 +65,8 @@ function MapEditor.buildGUI(view)
         end,
     }
     
-    MapEditor.toggleColorModeButton = widget.Button {
-        size = buttonSize,
-        text = "Toggle Color",
-        parent = view,
-        onClick = function()
-            MapEditor.currentColor = MapEditor.currentColor + 1
-            if MapEditor.currentColor > 5 then
-                MapEditor.currentColor = 1
-            end
-            MapEditor.statusUI:setText(MapEditor._updateStatus())
-        end,
-    }
-    
     MapEditor.clearButton = widget.Button {
+        pos = {xPosition, MapEditor.toggleModeButton:getBottom()},
         size = buttonSize,
         text = "Clear Grid",
         parent = view,
@@ -85,6 +76,7 @@ function MapEditor.buildGUI(view)
     }
     
     MapEditor.saveButton = widget.Button {
+        pos = {xPosition, MapEditor.clearButton:getBottom()},
         size = buttonSize,
         text = "Save Grid",
         parent = view,
@@ -95,6 +87,7 @@ function MapEditor.buildGUI(view)
     }
     
     MapEditor.loadButton = widget.Button {
+        pos = {xPosition, MapEditor.saveButton:getBottom()},
         size = buttonSize,
         text = "Load Grid",
         parent = view,
@@ -105,11 +98,65 @@ function MapEditor.buildGUI(view)
     }
     
     MapEditor.statusUI = widget.TextBox {
+         pos = {xPosition, MapEditor.loadButton:getBottom()},
          size = {buttonSize[1], 70},
          text = MapEditor._updateStatus(),
          textSize = 10,
          parent = view,
     }
+    
+    MapEditor.towerSelect1 = widget.ImageButton {
+         pos = {xPosition, MapEditor.statusUI:getBottom()},
+         size = {40, 40},
+         normalTexture = "assets/YellowTower.png",
+         selectedTexture = "assets/YellowTower.png",
+         onClick = function()
+             MapEditor.currentColor = 1
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.towerSelect2 = widget.ImageButton {
+         pos = {MapEditor.towerSelect1:getRight(), MapEditor.statusUI:getBottom()},
+         size = {40, 40},
+         normalTexture = "assets/RedTower.png",
+         selectedTexture = "assets/RedTower.png",
+         onClick = function()
+             MapEditor.currentColor = 2
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.towerSelect3 = widget.ImageButton {
+         pos = {MapEditor.towerSelect2:getRight(), MapEditor.statusUI:getBottom()},
+         size = {40, 40},
+         normalTexture = "assets/GreenTower.png",
+         selectedTexture = "assets/GreenTower.png",
+         onClick = function()
+             MapEditor.currentColor = 3
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.towerSelect4 = widget.ImageButton {
+         pos = {MapEditor.towerSelect3:getRight(), MapEditor.statusUI:getBottom()},
+         size = {40, 40},
+         normalTexture = "assets/BlueTower.png",
+         selectedTexture = "assets/BlueTower.png",
+         onClick = function()
+             MapEditor.currentColor = 4
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    --[[MapEditor.sButton = widget.SheetButton {
+         size = buttonSize,
+         parent = view,
+    }]]--
 end
 
 -- Load/Save grid to file
