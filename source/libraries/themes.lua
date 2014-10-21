@@ -43,7 +43,7 @@ M.NORMAL = {
         textPadding = {10, 5, 10, 5},
     },
     SheetButton = {
-        textureSheets = "skins/texture_sheets",
+        textureSheets = "hex-tiles",--"skins/texture_sheets",
         normalTexture = "gb-up.png",
         selectedTexture = "gb-down.png",
         disabledTexture = "gb-up.png",

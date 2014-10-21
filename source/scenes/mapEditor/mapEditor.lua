@@ -104,7 +104,7 @@ function MapEditor.buildGUI(view)
          textSize = 10,
          parent = view,
     }
-    
+    --[[
     MapEditor.towerSelect1 = widget.ImageButton {
          pos = {xPosition, MapEditor.statusUI:getBottom()},
          size = {40, 40},
@@ -152,11 +152,29 @@ function MapEditor.buildGUI(view)
          end,
          parent = view,
     }
-    
-    --[[MapEditor.sButton = widget.SheetButton {
+    --]]
+    MapEditor.sButton = widget.SheetButton {
+         pos = {xPosition, MapEditor.statusUI:getBottom()},
          size = buttonSize,
+         normalTexture = "yellow_tower.png",
+         onClick = function()
+             MapEditor.currentColor = 1
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
          parent = view,
-    }]]--
+    }
+    
+    MapEditor.sButton = widget.SheetButton {
+         pos = {MapEditor.sButton:getRight(), MapEditor.sButton:getTop()},
+         size = buttonSize,
+         normalTexture = "red_tower.png",
+         onClick = function()
+             MapEditor.currentColor = 2
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
 end
 
 -- Load/Save grid to file
