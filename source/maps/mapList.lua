@@ -1,4 +1,4 @@
 return {
-    {title = "Map 1", path = "maps/map1.lua"},
-    {title = "Map 2", path = "maps/map2.lua"},
+    {title = "Map 1", path = "source/maps/map1.lua"},
+    {title = "Map 2", path = "source/maps/map2.lua"},
 }
