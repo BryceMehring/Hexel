@@ -43,7 +43,7 @@ function Game.buildGrid()
     Game.grid:setRepeat(false, false)
     Game.grid:setPos(0,0)
     
-    print(Game.height, Game.width)
+    --print(Game.height, Game.width)
     for i = 1,Game.width do
         for j = 1,Game.height do
             Game.grid.grid:setTile(i, j, Game.default_tile)
