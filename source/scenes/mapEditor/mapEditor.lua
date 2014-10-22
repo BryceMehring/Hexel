@@ -104,56 +104,8 @@ function MapEditor.buildGUI(view)
          textSize = 10,
          parent = view,
     }
-    --[[
-    MapEditor.towerSelect1 = widget.ImageButton {
-         pos = {xPosition, MapEditor.statusUI:getBottom()},
-         size = {40, 40},
-         normalTexture = "assets/YellowTower.png",
-         selectedTexture = "assets/YellowTower.png",
-         onClick = function()
-             MapEditor.currentColor = 1
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.towerSelect2 = widget.ImageButton {
-         pos = {MapEditor.towerSelect1:getRight(), MapEditor.statusUI:getBottom()},
-         size = {40, 40},
-         normalTexture = "assets/RedTower.png",
-         selectedTexture = "assets/RedTower.png",
-         onClick = function()
-             MapEditor.currentColor = 2
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.towerSelect3 = widget.ImageButton {
-         pos = {MapEditor.towerSelect2:getRight(), MapEditor.statusUI:getBottom()},
-         size = {40, 40},
-         normalTexture = "assets/GreenTower.png",
-         selectedTexture = "assets/GreenTower.png",
-         onClick = function()
-             MapEditor.currentColor = 3
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.towerSelect4 = widget.ImageButton {
-         pos = {MapEditor.towerSelect3:getRight(), MapEditor.statusUI:getBottom()},
-         size = {40, 40},
-         normalTexture = "assets/BlueTower.png",
-         selectedTexture = "assets/BlueTower.png",
-         onClick = function()
-             MapEditor.currentColor = 4
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    --]]
-    MapEditor.sButton = widget.SheetButton {
+
+    MapEditor.yellowTower = widget.SheetButton {
          pos = {xPosition, MapEditor.statusUI:getBottom()},
          size = buttonSize,
          normalTexture = "yellow_tower.png",
@@ -164,12 +116,56 @@ function MapEditor.buildGUI(view)
          parent = view,
     }
     
-    MapEditor.sButton = widget.SheetButton {
-         pos = {MapEditor.sButton:getRight(), MapEditor.sButton:getTop()},
+    MapEditor.redTower = widget.SheetButton {
+         pos = {MapEditor.yellowTower:getRight(), MapEditor.yellowTower:getTop()},
          size = buttonSize,
          normalTexture = "red_tower.png",
          onClick = function()
              MapEditor.currentColor = 2
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.greenTower = widget.SheetButton {
+         pos = {MapEditor.redTower:getRight(), MapEditor.redTower:getTop()},
+         size = buttonSize,
+         normalTexture = "green_tower.png",
+         onClick = function()
+             MapEditor.currentColor = 3
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.blueTower = widget.SheetButton {
+         pos = {MapEditor.greenTower:getRight(), MapEditor.greenTower:getTop()},
+         size = buttonSize,
+         normalTexture = "blue_tower.png",
+         onClick = function()
+             MapEditor.currentColor = 4
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.blackSpace = widget.SheetButton {
+         pos = {MapEditor.yellowTower:getLeft(), MapEditor.yellowTower:getBottom()},
+         size = buttonSize,
+         normalTexture = "black_space.png",
+         onClick = function()
+             MapEditor.currentColor = 5
+             MapEditor.statusUI:setText(MapEditor._updateStatus())
+         end,
+         parent = view,
+    }
+    
+    MapEditor.brownSpace = widget.SheetButton {
+         pos = {MapEditor.blackSpace:getRight(), MapEditor.blackSpace:getTop()},
+         size = buttonSize,
+         normalTexture = "brown_space.png",
+         onClick = function()
+             MapEditor.currentColor = 6
              MapEditor.statusUI:setText(MapEditor._updateStatus())
          end,
          parent = view,
