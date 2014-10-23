@@ -17,7 +17,7 @@ MapEditor.texture = "hex-tiles.png"
 MapEditor.width = 50
 MapEditor.height = 100
 MapEditor.tileWidth = 128
-MapEditor.tileHeight = 112
+MapEditor.tileHeight = 111
 MapEditor.radius = 16
 MapEditor.saveFile = "grid.sav"
 
