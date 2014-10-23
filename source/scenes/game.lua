@@ -68,7 +68,8 @@ end
 -- TODO: Make this suck less
 local my_rectangle = nil
 local current_pos = nil
-local speed = 1
+local speed = 10
+local direction = 1
 
 function onStart(e)
     my_rectangle = flower.Rect(10,10)
@@ -77,25 +78,24 @@ function onStart(e)
     my_rectangle:setPos(x, y)
     my_rectangle:setColor(1,0,0,1)
     my_rectangle:setLayer(layer)
-    flower.Executors.callLoop(Game.gameLoop)
+    flower.Executors.callLoop(Game.run)
 end
 
-function Game.gameLoop()
+function Game.run()
     local m_x, m_y = my_rectangle:getPos()
-    if current_pos ~= #Map.paths[1] then
-        local f_x, f_y = Game.grid.grid:getTileLoc(Map.paths[1][current_pos+1][1], Map.paths[1][current_pos+1][2], MOAIGridSpace.TILE_CENTER)
-        local d_x = speed * math.cos(math.atan2(f_y-m_y, f_x-m_x))
-        local d_y = speed * math.sin(math.atan2(f_y-m_y, f_x-m_x))
-        --print(math.atan((f_y-m_y)/(f_x-m_x)), math.sin(math.atan2((f_y-m_y)/(f_x-m_x))))
-        --print(m_x,m_y,f_x,f_y,d_x,d_y)
-        if math.abs(d_x) >= math.abs(f_x - m_x) and math.abs(d_y) >= math.abs(f_y-m_y) then
-            d_x = f_x-m_x
-            d_y = f_y-m_y
-            current_pos = current_pos + 1
-        end
-        --print(m_x,m_y,f_x,f_y,d_x,d_y)
-        my_rectangle:setPos(m_x+d_x, m_y+d_y)
+    if (current_pos == (#Map.paths[1]) and direction > 0) or (current_pos == 1 and direction < 0) then
+        direction = -direction
     end
+    
+    local f_x, f_y = Game.grid.grid:getTileLoc(Map.paths[1][current_pos + direction][1], Map.paths[1][current_pos + direction][2], MOAIGridSpace.TILE_CENTER)
+    local angle = math.atan2(f_y - m_y, f_x - m_x)
+    local d_x, d_y = speed * math.cos(angle), speed * math.sin(angle)
+    if math.abs(d_x) >= math.abs(f_x - m_x) and math.abs(d_y) >= math.abs(f_y - m_y) then
+        d_x = f_x - m_x
+        d_y = f_y - m_y
+        current_pos = (current_pos + direction)
+    end
+    my_rectangle:setPos(m_x + d_x, m_y + d_y)
 end
 
 function onStop(e)

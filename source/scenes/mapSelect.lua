@@ -1,5 +1,7 @@
 module(..., package.seeall)
 
+require "utilities/extensions/io"
+
 MAP_LIST = require "maps/mapList"
 ITEM_HEIGHT = 32
 
@@ -88,16 +90,14 @@ function menuItem_onTouchDown(e)
     local t = e.target
     local data = t and t.data
     if data and data.path then
-        dofile( data.path )
-        local childView = createChildView()
-        local childScene = flower.openScene("scenes/game", {animation = "fade", params = nil, view = childView})
-        if childScene then
-            childView:setScene(childScene)
-            selectedData = item
+        if io.fileExists(data.path) then
+            dofile( data.path )
+            local childView = createChildView()
+            local childScene = flower.openScene("scenes/game", {animation = "fade", params = nil, view = childView})
+            if childScene then
+                childView:setScene(childScene)
+                selectedData = item
+            end
         end
-        --local input = assert(io.input(data.path))
-        --local dataz = input:read("*a")
-        --input:close()
-        --print(dataz)
     end
 end
