@@ -15,7 +15,7 @@ function scandir (root, path)
 -- adapted from http://keplerproject.github.com/luafilesystem/examples.html
     path = path or ""
     for file in fs.dir( root..path ) do
-        if file ~= "." and file ~= ".." and file ~= "scripts" then
+        if file ~= "." and file ~= ".." and file ~= "scripts" and file ~= "assets" then
             local f = path..'/'..file
             local attr = lfs.attributes( root..f )
             assert (type( attr ) == "table")

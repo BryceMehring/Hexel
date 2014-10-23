@@ -1,5 +1,5 @@
 -- import
-local flower = require "libraries/flower"
+local flower = require "source/libraries/flower"
 
 -- module
 local M = {}

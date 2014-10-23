@@ -2,7 +2,7 @@
 
 module(..., package.seeall)
 
-require "gridNeighbors"
+require "source/gridNeighbors"
 
 -- import
 local flower = flower

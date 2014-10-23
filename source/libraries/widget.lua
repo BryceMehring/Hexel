@@ -13,7 +13,7 @@
 local M = {}
 
 -- import
-local flower = require "libraries/flower"
+local flower = require "source/libraries/flower"
 local class = flower.class
 local table = flower.table
 local math = flower.math

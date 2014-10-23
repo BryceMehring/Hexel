@@ -9,8 +9,8 @@
 local M = {}
 
 -- import
-local flower = require "libraries/flower"
-local widget = require "libraries/widget"
+local flower = require "source/libraries/flower"
+local widget = require "source/libraries/widget"
 local ClassFactory = flower.ClassFactory
 local MsgBox = widget.MsgBox
 local ListItem = widget.ListItem

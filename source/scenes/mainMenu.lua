@@ -11,7 +11,7 @@ local widget = widget
 -- Constraints
 --------------------------------------------------------------------------------
 
-local MENU_ITEMS = require "scenes/sceneList"
+local MENU_ITEMS = require "source/scenes/sceneList"
 local ITEM_WIDTH = flower.viewWidth / 2
 local ITEM_HEIGHT = 60
 
