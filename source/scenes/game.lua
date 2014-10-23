@@ -1,6 +1,8 @@
 
 module(..., package.seeall)
 
+require "source/GuiUtilities"
+
 -- import
 local flower = flower
 
@@ -19,6 +21,19 @@ Game.tileHeight = 111
 Game.radius = 24
 Game.default_tile = 0
 Game.algorithms = {}
+Game.selectedTower = -1
+
+Game.currentCash = 200
+Game.currentInterest = "0%"
+Game.currentScore = 0
+
+-- This function is used by the GuiUtilities file to generate
+-- the status field in the UI
+function Game.generateStatus()
+   return "Cash: " .. Game.currentCash ..
+        "\nInterest: " .. Game.currentInterest ..
+        "\nScore: " .. Game.currentScore
+end
 
 function Game.buildGrid()
     --params = params or {}
@@ -63,6 +78,7 @@ function onCreate(e)
     scene:addChild(layer)
 
     Game.buildGrid()
+    buildUI("SinglePlayer", e.data.view, Game)
 end
 
 -- TODO: Make this suck less

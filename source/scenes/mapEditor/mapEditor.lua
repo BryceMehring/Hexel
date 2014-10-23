@@ -3,6 +3,7 @@
 module(..., package.seeall)
 
 require "source/gridNeighbors"
+require "source/GuiUtilities"
 
 -- import
 local flower = flower
@@ -19,6 +20,7 @@ MapEditor.tileWidth = 128
 MapEditor.tileHeight = 112
 MapEditor.radius = 16
 MapEditor.saveFile = "grid.sav"
+
 MapEditor.currentAlgorithm = 1
 MapEditor.currentColor = 1
 MapEditor.algorithms = {}
@@ -42,135 +44,11 @@ function MapEditor.buildGrid(params)
     MapEditor.grid:setShape(MOAIGridSpace.HEX_SHAPE)
     MapEditor.grid:setLayer(layer)
 end
-
-function MapEditor.buildGUI(view)
-    local buttonSize = {flower.viewWidth/6, 39}
-    local xPosition = flower.viewWidth - flower.viewWidth/6
-    
-    MapEditor.toggleModeButton = widget.Button {
-        pos = {xPosition, 39},
-        size = buttonSize,
-        text = "Toggle Mode",
-        parent = view,
-        onClick = function()
-            
-            -- Loop over all algorithms
-            MapEditor.currentAlgorithm = (MapEditor.currentAlgorithm + 1)
-            
-            if MapEditor.currentAlgorithm > #MapEditor.algorithms then
-                MapEditor.currentAlgorithm = 1
-            end
-            
-            MapEditor.statusUI:setText(MapEditor._updateStatus())
-        end,
-    }
-    
-    MapEditor.clearButton = widget.Button {
-        pos = {xPosition, MapEditor.toggleModeButton:getBottom()},
-        size = buttonSize,
-        text = "Clear Grid",
-        parent = view,
-        onClick = function()
-            MapEditor.grid.grid:fill(5)
-        end,
-    }
-    
-    MapEditor.saveButton = widget.Button {
-        pos = {xPosition, MapEditor.clearButton:getBottom()},
-        size = buttonSize,
-        text = "Save Grid",
-        parent = view,
-        onClick = function()
-            MapEditor.serializeGrid(saveFile)
-        end,
-        enabled = true,
-    }
-    
-    MapEditor.loadButton = widget.Button {
-        pos = {xPosition, MapEditor.saveButton:getBottom()},
-        size = buttonSize,
-        text = "Load Grid",
-        parent = view,
-        onClick = function()
-            -- TODO: implement
-        end,
-        enabled = false,
-    }
-    
-    MapEditor.statusUI = widget.TextBox {
-         pos = {xPosition, MapEditor.loadButton:getBottom()},
-         size = {buttonSize[1], 70},
-         text = MapEditor._updateStatus(),
-         textSize = 10,
-         parent = view,
-    }
-
-    MapEditor.yellowTower = widget.SheetButton {
-         pos = {xPosition, MapEditor.statusUI:getBottom()},
-         size = buttonSize,
-         normalTexture = "yellow_tower.png",
-         onClick = function()
-             MapEditor.currentColor = 1
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.redTower = widget.SheetButton {
-         pos = {MapEditor.yellowTower:getRight(), MapEditor.yellowTower:getTop()},
-         size = buttonSize,
-         normalTexture = "red_tower.png",
-         onClick = function()
-             MapEditor.currentColor = 2
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.greenTower = widget.SheetButton {
-         pos = {MapEditor.redTower:getRight(), MapEditor.redTower:getTop()},
-         size = buttonSize,
-         normalTexture = "green_tower.png",
-         onClick = function()
-             MapEditor.currentColor = 3
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.blueTower = widget.SheetButton {
-         pos = {MapEditor.greenTower:getRight(), MapEditor.greenTower:getTop()},
-         size = buttonSize,
-         normalTexture = "blue_tower.png",
-         onClick = function()
-             MapEditor.currentColor = 4
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.blackSpace = widget.SheetButton {
-         pos = {MapEditor.yellowTower:getLeft(), MapEditor.yellowTower:getBottom()},
-         size = buttonSize,
-         normalTexture = "black_space.png",
-         onClick = function()
-             MapEditor.currentColor = 5
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
-    MapEditor.brownSpace = widget.SheetButton {
-         pos = {MapEditor.blackSpace:getRight(), MapEditor.blackSpace:getTop()},
-         size = buttonSize,
-         normalTexture = "brown_space.png",
-         onClick = function()
-             MapEditor.currentColor = 6
-             MapEditor.statusUI:setText(MapEditor._updateStatus())
-         end,
-         parent = view,
-    }
-    
+-- This function is used by the GuiUtilities file to generate
+-- the status field in the UI
+function MapEditor.generateStatus()
+    return "Current Algorithm: " .. MapEditor.currentAlgorithm ..
+        "\nCurrent Color: " .. MapEditor.currentColor
 end
 
 -- Load/Save grid to file
@@ -257,7 +135,8 @@ function onCreate(e)
     MapEditor.buildGrid()
     
     -- Build GUI from parent view
-    MapEditor.buildGUI(e.data.view)
+    --MapEditor.buildGUI(e.data.view)
+    buildUI("MapEditor", e.data.view, MapEditor)
     
     MapEditor.serializeGrid(saveFile, true)
     
