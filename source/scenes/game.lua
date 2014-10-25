@@ -2,10 +2,12 @@
 module(..., package.seeall)
 
 require "source/GuiUtilities"
+require "source/utilities/vector"
 
 -- import
 local flower = flower
 local math = math
+local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 
 -- local variables
@@ -86,23 +88,24 @@ function Game.run()
 end
 
 function Game.loop()
-    local m_x, m_y = Game.my_rectangle:getPos()
+    local startingPosition = vector{Game.my_rectangle:getPos()}
     if (Game.current_pos == (#Map.paths[1]) and Game.direction > 0) or (Game.current_pos == 1 and Game.direction < 0) then
         Game.direction = -Game.direction
     end
-    
-    local f_x, f_y = Game.grid.grid:getTileLoc(Map.paths[1][Game.current_pos + Game.direction][1],
-                                               Map.paths[1][Game.current_pos + Game.direction][2],
-                                               MOAIGridSpace.TILE_CENTER)
-                                           
-    local angle = math.atan2(f_y - m_y, f_x - m_x)
-    local d_x, d_y = Game.speed * math.cos(angle), Game.speed * math.sin(angle)
-    if math.abs(d_x) >= math.abs(f_x - m_x) and math.abs(d_y) >= math.abs(f_y - m_y) then
-        d_x = f_x - m_x
-        d_y = f_y - m_y
+
+    local finalPosition = vector{Game.grid.grid:getTileLoc(Map.paths[1][Game.current_pos + Game.direction][1],
+                                                           Map.paths[1][Game.current_pos + Game.direction][2],
+                                                           MOAIGridSpace.TILE_CENTER)}
+    local positionDiff = finalPosition - startingPosition
+    local angle = math.atan2(positionDiff[2], positionDiff[1])
+    local velocity = Game.speed * vector{math.cos(angle), math.sin(angle)}
+    if math.abs(velocity[1]) >= math.abs(positionDiff[1]) and math.abs(velocity[2]) >= math.abs(positionDiff[2]) then
+        velocity = positionDiff
         Game.current_pos = (Game.current_pos + Game.direction)
     end
-    Game.my_rectangle:setPos(m_x + d_x, m_y + d_y)
+    
+    local newPosition = velocity + startingPosition
+    Game.my_rectangle:setPos(newPosition[1], newPosition[2])
     
     return Game.stopped
 end

@@ -5,26 +5,26 @@
 local neighbors = {
     hex = {
         {
-            {x = 0, y = 2},
-            {x = 0, y = -2},
-            {x = 0, y = -1},
-            {x = 0, y = 1},
-            {x = 1, y = -1},
-            {x = 1, y = 1},
+            {0, 2},
+            {0, -2},
+            {0, -1},
+            {0, 1},
+            {1, -1},
+            {1, 1},
         },
         {
-            {x = 0, y = 2},
-            {x = 0, y = -2},
-            {x = 0, y = -1},
-            {x = 0, y = 1},
-            {x = -1, y = -1},
-            {x = -1, y = 1}
+            {0, 2},
+            {0, -2},
+            {0, -1},
+            {0, 1},
+            {-1, -1},
+            {-1, 1}
         }
     }
 }
 
 -- Return a list of offsets for the tiles neighbors
 function getHexNeighbors(pos)
-    local parity = pos.y % 2 == 0 and 1 or 2
+    local parity = pos[2] % 2 == 0 and 1 or 2
     return neighbors.hex[parity]
 end
