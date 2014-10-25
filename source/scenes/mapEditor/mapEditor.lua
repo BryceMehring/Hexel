@@ -4,6 +4,7 @@ module(..., package.seeall)
 
 require "source/gridNeighbors"
 require "source/GuiUtilities"
+require "source/utilities/vector"
 
 -- import
 local flower = flower
@@ -79,9 +80,9 @@ end
 -- TODO: move these painting algorithms into another file
 function MapEditor._algorithmRippleOut(pos)
     local function ValidTile(pos)
-        return pos.x >= 1 and pos.x <= MapEditor.width and
-               pos.y >= 1 and pos.y <= MapEditor.height and
-               MapEditor.grid:getTile(pos.x, pos.y) ~= 3
+        return pos[1] >= 1 and pos[1] <= MapEditor.width and
+               pos[2] >= 1 and pos[2] <= MapEditor.height and
+               MapEditor.grid:getTile(pos[1], pos[2]) ~= 3
     end
     
     --[[if not ValidTile(pos) then
@@ -102,8 +103,8 @@ function MapEditor._algorithmRippleOut(pos)
         
         local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
-            local newPos = {x = currentNode.position.x + dir.x, y = currentNode.position.y + dir.y}
-            local key = newPos.x + newPos.y * (MapEditor.width + 1)
+            local newPos = currentNode.position + dir
+            local key = newPos[1] + newPos[2] * (MapEditor.width + 1)
             if ValidTile(newPos) and not visited[key] then
                 visited[key] = true
                 table.insert(list, {position = newPos, depth = currentNode.depth + 1})
@@ -116,7 +117,7 @@ end
 
 function MapEditor._algorithmFillSingleTile(pos, tile)
     tile = tile or MapEditor.currentColor
-    MapEditor.grid:setTile(pos.x, pos.y, tile)
+    MapEditor.grid:setTile(pos[1], pos[2], tile)
 end
 
 -- Create a list of all algorithms that the map editor supports
@@ -165,7 +166,6 @@ function item_onTouchDown(e)
         return
     end
 
-    -- Convert screen space into hex space
     local x = e.wx
     local y = e.wy
     x, y = layer:wndToWorld(x, y)
@@ -174,12 +174,11 @@ function item_onTouchDown(e)
     -- TODO: move this into the map editor
     local xCoord, yCoord = MapEditor.grid.grid:locToCoord(x, y)
     
-    MapEditor.onTouchDown({x = xCoord, y = yCoord})
+    MapEditor.onTouchDown(vector{xCoord, yCoord})
     
     prop.touchDown = true
     prop.touchIdx = e.idx
-    prop.touchLastX = e.wx
-    prop.touchLastY = e.wy
+    prop.touchLast = vector{e.wx, e.wy}
 end
 
 function item_onTouchUp(e)
@@ -191,8 +190,7 @@ function item_onTouchUp(e)
 
     prop.touchDown = false
     prop.touchIdx = nil
-    prop.touchLastX = nil
-    prop.touchLastY = nil
+    prop.touchLast = nil
 end
 
 function item_onTouchMove(e)
@@ -202,11 +200,9 @@ function item_onTouchMove(e)
         return
     end
     
-    local moveX = e.wx - prop.touchLastX 
-    local moveY = e.wy - prop.touchLastY
-    prop:addLoc(moveX, moveY, 0)
-    prop.touchLastX  = e.wx
-    prop.touchLastY = e.wy
+    local moveVec = {e.wx, e.wy} - prop.touchLast
+    prop:addLoc(moveVec[1], moveVec[2], 0)
+    prop.touchLast = vector{e.wx, e.wy}
 end
 
 function item_onTouchCancel(e)
@@ -218,6 +214,5 @@ function item_onTouchCancel(e)
     
     prop.touchDown = false
     prop.touchIdx = nil
-    prop.touchLastX = nil
-    prop.touchLastY = nil
+    prop.touchLast = nil
 end
