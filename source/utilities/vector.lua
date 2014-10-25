@@ -10,6 +10,7 @@ function vector:init(t)
             self[k] = v
         end
     else
+        t = t or 2 -- default to a 2d vector
         -- Zero out vector
         for i=1, t do
             self[i] = 0
@@ -44,12 +45,11 @@ function vector:negate()
 end
 
 function vector:mul(other)
-    assert(#other == #self, "Vectors are not the same dimension")
-    
     local result = vector()
+    local iterTable = type(self) == "table" and self or other
     
-    for i, v in ipairs(self) do
-        result[i] = v * (type(other) == "number" and other or other[i])
+    for i, v in ipairs(iterTable) do
+        result[i] = v * (type(self) == "number" and self or (type(other) == "number" and other or other[i]))
     end
 
     return result
