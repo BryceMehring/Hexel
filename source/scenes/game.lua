@@ -10,6 +10,8 @@ local math = math
 local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 
+local TOWERS = require "assets/towers"
+
 -- local variables
 local layer = nil
 
@@ -23,7 +25,14 @@ Game.tileHeight = 111
 Game.radius = 24
 Game.default_tile = 0
 Game.algorithms = {}
-Game.selectedTower = -1
+
+Game.sideSelect = -1
+Game.selectName = ""
+Game.selectCost = ""
+Game.selectDamage = ""
+Game.selectRange = ""
+Game.selectDescription = ""
+
 Game.direction = 1
 Game.speed = 10
 
@@ -34,7 +43,11 @@ Game.currentScore = 0
 -- This function is used by the GuiUtilities file to generate
 -- the status field in the UI
 function Game.generateStatus()
-   return "Cash: " .. Game.currentCash ..
+   return "Selected: " .. Game.selectName .. 
+        "\nCost:" .. Game.selectCost ..
+        "\n" .. Game.selectDescription ..
+        "\nRange:" .. Game.selectRange .. "  Damage:".. Game.selectDamage ..
+        "\n\nCash: " .. Game.currentCash ..
         "\nInterest: " .. Game.currentInterest ..
         "\nScore: " .. Game.currentScore
 end
@@ -111,6 +124,25 @@ function Game.loop()
     return Game.stopped
 end
 
+function Game.onTouchDown(pos)
+    local tile = Game.grid:getTile(pos[1], pos[2])
+    -- TODO: highlight map tile
+    
+    if tile == 5 and Game.sideSelect ~= -1 then
+        if Game.currentCash >= TOWERS[Game.sideSelect].cost then
+            Game.currentCash = Game.currentCash - TOWERS[Game.sideSelect].cost
+            Game.grid:setTile(pos[1], pos[2], Game.sideSelect)
+            -- TODO: update statusUI for cost
+        else
+            -- TODO: alert for insufficient funds
+        end
+    elseif tile ~= 5 then
+        -- TODO: change statusUI for tower select from here
+        -- TODO: upgrade and sell options appear
+    end
+    
+end
+
 function Game.paused(p)
     if p ~= nil then
         Game.isPaused = p
@@ -125,6 +157,7 @@ function onCreate(e)
     scene:addChild(layer)
 
     Game.buildGrid()
+    addTouchEventListeners(Game.grid)
     buildUI("SinglePlayer", e.data.view, Game)
 end
 
@@ -136,4 +169,68 @@ end
 function onStop(e)
     Game.stopped = true
     Game.paused(false)
+end
+
+function addTouchEventListeners(item)
+    item:addEventListener("touchDown", item_onTouchDown)
+    item:addEventListener("touchUp", item_onTouchUp)
+    item:addEventListener("touchMove", item_onTouchMove)
+    item:addEventListener("touchCancel", item_onTouchCancel)
+end
+
+function item_onTouchDown(e)
+    local prop = e.prop
+    if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
+        return
+    end
+
+    local x = e.wx
+    local y = e.wy
+    x, y = layer:wndToWorld(x, y)
+    x, y = prop:worldToModel(x, y)
+    
+    -- TODO: move this into the Game
+    local xCoord, yCoord = Game.grid.grid:locToCoord(x, y)
+    
+    Game.onTouchDown(vector{xCoord, yCoord})
+    
+    prop.touchDown = true
+    prop.touchIdx = e.idx
+    prop.touchLast = vector{e.wx, e.wy}
+end
+
+function item_onTouchUp(e)
+    
+    local prop = e.prop
+    if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
+        return
+    end
+
+    prop.touchDown = false
+    prop.touchIdx = nil
+    prop.touchLast = nil
+end
+
+function item_onTouchMove(e)
+    
+    local prop = e.prop
+    if prop == nil or not prop.touchDown then
+        return
+    end
+    
+    local moveVec = {e.wx, e.wy} - prop.touchLast
+    prop:addLoc(moveVec[1], moveVec[2], 0)
+    prop.touchLast = vector{e.wx, e.wy}
+end
+
+function item_onTouchCancel(e)
+
+    local prop = e.prop
+    if prop == nil or not prop.touchDown then
+        return
+    end
+    
+    prop.touchDown = false
+    prop.touchIdx = nil
+    prop.touchLast = nil
 end

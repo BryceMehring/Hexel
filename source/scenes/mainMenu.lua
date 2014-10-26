@@ -95,16 +95,11 @@ function onCreate(e)
     
     createMenuList()
     
-    local function onClickCallback()
-        os.exit()
-    end
-    
-    -- TODO: have the quit button actually quit the game.
     local quitButton = widget.Button {
         size = {ITEM_WIDTH, ITEM_HEIGHT},
         text = "Quit",
         onClick = function()
-            onClickCallback()
+            os.exit()
         end,
         onDown = nil,
         onUp = nil,
