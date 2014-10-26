@@ -43,3 +43,7 @@ function math.shuffleCopy(list)
     math.shuffle(listCopy)
     return listCopy
 end
+
+function math.clamp(x, minValue, maxValue)
+    return math.max(minValue, math.min(maxValue, x))
+end

@@ -107,7 +107,7 @@ function menuItem_onTouchDown(e)
         if io.fileExists(data.path) then
             dofile( data.path )
             local childView = createChildView()
-            local childScene = flower.openScene("source/scenes/game", {animation = "fade", params = nil, view = childView})
+            local childScene = flower.openScene("source/scenes/singlePlayer/singlePlayer", {animation = "fade", params = nil, view = childView})
             if childScene then
                 childView:setScene(childScene)
                 selectedData = item
