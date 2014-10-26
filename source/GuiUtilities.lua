@@ -82,6 +82,27 @@ function buildUI(gameMode, view, parentObj)
          parent = view,
     }
     
+    pauseButton = widget.Button {
+        pos = {xPosition,  blueTower:getBottom()},
+        size = buttonSize,
+        text = "Pause Wave",
+        parent = view,
+        onClick = function()
+            if parentObj.paused then 
+                require('mobdebug').on()
+                if parentObj.paused() then
+                    parentObj.paused(false)
+                    pauseButton:setText("Pause Wave")
+                else
+                    parentObj.paused(true)
+                    pauseButton:setText("Start Wave")
+                end
+            end
+        end,
+        enabled = true,
+    }
+   
+    
     if gameMode == "MapEditor" then
        blackSpace = widget.SheetButton {
          pos = {yellowTower:getLeft(), yellowTower:getBottom()},

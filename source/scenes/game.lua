@@ -40,14 +40,9 @@ function Game.generateStatus()
 end
 
 function Game.buildGrid()
-    --params = params or {}
-    --Game.texture = params.texture or Game.texture
     Game.width = Map.width or Game.width
     Game.height = Map.height or Game.height
     Game.default_tile = Map.default_tile or Game.default_tile
-    --Game.tileWidth = params.tileWidth or Game.tileWidth
-    --Game.tileHeight = params.tileHeight or Game.tileHeight
-    --Game.radius = params.radius or Game.radius
     
     Game.grid = flower.MapImage(Game.texture,
                                 Game.width, 
@@ -84,10 +79,12 @@ function Game.run()
     Game.my_rectangle:setColor(1,0,0,1)
     Game.my_rectangle:setLayer(layer)
     
+    Game.paused(false)
     flower.Executors.callLoop(Game.loop)
 end
 
 function Game.loop()
+    
     local startingPosition = vector{Game.my_rectangle:getPos()}
     if (Game.current_pos == (#Map.paths[1]) and Game.direction > 0) or (Game.current_pos == 1 and Game.direction < 0) then
         Game.direction = -Game.direction
@@ -107,7 +104,19 @@ function Game.loop()
     local newPosition = velocity + startingPosition
     Game.my_rectangle:setPos(newPosition[1], newPosition[2])
     
+    while Game.paused() do
+        coroutine.yield()
+    end
+    
     return Game.stopped
+end
+
+function Game.paused(p)
+    if p ~= nil then
+        Game.isPaused = p
+    else
+        return Game.isPaused
+    end
 end
 
 function onCreate(e)
@@ -126,4 +135,5 @@ end
 
 function onStop(e)
     Game.stopped = true
+    Game.paused(false)
 end
