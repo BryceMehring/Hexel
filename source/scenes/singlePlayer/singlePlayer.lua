@@ -3,22 +3,28 @@ module(..., package.seeall)
 require "source/scenes/singlePlayer/game"
 require "source/guiUtilities"
 
-function onCreate(e)
-    -- TODO: avoid setting the layer directly into the game singleton
-    Game.layer = flower.Layer()
-    Game.layer:setTouchEnabled(true)
-    scene:addChild(Game.layer)
+local singlePlayerGame = nil
 
-    Game.buildGrid()
-    buildUI("SinglePlayer", e.data.view, Game)
+function onCreate(e)
+    local layer = flower.Layer()
+    layer:setTouchEnabled(true)
+    scene:addChild(layer)
+    
+    singlePlayerGame = game {
+        layer = layer,
+        -- TODO: fill this out
+    }
+
+    buildUI("SinglePlayer", e.data.view, singlePlayerGame)
 end
 
 function onStart(e)
-    Game.stopped(false)
-    Game.run()
+    singlePlayerGame:stopped(false)
+    singlePlayerGame:run()
 end
 
 function onStop(e)
-    Game.paused(false)
-    Game.stopped(true)
+    singlePlayerGame:paused(false)
+    singlePlayerGame:stopped(true)
+    singlePlayerGame = nil
 end

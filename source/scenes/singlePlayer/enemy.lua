@@ -18,6 +18,7 @@ function enemy:init(t)
     self.pathIndex = t.pathIndex or 1
     self.currentPos = 1
     self.speed = t.speed or 5
+    self.grid = t.grid
 end
 
 function enemy:update()
@@ -26,9 +27,9 @@ function enemy:update()
         return false
     end
 
-    local finalPosition = vector{Game.grid.grid:getTileLoc(Map.paths[self.pathIndex][self.currentPos + 1][1],
-                                                           Map.paths[self.pathIndex][self.currentPos + 1][2],
-                                                           MOAIGridSpace.TILE_CENTER)}
+    local finalPosition = vector{self.grid:getTileLoc(Map.paths[self.pathIndex][self.currentPos + 1][1],
+                                                      Map.paths[self.pathIndex][self.currentPos + 1][2],
+                                                      MOAIGridSpace.TILE_CENTER)}
     local positionDiff = finalPosition - startingPosition
     local angle = math.atan2(positionDiff[2], positionDiff[1])
     local velocity = self.speed * vector{math.cos(angle), math.sin(angle)}

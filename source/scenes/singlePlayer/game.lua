@@ -9,122 +9,128 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
--- Game singleton
--- TODO: turn this into a regular class, not a singleton
-Game = {}
-Game.texture = "hex-tiles.png"
-Game.width = 50
-Game.height = 100
-Game.tileWidth = 128
-Game.tileHeight = 111
-Game.radius = 24
-Game.default_tile = 0
-Game.selectedTower = -1
-Game.direction = 1
+game = flower.class()
 
-Game.currentCash = 200
-Game.currentInterest = "0%"
-Game.currentScore = 0
+function game:init(t)
+    -- TODO: pass is variables instead of hardcoding them
+    self.texture = "hex-tiles.png"
+    self.width = 50
+    self.height = 100
+    self.tileWidth = 128
+    self.tileHeight = 111
+    self.radius = 24
+    self.default_tile = 0
+    self.selectedTower = -1
+    self.direction = 1
+
+    self.currentCash = 200
+    self.currentInterest = "0%"
+    self.currentScore = 0
+    self.layer = t.layer
+    
+    self:buildGrid()
+end
 
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
-function Game.generateStatus()
-   return "Cash: " .. Game.currentCash ..
-        "\nInterest: " .. Game.currentInterest ..
-        "\nScore: " .. Game.currentScore
+function game:generateStatus()
+   return "Cash: " .. self.currentCash ..
+        "\nInterest: " .. self.currentInterest ..
+        "\nScore: " .. self.currentScore
 end
 
-function Game.buildGrid()
-    Game.width = Map.width or Game.width
-    Game.height = Map.height or Game.height
-    Game.default_tile = Map.default_tile or Game.default_tile
+function game:buildGrid()
+    self.width = Map.width or self.width
+    self.height = Map.height or self.height
+    self.default_tile = Map.default_tile or self.default_tile
     
-    Game.grid = flower.MapImage(Game.texture,
-                                Game.width, 
-                                Game.height,
-                                Game.tileWidth,
-                                Game.tileHeight,
-                                Game.radius)
+    self.grid = flower.MapImage(self.texture,
+                                self.width, 
+                                self.height,
+                                self.tileWidth,
+                                self.tileHeight,
+                                self.radius)
                                   
-    Game.grid:setShape(MOAIGridSpace.HEX_SHAPE)
-    Game.grid:setLayer(Game.layer)
+    self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
+    self.grid:setLayer(self.layer)
     
-    Game.grid:setRepeat(false, false)
-    Game.grid:setPos(0,0)
+    self.grid:setRepeat(false, false)
+    self.grid:setPos(0,0)
     
-    --print(Game.height, Game.width)
-    for i = 1,Game.width do
-        for j = 1,Game.height do
-            Game.grid.grid:setTile(i, j, Game.default_tile)
+    --print(self.height, self.width)
+    for i = 1,self.width do
+        for j = 1,self.height do
+            self.grid.grid:setTile(i, j, self.default_tile)
         end
     end
     
     for i, data in ipairs(Map.tiles) do
         for j, pos in ipairs(data) do
-            Game.grid.grid:setTile(pos[1], pos[2], i)
+            self.grid.grid:setTile(pos[1], pos[2], i)
         end
     end
 end
 
-function Game.run()
-    local x, y = Game.grid.grid:getTileLoc(Map.paths[1][1][1], Map.paths[1][1][2], MOAIGridSpace.TILE_CENTER)
+function game:run()
+    local x, y = self.grid.grid:getTileLoc(Map.paths[1][1][1], Map.paths[1][1][2], MOAIGridSpace.TILE_CENTER)
     local spawnColor = {1, 0, 0, 1}
     
-    Game.enemies = {}
+    self.enemies = {}
     local spawnTimer = flower.Executors.callLoopTime(0.5, function()
         local newEnemy = enemy {
             width = 10, height = 10,
             pos = {x, y},
             color = spawnColor,
-            layer = Game.layer,
+            layer = self.layer,
             pathIndex = 1,
-            speed = math.randomFloatBetween(2, 5)
+            speed = math.randomFloatBetween(2, 5),
+            grid = self.grid.grid,
         }
-        table.insert(Game.enemies, newEnemy)
+        table.insert(self.enemies, newEnemy)
     end)
 
     local colorTimer = flower.Executors.callLoopTime(4, function()
         spawnColor = math.generateRandomNumbers(0.1, 1, 4)
-        spawnColor[4] = math.clamp(spawnColor[4], 0.9, 1.0)
+        spawnColor[4] = math.clamp(spawnColor[4], 0.95, 1.0)
     end)
 
     local destroyTimer = flower.Executors.callLoopTime(1, function()
-        if #Game.enemies > 0 then
-            local randomEnemy = math.random(1, #Game.enemies)
-            Game.enemies[randomEnemy]:remove()
-            table.remove(Game.enemies, randomEnemy)
+        if #self.enemies > 0 then
+            local randomEnemy = math.random(1, #self.enemies)
+            self.enemies[randomEnemy]:remove()
+            table.remove(self.enemies, randomEnemy)
         end
     end)
 
-    Game.timers = {}
-    table.insert(Game.timers, spawnTimer)
-    table.insert(Game.timers, destroyTimer)
-    table.insert(Game.timers, colorTimer)
+    self.timers = {}
+    table.insert(self.timers, spawnTimer)
+    table.insert(self.timers, destroyTimer)
+    table.insert(self.timers, colorTimer)
     
-    Game.paused(false)
-    flower.Executors.callLoop(Game.loop)
+    self:paused(false)
+    flower.Executors.callLoop(self.loop, self)
 end
 
-function Game.loop()
+function game:loop()
     
-    for i, enemy in ipairs(Game.enemies) do
+    for i, enemy in ipairs(self.enemies) do
         if not enemy:update() then
             enemy:remove()
-            table.remove(Game.enemies, i)
+            table.remove(self.enemies, i)
         end
     end
     
-    while Game.paused() do
+    while self:paused() do
         coroutine.yield()
     end
     
-    return Game.stopped()
+    return self:stopped()
 end
 
-function Game.paused(p)
+function game:paused(p)
     if p ~= nil then
 
-        for i, timer in ipairs(Game.timers) do
+        for i, timer in ipairs(self.timers) do
             if p then
                 timer:pause()
             else
@@ -132,27 +138,27 @@ function Game.paused(p)
             end
         end
 
-        Game.isPaused = p
+        self.isPaused = p
     else
-        return Game.isPaused
+        return self.isPaused
     end
 end
 
-function Game.stopped(s)
+function game:stopped(s)
     if s ~= nil then
         
         if s == true then
-            for i, timer in ipairs(Game.timers) do
+            for i, timer in ipairs(self.timers) do
                 flower.Executors.cancel(timer)
             end
             
-            for i, enemy in ipairs(Game.enemies) do
+            for i, enemy in ipairs(self.enemies) do
                 enemy:remove()
             end
         end
         
-        Game.isStopped = s
+        self.isStopped = s
     else
-        return Game.isStopped
+        return self.isStopped
     end
 end
