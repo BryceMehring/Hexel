@@ -29,14 +29,13 @@ function buildUI(gameMode, view, parentObj)
         end,
         enabled = false,
     }
-    
-    pauseButton = widget.Button {
-        pos = {xPosition,  loadButton:getBottom()},
-        size = buttonSize,
-        text = "Pause Wave",
-        parent = view,
-        onClick = function()
-            if parentObj.paused then 
+    if parentObj.paused then
+        pauseButton = widget.Button {
+            pos = {xPosition,  loadButton:getBottom()},
+            size = buttonSize,
+            text = "Pause Wave",
+            parent = view,
+            onClick = function()
                 if parentObj.paused() then
                     parentObj.paused(false)
                     pauseButton:setText("Pause Wave")
@@ -44,13 +43,13 @@ function buildUI(gameMode, view, parentObj)
                     parentObj.paused(true)
                     pauseButton:setText("Start Wave")
                 end
-            end
-        end,
-        enabled = true,
-    }
+            end,
+            enabled = true,
+        }
+    end
     
      statusUI = widget.TextBox {
-         pos = {xPosition,  pauseButton:getBottom()},
+         pos = {xPosition,  pauseButton and pauseButton:getBottom() or loadButton:getBottom()},
          size = {buttonSize[1], 70},
          text =  parentObj.generateStatus(),
          textSize = 10,
