@@ -89,7 +89,6 @@ function buildUI(gameMode, view, parentObj)
         parent = view,
         onClick = function()
             if parentObj.paused then 
-                require('mobdebug').on()
                 if parentObj.paused() then
                     parentObj.paused(false)
                     pauseButton:setText("Pause Wave")

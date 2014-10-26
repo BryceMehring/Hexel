@@ -1,7 +1,7 @@
 
 module(..., package.seeall)
 
-require "source/GuiUtilities"
+require "source/guiUtilities"
 require "source/utilities/vector"
 
 -- import

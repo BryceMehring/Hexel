@@ -3,7 +3,7 @@
 module(..., package.seeall)
 
 require "source/gridNeighbors"
-require "source/GuiUtilities"
+require "source/guiUtilities"
 require "source/utilities/vector"
 
 -- import
