@@ -30,8 +30,27 @@ function buildUI(gameMode, view, parentObj)
         enabled = false,
     }
     
+    pauseButton = widget.Button {
+        pos = {xPosition,  loadButton:getBottom()},
+        size = buttonSize,
+        text = "Pause Wave",
+        parent = view,
+        onClick = function()
+            if parentObj.paused then 
+                if parentObj.paused() then
+                    parentObj.paused(false)
+                    pauseButton:setText("Pause Wave")
+                else
+                    parentObj.paused(true)
+                    pauseButton:setText("Start Wave")
+                end
+            end
+        end,
+        enabled = true,
+    }
+    
      statusUI = widget.TextBox {
-         pos = {xPosition,  loadButton:getBottom()},
+         pos = {xPosition,  pauseButton:getBottom()},
          size = {buttonSize[1], 70},
          text =  parentObj.generateStatus(),
          textSize = 10,
@@ -81,26 +100,6 @@ function buildUI(gameMode, view, parentObj)
          end,
          parent = view,
     }
-    
-    pauseButton = widget.Button {
-        pos = {xPosition,  blueTower:getBottom()},
-        size = buttonSize,
-        text = "Pause Wave",
-        parent = view,
-        onClick = function()
-            if parentObj.paused then 
-                if parentObj.paused() then
-                    parentObj.paused(false)
-                    pauseButton:setText("Pause Wave")
-                else
-                    parentObj.paused(true)
-                    pauseButton:setText("Start Wave")
-                end
-            end
-        end,
-        enabled = true,
-    }
-   
     
     if gameMode == "MapEditor" then
        blackSpace = widget.SheetButton {
