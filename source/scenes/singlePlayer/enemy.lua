@@ -32,8 +32,8 @@ function enemy:update()
         end
         
         finalPosition = vector{self.grid:getTileLoc(self.map.paths[self.pathIndex][self.currentPos + 1][1],
-                                                          self.map.paths[self.pathIndex][self.currentPos + 1][2],
-                                                          MOAIGridSpace.TILE_CENTER)}
+                                                    self.map.paths[self.pathIndex][self.currentPos + 1][2],
+                                                    MOAIGridSpace.TILE_CENTER)}
     else
         finalPosition = getPathDestination(self.grid, startingPosition, self.path)
         
