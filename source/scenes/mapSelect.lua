@@ -104,8 +104,8 @@ function menuItem_onTouchDown(e)
     local t = e.target
     local data = t and t.data
     if data and data.path then
-        if io.fileExists(data.path .. ".lua") then
-            local map = require(data.path)
+        if io.fileExists(data.path) then
+            local map = dofile(data.path)
             local childView = createChildView()
             local childScene = flower.openScene("source/scenes/singlePlayer/singlePlayer", {animation = "fade", map = map, view = childView})
             if childScene then
