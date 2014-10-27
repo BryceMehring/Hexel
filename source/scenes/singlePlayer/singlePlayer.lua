@@ -12,6 +12,7 @@ function onCreate(e)
     
     singlePlayerGame = game {
         layer = layer,
+        map = e.data.map,
         -- TODO: fill this out
     }
 

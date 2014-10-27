@@ -4,7 +4,6 @@ require "source/utilities/vector"
 -- import
 local flower = flower
 local vector = vector
-local Map = Map
 local MOAIGridSpace = MOAIGridSpace
 local math = math
 
@@ -19,17 +18,30 @@ function enemy:init(t)
     self.currentPos = 1
     self.speed = t.speed or 5
     self.grid = t.grid
+    self.map = t.map
+    self.path = t.path
 end
 
 function enemy:update()
     local startingPosition = vector{self.rectangle:getPos()}
-    if (self.currentPos == (#Map.paths[self.pathIndex])) then
-        return false
+    local finalPosition = nil
+    
+    if self.map.paths and self.map.paths[self.pathIndex] then
+        if (self.currentPos == (#self.map.paths[self.pathIndex])) then
+            return false
+        end
+        
+        finalPosition = vector{self.grid:getTileLoc(self.map.paths[self.pathIndex][self.currentPos + 1][1],
+                                                          self.map.paths[self.pathIndex][self.currentPos + 1][2],
+                                                          MOAIGridSpace.TILE_CENTER)}
+    else
+        finalPosition = getPathDestination(self.grid, startingPosition, self.path)
+        
+        if finalPosition == nil then
+            return false
+        end
     end
-
-    local finalPosition = vector{self.grid:getTileLoc(Map.paths[self.pathIndex][self.currentPos + 1][1],
-                                                      Map.paths[self.pathIndex][self.currentPos + 1][2],
-                                                      MOAIGridSpace.TILE_CENTER)}
+   
     local positionDiff = finalPosition - startingPosition
     local angle = math.atan2(positionDiff[2], positionDiff[1])
     local velocity = self.speed * vector{math.cos(angle), math.sin(angle)}
