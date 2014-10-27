@@ -113,13 +113,13 @@ function game:run()
     end)
 
     -- Timer to simulate the destruction of enemies
-    local destroyTimer = flower.Executors.callLoopTime(1, function()
+    --[[local destroyTimer = flower.Executors.callLoopTime(1, function()
         if #self.enemies > 0 then
             local randomEnemy = math.random(1, #self.enemies)
             self.enemies[randomEnemy]:remove()
             table.remove(self.enemies, randomEnemy)
         end
-    end)
+    end)]]
 
     self.timers = {}
     table.insert(self.timers, spawnTimer)
