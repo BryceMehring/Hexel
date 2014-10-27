@@ -36,6 +36,7 @@ function findPath(grid, targetPosition)
     local list = {}
     
     table.insert(list, {position = targetPosition, parent = nil})
+    visited[posToKey(width, targetPosition)] = list[1]
     
     while #list > 0 do
         -- Pop the front node from the queue
