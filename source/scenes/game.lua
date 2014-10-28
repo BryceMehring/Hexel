@@ -173,9 +173,6 @@ end
 
 function addTouchEventListeners(item)
     item:addEventListener("touchDown", item_onTouchDown)
-    item:addEventListener("touchUp", item_onTouchUp)
-    item:addEventListener("touchMove", item_onTouchMove)
-    item:addEventListener("touchCancel", item_onTouchCancel)
 end
 
 function item_onTouchDown(e)
@@ -199,38 +196,3 @@ function item_onTouchDown(e)
     prop.touchLast = vector{e.wx, e.wy}
 end
 
-function item_onTouchUp(e)
-    
-    local prop = e.prop
-    if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
-        return
-    end
-
-    prop.touchDown = false
-    prop.touchIdx = nil
-    prop.touchLast = nil
-end
-
-function item_onTouchMove(e)
-    
-    local prop = e.prop
-    if prop == nil or not prop.touchDown then
-        return
-    end
-    
-    local moveVec = {e.wx, e.wy} - prop.touchLast
-    prop:addLoc(moveVec[1], moveVec[2], 0)
-    prop.touchLast = vector{e.wx, e.wy}
-end
-
-function item_onTouchCancel(e)
-
-    local prop = e.prop
-    if prop == nil or not prop.touchDown then
-        return
-    end
-    
-    prop.touchDown = false
-    prop.touchIdx = nil
-    prop.touchLast = nil
-end
