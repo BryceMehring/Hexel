@@ -12,7 +12,7 @@ function buildUI(gameMode, view, parentObj)
         parent = view,
         onClick = function()
             if gameMode == "MapEditor" then
-                parentObj:serializeGrid(saveFile) 
+                parentObj.serializeGrid(saveFile) 
             end
             -- TODO: implement
         end,
