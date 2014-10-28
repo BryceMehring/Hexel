@@ -62,9 +62,12 @@ function createMenuList()
         end
     end
     
+    yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
+    xOffset = (flower.viewWidth - ITEM_WIDTH)/2
     for i, item in ipairs(MENU_ITEMS) do
         local menuItem = widget.Button {
             size = {ITEM_WIDTH, ITEM_HEIGHT},
+            pos = {xOffset, yOffset + (i-1)*(ITEM_HEIGHT + 5)},
             text = item.title,
             onClick = function()
                 onClickCallback(item)
@@ -73,6 +76,34 @@ function createMenuList()
         }
         
         view:addChild(menuItem)
+    end
+    
+    local function onClickCallback()
+        os.exit()
+    end
+    
+    -- TODO: have the quit button actually quit the game.
+    local quitButton = widget.Button {
+        size = {ITEM_WIDTH, ITEM_HEIGHT},
+        pos = {xOffset, yOffset + (#MENU_ITEMS)*(ITEM_HEIGHT + 5)},
+        text = "Quit",
+        onClick = function()
+            onClickCallback()
+        end,
+        onDown = nil,
+        onUp = nil,
+        enabled = true,
+    }
+    
+    view:addChild(quitButton)
+end
+
+function updateLayout()
+    yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
+    xOffset = (flower.viewWidth - ITEM_WIDTH)/2
+    
+    for i, item in ipairs(view.children) do
+        item:setPos(xOffset, yOffset + (i-1)*(ITEM_HEIGHT + 5))
     end
 end
 
@@ -87,32 +118,16 @@ function onCreate(e)
     
     view = widget.UIView {
         scene = scene,
-        layout = widget.BoxLayout {
-            gap = {5, 5},
-            align = {"center", "center"},
-        },
     }
     
     createMenuList()
-    
-    local function onClickCallback()
-        os.exit()
-    end
-    
-    -- TODO: have the quit button actually quit the game.
-    local quitButton = widget.Button {
-        size = {ITEM_WIDTH, ITEM_HEIGHT},
-        text = "Quit",
-        onClick = function()
-            onClickCallback()
-        end,
-        onDown = nil,
-        onUp = nil,
-        enabled = true,
-    }
-    
-    view:addChild(quitButton)
+    flower.Runtime:addEventListener("resize", onResize)
+
 end
 
 function onStart(e)
+end
+
+function onResize(e)
+    updateLayout()
 end
