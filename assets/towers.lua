@@ -6,7 +6,7 @@ local EMPTY = 5
 local ENEMY = 6
 local VOID = 7
 
-Towers = {}
+local towers = {}
 
 local YellowTower = {}
 YellowTower.id = YELLOW
@@ -16,7 +16,7 @@ YellowTower.damage = 10
 YellowTower.range = 3
 YellowTower.description = "???"
 YellowTower.texture = "yellow_tower.png"
-Towers[YELLOW] = YellowTower
+towers[YELLOW] = YellowTower
 
 local RedTower = {}
 RedTower.id = RED
@@ -26,7 +26,7 @@ RedTower.damage = 7
 RedTower.range = 5
 RedTower.description = "???"
 RedTower.texture = "red_tower.png"
-Towers[RED] = RedTower
+towers[RED] = RedTower
 
 
 local GreenTower = {}
@@ -37,7 +37,7 @@ GreenTower.damage = 10
 GreenTower.range = 7
 GreenTower.description = "???"
 GreenTower.texture = "green_tower.png"
-Towers[GREEN] = GreenTower
+towers[GREEN] = GreenTower
 
 local BlueTower = {}
 BlueTower.id = BLUE
@@ -47,6 +47,6 @@ BlueTower.damage = 35
 BlueTower.range = 3
 BlueTower.description = "???"
 BlueTower.texture = "blue_tower.png"
-Towers[BLUE] = BlueTower
+towers[BLUE] = BlueTower
 
-return Towers
+return towers

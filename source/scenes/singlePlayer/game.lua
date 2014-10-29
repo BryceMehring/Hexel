@@ -5,6 +5,8 @@ require "source/utilities/extensions/math"
 require "source/scenes/singlePlayer/enemy"
 require "source/pathfinder"
 
+local Towers = require "assets/towers"
+
 -- import
 local flower = flower
 local math = math
@@ -23,8 +25,14 @@ function game:init(t)
     self.tileHeight = 111
     self.radius = 24
     self.default_tile = 0
-    self.selectedTower = -1
     self.direction = 1
+    
+    self.sideSelect = -1
+    self.selectName = ""
+    self.selectCost = ""
+    self.selectDamage = ""
+    self.selectRange = ""
+    self.selectDescription = ""
 
     self.currentCash = 200
     self.currentInterest = "0%"
@@ -38,9 +46,11 @@ end
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
 function game:generateStatus()
-   return "Cash: " .. self.currentCash ..
-        "\nInterest: " .. self.currentInterest ..
-        "\nScore: " .. self.currentScore
+   return "Selected: " .. self.selectName .. 
+          "\nCost:" .. self.selectCost ..
+          "\n" .. self.selectDescription ..
+          "\nRange:" .. self.selectRange .. "  Damage:".. self.selectDamage ..
+          "\n\nCash: " .. self.currentCash
 end
 
 function game:buildGrid()
@@ -182,13 +192,13 @@ function game:stopped(s)
     end
 end
 
-function Game:onTouchDown(pos)
+function game:onTouchDown(pos)
     local tile = self.grid:getTile(pos[1], pos[2])
     -- TODO: highlight map tile
     
     if tile == 5 and self.sideSelect ~= -1 then
-        if self.currentCash >= TOWERS[self.sideSelect].cost then
-            self.currentCash = self.currentCash - TOWERS[self.sideSelect].cost
+        if self.currentCash >= Towers[self.sideSelect].cost then
+            self.currentCash = self.currentCash - Towers[self.sideSelect].cost
             self.grid:setTile(pos[1], pos[2], self.sideSelect)
             -- TODO: update statusUI for cost
         else

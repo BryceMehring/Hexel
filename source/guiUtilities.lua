@@ -53,7 +53,7 @@ function buildUI(gameMode, view, parentObj)
     statusUI = widget.TextBox {
         pos = {xPosition,  pauseButton and pauseButton:getBottom() or loadButton:getBottom()},
         size = {buttonSize[1], 120},
-        text =  parentObj.generateStatus(),
+        text =  parentObj:generateStatus(),
         textSize = 10,
         parent = view,
     }
@@ -76,7 +76,7 @@ function buildUI(gameMode, view, parentObj)
                 parentObj.selectDamage = child.damage
                 parentObj.selectRange = child.range
             end
-            statusUI:setText(parentObj.generateStatus()) 
+            statusUI:setText(parentObj:generateStatus()) 
         end
         
         local listX = xPosition
@@ -103,7 +103,7 @@ function buildUI(gameMode, view, parentObj)
             normalTexture = "yellow_tower.png",
             onClick = function()
                 parentObj.currentColor = 1 -- used in mapEditor
-                statusUI:setText( parentObj.generateStatus()) 
+                statusUI:setText( parentObj:generateStatus()) 
             end,
             parent = view,
         }
@@ -114,7 +114,7 @@ function buildUI(gameMode, view, parentObj)
             normalTexture = "red_tower.png",
             onClick = function()
                 parentObj.currentColor = 2
-                statusUI:setText( parentObj.generateStatus())
+                statusUI:setText( parentObj:generateStatus())
             end,
             parent = view,
         }
@@ -125,7 +125,7 @@ function buildUI(gameMode, view, parentObj)
             normalTexture = "green_tower.png",
             onClick = function()
                 parentObj.currentColor = 3
-                statusUI:setText( parentObj.generateStatus())
+                statusUI:setText( parentObj:generateStatus())
             end,
             parent = view,
         }
@@ -136,7 +136,7 @@ function buildUI(gameMode, view, parentObj)
             normalTexture = "blue_tower.png",
             onClick = function()
                 parentObj.currentColor = 4
-                statusUI:setText(parentObj.generateStatus())
+                statusUI:setText(parentObj:generateStatus())
             end,
             parent = view,
         }
@@ -147,7 +147,7 @@ function buildUI(gameMode, view, parentObj)
             normalTexture = "black_space.png",
             onClick = function()
                 parentObj.currentColor = 5
-                statusUI:setText(parentObj.generateStatus())
+                statusUI:setText(parentObj:generateStatus())
             end,
             parent = view,
         }
@@ -158,7 +158,7 @@ function buildUI(gameMode, view, parentObj)
             normalTexture = "brown_space.png",
             onClick = function()
                 parentObj.currentColor = 6
-                statusUI:setText(parentObj.generateStatus())
+                statusUI:setText(parentObj:generateStatus())
             end,
             parent = view,
         }
@@ -177,7 +177,7 @@ function buildUI(gameMode, view, parentObj)
                     parentObj.currentAlgorithm = 1
                 end
                 
-                statusUI:setText(parentObj.generateStatus())
+                statusUI:setText(parentObj:generateStatus())
             end,
         }
     

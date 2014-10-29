@@ -4,9 +4,10 @@ require "source/scenes/singlePlayer/game"
 require "source/guiUtilities"
 
 local singlePlayerGame = nil
+local layer = nil
 
 function onCreate(e)
-    local layer = flower.Layer()
+    layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
