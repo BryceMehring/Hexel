@@ -62,8 +62,8 @@ function createMenuList()
         end
     end
     
-    yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
-    xOffset = (flower.viewWidth - ITEM_WIDTH)/2
+    local yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
+    local xOffset = (flower.viewWidth - ITEM_WIDTH)/2
     for i, item in ipairs(MENU_ITEMS) do
         local menuItem = widget.Button {
             size = {ITEM_WIDTH, ITEM_HEIGHT},
@@ -78,17 +78,12 @@ function createMenuList()
         view:addChild(menuItem)
     end
     
-    local function onClickCallback()
-        os.exit()
-    end
-    
-    -- TODO: have the quit button actually quit the game.
     local quitButton = widget.Button {
         size = {ITEM_WIDTH, ITEM_HEIGHT},
         pos = {xOffset, yOffset + (#MENU_ITEMS)*(ITEM_HEIGHT + 5)},
         text = "Quit",
         onClick = function()
-            onClickCallback()
+            os.exit()
         end,
         onDown = nil,
         onUp = nil,
@@ -99,8 +94,8 @@ function createMenuList()
 end
 
 function updateLayout()
-    yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
-    xOffset = (flower.viewWidth - ITEM_WIDTH)/2
+    local yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
+    local xOffset = (flower.viewWidth - ITEM_WIDTH)/2
     
     for i, item in ipairs(view.children) do
         item:setPos(xOffset, yOffset + (i-1)*(ITEM_HEIGHT + 5))

@@ -5,6 +5,8 @@ require "source/utilities/extensions/math"
 require "source/scenes/singlePlayer/enemy"
 require "source/pathfinder"
 
+local Towers = require "assets/towers"
+
 -- import
 local flower = flower
 local math = math
@@ -23,8 +25,14 @@ function game:init(t)
     self.tileHeight = 111
     self.radius = 24
     self.default_tile = 0
-    self.selectedTower = -1
     self.direction = 1
+    
+    self.sideSelect = -1
+    self.selectName = ""
+    self.selectCost = ""
+    self.selectDamage = ""
+    self.selectRange = ""
+    self.selectDescription = ""
 
     self.currentCash = 200
     self.currentInterest = "0%"
@@ -38,9 +46,11 @@ end
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
 function game:generateStatus()
-   return "Cash: " .. self.currentCash ..
-        "\nInterest: " .. self.currentInterest ..
-        "\nScore: " .. self.currentScore
+   return "Selected: " .. self.selectName .. 
+          "\nCost:" .. self.selectCost ..
+          "\n" .. self.selectDescription ..
+          "\nRange:" .. self.selectRange .. "  Damage:".. self.selectDamage ..
+          "\n\nCash: " .. self.currentCash
 end
 
 function game:buildGrid()
@@ -131,8 +141,8 @@ function game:run()
 end
 
 function game:loop()
-    
-    for i, enemy in ipairs(self.enemies) do
+    for i = #self.enemies, 1, -1 do
+        local enemy = self.enemies[i]
         if not enemy:update() then
             enemy:remove()
             table.remove(self.enemies, i)
@@ -180,4 +190,23 @@ function game:stopped(s)
     else
         return self.isStopped
     end
+end
+
+function game:onTouchDown(pos)
+    local tile = self.grid:getTile(pos[1], pos[2])
+    -- TODO: highlight map tile
+    
+    if tile == 5 and self.sideSelect ~= -1 then
+        if self.currentCash >= Towers[self.sideSelect].cost then
+            self.currentCash = self.currentCash - Towers[self.sideSelect].cost
+            self.grid:setTile(pos[1], pos[2], self.sideSelect)
+            -- TODO: update statusUI for cost
+        else
+            -- TODO: alert for insufficient funds
+        end
+    elseif tile ~= 5 then
+        -- TODO: change statusUI for tower select from here
+        -- TODO: upgrade and sell options appear
+    end
+    
 end
