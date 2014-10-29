@@ -3,7 +3,9 @@ local widget = widget
 
 local TOWERS = require "assets/towers"
 
-function buildUI(gameMode, view, parentObj)
+local statusUI = nil
+
+function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     local buttonSize = {flower.viewWidth/6, 39}
     local xPosition = flower.viewWidth - flower.viewWidth/6
     
@@ -14,7 +16,7 @@ function buildUI(gameMode, view, parentObj)
         parent = view,
         onClick = function()
             if gameMode == "MapEditor" then
-                parentObj.serializeGrid(saveFile) 
+                saveGrid(saveFile)
             end
             -- TODO: implement
         end,
@@ -27,6 +29,7 @@ function buildUI(gameMode, view, parentObj)
         text = "Load State",
         parent = view,
         onClick = function()
+            loadGrid()
             -- TODO: implement
         end,
         enabled = false,
@@ -102,7 +105,8 @@ function buildUI(gameMode, view, parentObj)
             size = buttonSize,
             normalTexture = "yellow_tower.png",
             onClick = function()
-                parentObj.currentColor = 1 -- used in mapEditor
+                setColor(1)
+                --parentObj.currentColor = 1 -- used in mapEditor
                 statusUI:setText( parentObj:generateStatus()) 
             end,
             parent = view,
@@ -113,7 +117,8 @@ function buildUI(gameMode, view, parentObj)
             size = buttonSize,
             normalTexture = "red_tower.png",
             onClick = function()
-                parentObj.currentColor = 2
+                setColor(2)
+                --parentObj.currentColor = 2
                 statusUI:setText( parentObj:generateStatus())
             end,
             parent = view,
@@ -124,7 +129,8 @@ function buildUI(gameMode, view, parentObj)
             size = buttonSize,
             normalTexture = "green_tower.png",
             onClick = function()
-                parentObj.currentColor = 3
+                setColor(3)
+                --parentObj.currentColor = 3
                 statusUI:setText( parentObj:generateStatus())
             end,
             parent = view,
@@ -135,7 +141,8 @@ function buildUI(gameMode, view, parentObj)
             size = buttonSize,
             normalTexture = "blue_tower.png",
             onClick = function()
-                parentObj.currentColor = 4
+                setColor(4)
+                --parentObj.currentColor = 4
                 statusUI:setText(parentObj:generateStatus())
             end,
             parent = view,
@@ -146,7 +153,8 @@ function buildUI(gameMode, view, parentObj)
             size = buttonSize,
             normalTexture = "black_space.png",
             onClick = function()
-                parentObj.currentColor = 5
+                setColor(5)
+                --parentObj.currentColor = 5
                 statusUI:setText(parentObj:generateStatus())
             end,
             parent = view,
@@ -157,7 +165,8 @@ function buildUI(gameMode, view, parentObj)
             size = buttonSize,
             normalTexture = "brown_space.png",
             onClick = function()
-                parentObj.currentColor = 6
+                setColor(6)
+                --parentObj.currentColor = 6
                 statusUI:setText(parentObj:generateStatus())
             end,
             parent = view,
@@ -192,6 +201,10 @@ function buildUI(gameMode, view, parentObj)
         }
     end
 
+end
+
+function updateStatusText(status)
+    statusUI:setText(status)
 end
 
 function _updateStatus(status)

@@ -16,14 +16,19 @@ function onCreate(e)
     singlePlayerGame = game {
         layer = layer,
         map = e.data.map,
+        updateStatus = updateStatus,
         -- TODO: fill this out
     }
-    
-    view = e.data.view
 
+    view = e.data.view
     buildUI("SinglePlayer", e.data.view, singlePlayerGame)
+
     flower.Runtime:addEventListener("resize", onResize)
     addTouchEventListeners(singlePlayerGame.grid)
+end
+
+function updateStatus(statusMsg)
+   updateStatusText(statusMsg) 
 end
 
 function updateLayout()

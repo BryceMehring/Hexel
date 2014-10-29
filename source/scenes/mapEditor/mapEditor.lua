@@ -128,6 +128,10 @@ for k, v in pairs(MapEditor) do
     end
 end
 
+function MapEditor.setColor(colorNum)
+    MapEditor.currentColor = colorNum
+end
+
 function onCreate(e)
 
     view = e.data.view
@@ -139,7 +143,7 @@ function onCreate(e)
     MapEditor.buildGrid()
     
     -- Build GUI from parent view
-    buildUI("MapEditor", view, MapEditor)
+    buildUI("MapEditor", view, MapEditor, MapEditor.serializeGrid, nil, MapEditor.setColor)
     
     MapEditor.serializeGrid(saveFile, true)
     

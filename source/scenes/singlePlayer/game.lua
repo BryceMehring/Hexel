@@ -40,6 +40,8 @@ function game:init(t)
     self.layer = t.layer
     self.map = t.map
     
+    self.updateStatus = t.updateStatus
+    
     self:buildGrid()
 end
 
@@ -200,6 +202,8 @@ function game:onTouchDown(pos)
         if self.currentCash >= Towers[self.sideSelect].cost then
             self.currentCash = self.currentCash - Towers[self.sideSelect].cost
             self.grid:setTile(pos[1], pos[2], self.sideSelect)
+            
+            self.updateStatus(self:generateStatus())
             -- TODO: update statusUI for cost
         else
             -- TODO: alert for insufficient funds
