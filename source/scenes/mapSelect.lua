@@ -6,6 +6,7 @@ MAP_LIST = require "assets/maps/mapList"
 ITEM_HEIGHT = 32
 
 local selectedData = nil
+local view = nil
 
 function createChildView()
     return widget.UIView {
@@ -63,6 +64,9 @@ function resizeMenuList()
     local itemWidth = flower.viewWidth - 20
     local itemHeight = ITEM_HEIGHT
     
+    view.children[1]:setPos(flower.viewWidth-flower.viewWidth/6, 0)
+    view.children[1]:setSize(flower.viewWidth/6, 39)
+    
     for i, menuItem in ipairs(menuList) do
         menuItem:setSize(itemWidth, itemHeight)
     end
@@ -76,7 +80,7 @@ function onCreate(e)
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
-    
+    view = e.data.view
     createMenuList()
     
     flower.Runtime:addEventListener("resize", onResize)

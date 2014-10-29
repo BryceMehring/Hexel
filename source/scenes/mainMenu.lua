@@ -31,9 +31,6 @@ local view = nil
 function createChildView()
     return widget.UIView {
         scene = nil,
-        --[[layout = widget.BoxLayout {
-            align = {"right", "top"},
-        },--]]
         children = {{
             widget.Button {
                 pos = {flower.viewWidth - flower.viewWidth/6, 0},
