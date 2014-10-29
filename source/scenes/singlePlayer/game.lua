@@ -181,3 +181,22 @@ function game:stopped(s)
         return self.isStopped
     end
 end
+
+function Game:onTouchDown(pos)
+    local tile = self.grid:getTile(pos[1], pos[2])
+    -- TODO: highlight map tile
+    
+    if tile == 5 and self.sideSelect ~= -1 then
+        if self.currentCash >= TOWERS[self.sideSelect].cost then
+            self.currentCash = self.currentCash - TOWERS[self.sideSelect].cost
+            self.grid:setTile(pos[1], pos[2], self.sideSelect)
+            -- TODO: update statusUI for cost
+        else
+            -- TODO: alert for insufficient funds
+        end
+    elseif tile ~= 5 then
+        -- TODO: change statusUI for tower select from here
+        -- TODO: upgrade and sell options appear
+    end
+    
+end
