@@ -11,6 +11,7 @@ local flower = flower
 
 -- local variables
 local layer = nil
+local view = nil
 
 -- MapEditor singleton
 MapEditor = {}
@@ -129,6 +130,8 @@ end
 
 function onCreate(e)
 
+    view = e.data.view
+
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
@@ -136,14 +139,22 @@ function onCreate(e)
     MapEditor.buildGrid()
     
     -- Build GUI from parent view
-    --MapEditor.buildGUI(e.data.view)
-    buildUI("MapEditor", e.data.view, MapEditor)
+    buildUI("MapEditor", view, MapEditor)
     
     MapEditor.serializeGrid(saveFile, true)
     
     -- Make the grid touchable
     -- TODO: move this code into the map editor
     addTouchEventListeners(MapEditor.grid)
+    flower.Runtime:addEventListener("resize", onResize)
+end
+
+function updateLayout()
+    _resizeComponents(view)
+end
+
+function onResize(e)
+    updateLayout()
 end
 
 function onStart(e)

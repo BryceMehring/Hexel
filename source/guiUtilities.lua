@@ -122,7 +122,7 @@ function buildUI(gameMode, view, parentObj)
          end,
          parent = view,
     }
-    
+    --]]
     toggleModeButton = widget.Button {
         pos = {xPosition, brownSpace:getBottom()},
         size = buttonSize,
@@ -168,6 +168,34 @@ function _updateStatus(status)
     end
     
    return retString
+end
+
+function _resizeComponents(view)
+    local buttonSize = {flower.viewWidth/6, 39}
+    local xPosition = flower.viewWidth - flower.viewWidth/6
+    
+    curX = xPosition
+    curY = 0
+    timesRepeated = 0
+    
+    prevY = -1
+    prevItem = nil
+   for i, item in ipairs(view.children) do
+        if (item:getTop() == prevY) then--If it has the same Y as the prev elem
+            print(item:getTop().." "..prevY)
+            print(item:getWidth())
+            timesRepeated = timesRepeated + 1
+            item:setPos(xPosition+(item:getWidth()*timesRepeated), prevItem:getTop())
+        else
+            timesRepeated = 0
+            item:setPos(xPosition, item:getTop())
+            item:setSize(buttonSize[1], item:getHeight())
+        end
+        
+        
+        prevY = item:getTop()
+        prevItem = item
+    end 
 end
 
 
