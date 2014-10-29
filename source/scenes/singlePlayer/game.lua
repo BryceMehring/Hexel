@@ -141,8 +141,8 @@ function game:run()
 end
 
 function game:loop()
-    
-    for i, enemy in ipairs(self.enemies) do
+    for i = #self.enemies, 1, -1 do
+        local enemy = self.enemies[i]
         if not enemy:update() then
             enemy:remove()
             table.remove(self.enemies, i)
