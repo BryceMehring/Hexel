@@ -3,6 +3,7 @@
 require "source/utilities/vector"
 require "source/utilities/extensions/math"
 require "source/scenes/singlePlayer/enemy"
+require "source/scenes/singlePlayer/tower"
 require "source/pathfinder"
 
 local Towers = require "assets/towers"
@@ -34,11 +35,14 @@ function game:init(t)
     self.selectRange = ""
     self.selectDescription = ""
 
-    self.currentCash = 200
+    self.currentCash = 200000
     self.currentInterest = "0%"
     self.currentScore = 0
     self.layer = t.layer
     self.map = t.map
+    
+    self.towers = {}
+    self.attacks = {}
     
     self.updateStatus = t.updateStatus
     
@@ -143,11 +147,29 @@ function game:run()
 end
 
 function game:loop()
+    for i = #self.attacks, 1, -1 do
+        self.attacks[i]:setVisible(false)
+        table.remove(self.attacks, i)
+    end
+    
     for i = #self.enemies, 1, -1 do
         local enemy = self.enemies[i]
         if not enemy:update() then
             enemy:remove()
             table.remove(self.enemies, i)
+        end
+    end
+    
+    for key, tower in pairs(self.towers) do
+        local result = tower:fire(self.enemies)
+        if result ~= nil then
+            v1 = vector{self.grid.grid:getTileLoc(tower.pos[1], tower.pos[2])}
+            v2 = vector{self.enemies[result].rectangle:getPos()}
+            local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
+            attack:setColor(1,1,1,1)
+            attack:setLayer(self.layer)
+            attack:setVisible(true)
+            table.insert(self.attacks, #self.attacks, attack)
         end
     end
     
@@ -202,7 +224,7 @@ function game:onTouchDown(pos)
         if self.currentCash >= Towers[self.sideSelect].cost then
             self.currentCash = self.currentCash - Towers[self.sideSelect].cost
             self.grid:setTile(pos[1], pos[2], self.sideSelect)
-            
+            self.towers[Tower.serialize_pos(pos)] = Tower(self.sideSelect, pos)
             self.updateStatus(self:generateStatus())
             -- TODO: update statusUI for cost
         else

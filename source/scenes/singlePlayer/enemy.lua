@@ -20,11 +20,16 @@ function enemy:init(t)
     self.grid = t.grid
     self.map = t.map
     self.path = t.path
+    self.health = 100
 end
 
 function enemy:update()
     local startingPosition = vector{self.rectangle:getPos()}
     local finalPosition = nil
+    
+    if self.health <= 0 then
+        return false
+    end
     
     if self.map.paths and self.map.paths[self.pathIndex] then
         if (self.currentPos == (#self.map.paths[self.pathIndex])) then
@@ -56,9 +61,18 @@ function enemy:update()
     return true
 end
 
+function enemy:damage(damage)
+    self.health = self.health - damage
+end
+
 function enemy:remove()
     if self.rectangle then
         self.rectangle:setVisible(false)
         self.rectangle:setLayer(nil)
     end
+end
+
+function enemy:get_tile()
+    local pos = vector{self.rectangle:getPos()}
+    return vector{self.grid:locToCoord(pos[1], pos[2])}
 end
