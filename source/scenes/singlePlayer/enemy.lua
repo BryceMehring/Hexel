@@ -7,9 +7,9 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local math = math
 
-enemy = flower.class()
+Enemy = flower.class()
 
-function enemy:init(t)
+function Enemy:init(t)
     self.rectangle = flower.Rect(t.width, t.height)
     self.rectangle:setPos(t.pos[1], t.pos[2])
     self.rectangle:setColor(t.color[1], t.color[2], t.color[3], t.color[4])
@@ -23,7 +23,7 @@ function enemy:init(t)
     self.health = 100
 end
 
-function enemy:update()
+function Enemy:update()
     local startingPosition = vector{self.rectangle:getPos()}
     local finalPosition = nil
     
@@ -61,18 +61,18 @@ function enemy:update()
     return true
 end
 
-function enemy:damage(damage)
+function Enemy:damage(damage)
     self.health = self.health - damage
 end
 
-function enemy:remove()
+function Enemy:remove()
     if self.rectangle then
         self.rectangle:setVisible(false)
         self.rectangle:setLayer(nil)
     end
 end
 
-function enemy:get_tile()
+function Enemy:get_tile()
     local pos = vector{self.rectangle:getPos()}
     return vector{self.grid:locToCoord(pos[1], pos[2])}
 end

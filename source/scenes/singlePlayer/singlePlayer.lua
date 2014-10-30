@@ -13,7 +13,7 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
-    singlePlayerGame = game {
+    singlePlayerGame = Game {
         layer = layer,
         map = e.data.map,
         updateStatus = updateStatus,

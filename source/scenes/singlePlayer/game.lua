@@ -15,9 +15,9 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-game = flower.class()
+Game = flower.class()
 
-function game:init(t)
+function Game:init(t)
     -- TODO: pass is variables instead of hardcoding them
     self.texture = "hex-tiles.png"
     self.width = 50
@@ -51,7 +51,7 @@ end
 
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
-function game:generateStatus()
+function Game:generateStatus()
    return "Selected: " .. self.selectName .. 
           "\nCost:" .. self.selectCost ..
           "\n" .. self.selectDescription ..
@@ -59,7 +59,7 @@ function game:generateStatus()
           "\n\nCash: " .. self.currentCash
 end
 
-function game:buildGrid()
+function Game:buildGrid()
     self.width = self.map.width or self.width
     self.height = self.map.height or self.height
     self.default_tile = self.map.default_tile or self.default_tile
@@ -94,7 +94,7 @@ function game:buildGrid()
     self.path = not self.map.paths and findPath(self.grid.grid, vector{targetPos[1], targetPos[2]})
 end
 
-function game:run()
+function Game:run()
     local spawnColor = {1, 0, 0, 1}
     
     self.enemies = {}
@@ -109,7 +109,7 @@ function game:run()
         -- Convert starting position into world space
         startPosition = vector{self.grid.grid:getTileLoc(startPosition[1], startPosition[2], MOAIGridSpace.TILE_CENTER)}
   
-        local newEnemy = enemy {
+        local newEnemy = Enemy {
             layer = self.layer,
             width = 10, height = 10,
             pos = startPosition,
@@ -146,7 +146,7 @@ function game:run()
     flower.Executors.callLoop(self.loop, self)
 end
 
-function game:loop()
+function Game:loop()
     for i = #self.attacks, 1, -1 do
         self.attacks[i]:setVisible(false)
         table.remove(self.attacks, i)
@@ -180,7 +180,7 @@ function game:loop()
     return self:stopped()
 end
 
-function game:paused(p)
+function Game:paused(p)
     if p ~= nil then
 
         for i, timer in ipairs(self.timers) do
@@ -197,7 +197,7 @@ function game:paused(p)
     end
 end
 
-function game:stopped(s)
+function Game:stopped(s)
     if s ~= nil then
         
         if s == true then
@@ -216,7 +216,7 @@ function game:stopped(s)
     end
 end
 
-function game:onTouchDown(pos)
+function Game:onTouchDown(pos)
     local tile = self.grid:getTile(pos[1], pos[2])
     -- TODO: highlight map tile
     
