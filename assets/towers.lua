@@ -15,7 +15,7 @@ YellowTower.cost = 50
 YellowTower.damage = 100
 YellowTower.range = 5
 YellowTower.speed = 50
-YellowTower.description = "???"
+YellowTower.description = "Yellow Description"
 YellowTower.texture = "yellow_tower.png"
 towers[YELLOW] = YellowTower
 
@@ -26,7 +26,7 @@ RedTower.cost = 50
 RedTower.damage = 20
 RedTower.range = 3
 RedTower.speed = 10
-RedTower.description = "???"
+RedTower.description = "Red Description"
 RedTower.texture = "red_tower.png"
 towers[RED] = RedTower
 
@@ -38,7 +38,7 @@ GreenTower.cost = 100
 GreenTower.damage = 5
 GreenTower.range = 2
 GreenTower.speed = 2
-GreenTower.description = "???"
+GreenTower.description = "Green Description"
 GreenTower.texture = "green_tower.png"
 towers[GREEN] = GreenTower
 
@@ -49,7 +49,7 @@ BlueTower.cost = 100
 BlueTower.damage = 30
 BlueTower.range = 1
 BlueTower.speed = 15
-BlueTower.description = "???"
+BlueTower.description = "Blue Description"
 BlueTower.texture = "blue_tower.png"
 towers[BLUE] = BlueTower
 

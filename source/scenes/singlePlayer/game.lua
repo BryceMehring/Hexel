@@ -36,7 +36,7 @@ function Game:init(t)
     self.selectDescription = ""
 
     self.currentCash = 200000
-    self.currentInterest = "0%"
+    self.currentInterest = 0
     self.currentScore = 0
     self.layer = t.layer
     self.map = t.map
@@ -51,12 +51,21 @@ end
 
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
+function Game:generateItemInfo()
+    if self.selectName ~= "" then
+        return "Selected: " .. self.selectName .. 
+               "\nCost:" .. self.selectCost ..
+               "\n" .. self.selectDescription ..
+               "\nRange:" .. self.selectRange .. "  Damage:".. self.selectDamage
+    else
+       return "" 
+    end
+end
+
 function Game:generateStatus()
-   return "Selected: " .. self.selectName .. 
-          "\nCost:" .. self.selectCost ..
-          "\n" .. self.selectDescription ..
-          "\nRange:" .. self.selectRange .. "  Damage:".. self.selectDamage ..
-          "\n\nCash: " .. self.currentCash
+   return "Cash: " .. self.currentCash ..
+          "\t    Interest: " .. self.currentInterest .. "%" ..
+          "\nScore: " .. self.currentScore
 end
 
 function Game:buildGrid()

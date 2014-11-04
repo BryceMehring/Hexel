@@ -4,6 +4,9 @@ local widget = widget
 local TOWERS = require "assets/towers"
 
 local statusUI = nil
+local itemInfoUI = nil
+
+local fontSize = 12
 
 function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     local buttonSize = {flower.viewWidth/6, 39}
@@ -55,9 +58,9 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     
     statusUI = widget.TextBox {
         pos = {xPosition,  pauseButton and pauseButton:getBottom() or loadButton:getBottom()},
-        size = {buttonSize[1], 120},
+        size = {buttonSize[1], 50},
         text =  parentObj:generateStatus(),
-        textSize = 10,
+        textSize = fontSize,
         parent = view,
     }
     
@@ -79,9 +82,10 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
                 parentObj.selectDamage = child.damage
                 parentObj.selectRange = child.range
             end
-            statusUI:setText(parentObj:generateStatus()) 
+            itemInfoUI:setText(parentObj:generateItemInfo()) 
         end
         
+        local lastElem = nil
         local listX = xPosition
         for i, item in ipairs(TOWERS) do
             tower = widget.SheetButton{
@@ -94,7 +98,16 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
                 parent = view,
             }
             listX = tower:getRight()
+            lastElem = tower:getBottom()
         end
+        
+        itemInfoUI = widget.TextBox {
+            pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
+            size = {buttonSize[1], 70},
+            text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
+            textSize = fontSize,
+            parent = view,
+        }
         
     end
     
