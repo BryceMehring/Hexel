@@ -220,22 +220,6 @@ function updateStatusText(status)
     statusUI:setText(status)
 end
 
-function _updateStatus(status)
-    retString = ""
-    isFirstRow = true
-
-    for key,value in pairs(status) do
-        if not isFirstRow then
-           retString = retString .. "\n"
-        else
-            isFirstRow = false
-        end
-     retString = retString .. key .. ": " .. status[key]
-    end
-    
-   return retString
-end
-
 function _resizeComponents(view)
     local buttonSize = {flower.viewWidth/6, 39}
     local xPosition = flower.viewWidth - flower.viewWidth/6
