@@ -3,6 +3,11 @@ local Towers = require "assets/towers"
 require "source/gridNeighbors"
 require "source/utilities/vector"
 
+local fireSound = MOAIUntzSound.new();
+fireSound:load("assets/sounds/laser2.wav")
+fireSound:setVolume(.1)
+fireSound:setLooping(false)
+
 Tower = class()
 
 function Tower.serialize_pos(pos)
@@ -29,6 +34,7 @@ function Tower:fire(enemies)
         for i=#enemies,1,-1 do
             local tile = enemies[i]:get_tile()
             if self.targets[Tower.serialize_pos(tile)] ~= nil then
+                fireSound:play()
                 enemies[i]:damage(self.damage)
                 self.fire_tick = 0
                 return i

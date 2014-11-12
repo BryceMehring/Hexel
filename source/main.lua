@@ -11,3 +11,5 @@ flower.openWindow("Hexel", 1024, 768)
 
 math.randomseed(os.clock())
 flower.openScene("source/scenes/mainMenu")
+
+MOAIUntzSystem.initialize()

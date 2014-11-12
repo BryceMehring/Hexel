@@ -15,6 +15,11 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
+local bgm = MOAIUntzSound.new();
+bgm:load("assets/sounds/EPICSaxGuyLoop.wav")
+bgm:setVolume(.1)
+bgm:setLooping(true)
+
 Game = flower.class()
 
 function Game:init(t)
@@ -50,6 +55,8 @@ function Game:init(t)
     self.view = t.view
     
     self:buildGrid()
+    
+    bgm:play()
 end
 
 -- This function is used by the guiUtilities file to generate
