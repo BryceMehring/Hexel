@@ -109,7 +109,6 @@ function Game:buildGrid()
 end
 
 function Game:run()
-    enableDebugging()
     local spawnColor = {1, 0, 0, 1}
     
     self.enemies = {}
