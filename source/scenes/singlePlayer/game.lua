@@ -47,6 +47,7 @@ function Game:init(t)
     self.currentWave = 1
     
     self.updateStatus = t.updateStatus
+    self.view = t.view
     
     self:buildGrid()
 end
@@ -153,6 +154,18 @@ function Game:run()
         
         self:updateGUI()
         updatePauseButton()
+        
+        -- TODO: move this code somewhere else?
+        local msgbox = widget.MsgBox {
+            size = {flower.viewWidth / 2, 100},
+            pos = {flower.viewWidth / 4, flower.viewHeight / 2},
+            text = "Wave: " .. self.currentWave,
+            parent = self.view,
+            priority = 100,
+        }
+        
+        msgbox:showPopup()
+        flower.Executors.callLaterTime(3, function() msgbox:hidePopup() end)
     end)
 
     -- Timer controlling when the enemies change color(in the future this could change the wave type)

@@ -16,6 +16,7 @@ function onCreate(e)
     singlePlayerGame = Game {
         layer = layer,
         map = e.data.map,
+        view = e.data.view,
         updateStatus = updateStatus,
         -- TODO: fill this out
     }
@@ -28,7 +29,7 @@ function onCreate(e)
 end
 
 function updateStatus(statusMsg)
-   updateStatusText(statusMsg) 
+   updateStatusText(statusMsg)
 end
 
 function updateLayout()

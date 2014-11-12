@@ -51,9 +51,9 @@ map.targetPosition = {7, 35}
 
 -- Wave details
 map.waves = {
-    {enemies = {RED, YELLOW, GREEN}, spawnRate = 0.5, length = 30},
-    {enemies = {RED, GREEN}, spawnRate = 0.4, length = 40},
-    {enemies = {RED}, spawnRate = 0.3, length = 50},
+    {enemies = {RED, YELLOW, GREEN}, spawnRate = 0.5, length = 15},
+    {enemies = {RED, GREEN}, spawnRate = 0.4, length = 30},
+    {enemies = {RED}, spawnRate = 0.3, length = 40},
 }
 
 return map
