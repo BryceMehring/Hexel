@@ -220,6 +220,10 @@ function updateStatusText(status)
     statusUI:setText(status)
 end
 
+function updatePauseButton(paused)
+    pauseButton:setText(paused and "Paused" or "Start" .. " Wave")
+end
+
 function _resizeComponents(view)
     local buttonSize = {flower.viewWidth/6, 39}
     local xPosition = flower.viewWidth - flower.viewWidth/6

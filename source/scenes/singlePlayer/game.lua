@@ -44,6 +44,8 @@ function Game:init(t)
     self.towers = {}
     self.attacks = {}
     
+    self.currentWave = 1
+    
     self.updateStatus = t.updateStatus
     
     self:buildGrid()
@@ -56,15 +58,17 @@ function Game:generateItemInfo()
         return "Selected: " .. self.selectName .. 
                "\nCost:" .. self.selectCost ..
                "\n" .. self.selectDescription ..
-               "\nRange:" .. self.selectRange .. "  Damage:".. self.selectDamage
+               "\nRange:" .. self.selectRange .. 
+               "  Damage:".. self.selectDamage
     else
        return "" 
     end
 end
 
 function Game:generateStatus()
-   return "Cash: " .. self.currentCash ..
-          "\t    Interest: " .. self.currentInterest .. "%" ..
+   return "Curent Wave: " .. self.currentWave ..
+          "\nCash: " .. self.currentCash ..
+          "  Interest: " .. self.currentInterest .. "%" ..
           "\nScore: " .. self.currentScore
 end
 
@@ -104,12 +108,13 @@ function Game:buildGrid()
 end
 
 function Game:run()
+    enableDebugging()
     local spawnColor = {1, 0, 0, 1}
     
     self.enemies = {}
     
     -- Timer controlling when enemies spawn
-    local spawnTimer = flower.Executors.callLoopTime(0.5, function()
+    local spawnTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].spawnRate, function()
             
         -- Extract starting position from map
         local startPosition = self.map.paths and self.map.paths[1][1] or self.map.startPosition
@@ -131,25 +136,36 @@ function Game:run()
         table.insert(self.enemies, newEnemy)
     end)
 
+    local waveTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].length, function()
+        if not self.timers then
+            return
+        end
+        
+        self:paused(true)
+       
+        self.currentWave = (self.currentWave + 1)
+        if self.currentWave > #self.map.waves then
+            self.currentWave = 1
+        end
+        
+        self.timers.spawnTimer:setSpan(self.map.waves[self.currentWave].spawnRate)
+        self.timers.waveTimer:setSpan(self.map.waves[self.currentWave].length)
+        
+        self:updateGUI()
+        updatePauseButton()
+    end)
+
     -- Timer controlling when the enemies change color(in the future this could change the wave type)
     local colorTimer = flower.Executors.callLoopTime(4, function()
         spawnColor = math.generateRandomNumbers(0.1, 1, 4)
         spawnColor[4] = math.clamp(spawnColor[4], 0.95, 1.0)
     end)
 
-    -- Timer to simulate the destruction of enemies
-    --[[local destroyTimer = flower.Executors.callLoopTime(1, function()
-        if #self.enemies > 0 then
-            local randomEnemy = math.random(1, #self.enemies)
-            self.enemies[randomEnemy]:remove()
-            table.remove(self.enemies, randomEnemy)
-        end
-    end)]]
-
-    self.timers = {}
-    table.insert(self.timers, spawnTimer)
-    table.insert(self.timers, destroyTimer)
-    table.insert(self.timers, colorTimer)
+    self.timers = {
+        spawnTimer = spawnTimer,
+        colorTimer = colorTimer,
+        waveTimer = waveTimer,
+    }
     
     self:paused(false)
     flower.Executors.callLoop(self.loop, self)
@@ -192,7 +208,7 @@ end
 function Game:paused(p)
     if p ~= nil then
 
-        for i, timer in ipairs(self.timers) do
+        for k, timer in pairs(self.timers) do
             if p then
                 timer:pause()
             else
@@ -210,7 +226,7 @@ function Game:stopped(s)
     if s ~= nil then
         
         if s == true then
-            for i, timer in ipairs(self.timers) do
+            for k, timer in pairs(self.timers) do
                 flower.Executors.cancel(timer)
             end
             
@@ -225,6 +241,11 @@ function Game:stopped(s)
     end
 end
 
+function Game:updateGUI()
+    self.updateStatus(self:generateStatus())
+end
+
+--TODO: clean this up
 function Game:onTouchDown(pos)
     local tile = self.grid:getTile(pos[1], pos[2])
     -- TODO: highlight map tile
@@ -234,7 +255,7 @@ function Game:onTouchDown(pos)
             self.currentCash = self.currentCash - Towers[self.sideSelect].cost
             self.grid:setTile(pos[1], pos[2], self.sideSelect)
             self.towers[Tower.serialize_pos(pos)] = Tower(self.sideSelect, pos)
-            self.updateStatus(self:generateStatus())
+            self:updateGUI()
             -- TODO: update statusUI for cost
         else
             -- TODO: alert for insufficient funds
