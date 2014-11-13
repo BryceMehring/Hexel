@@ -155,7 +155,6 @@ function Game:run()
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1
-        pauseIfWaveComplete()
     end)
 
     --[[local waveTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].length, function()
