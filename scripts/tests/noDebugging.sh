@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Test to make sure that debugging is not enabled
 enableDebuggingCount=($(grep -r "enableDebugging()" ../../ | wc -l))
 
