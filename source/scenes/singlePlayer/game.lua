@@ -125,6 +125,17 @@ function Game:run()
     -- Timer controlling when enemies spawn
     local spawnTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].spawnRate, function()
             
+        local function pauseIfWaveComplete()
+            if self.spawnedEnemies >= self.map.waves[self.currentWave].length then
+                self.timers.spawnTimer:pause()
+                return true
+            end
+        end
+        
+        if pauseIfWaveComplete() then
+            return
+        end
+            
         -- Extract starting position from map
         local startPosition = self.map.paths and self.map.paths[1][1] or self.map.startPosition
         if type(startPosition) == "function" then startPosition = startPosition() end
@@ -144,10 +155,7 @@ function Game:run()
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1
-        if self.spawnedEnemies >= self.map.waves[self.currentWave].length then
-            self.timers.spawnTimer:pause()
-            --spawnTimer:pause()
-        end
+        pauseIfWaveComplete()
     end)
 
     --[[local waveTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].length, function()
@@ -182,9 +190,8 @@ function Game:updateWave()
     self.timers.spawnTimer:setSpan(self.map.waves[self.currentWave].spawnRate)
     
     self:updateGUI()
-    updatePauseButton()
-    
     -- TODO: move this code somewhere else?
+    
     local msgbox = widget.MsgBox {
         size = {flower.viewWidth / 2, 100},
         pos = {flower.viewWidth / 5, flower.viewHeight / 2},
@@ -194,13 +201,16 @@ function Game:updateWave()
     }
     
     msgbox:showPopup()
-    flower.Executors.callLaterTime(3, function() msgbox:hidePopup() end)
+    flower.Executors.callLaterTime(3, function()
+        msgbox:hidePopup()
+        self:paused(false)
+    end)
 end
 
 function Game:loop()
     
     if self.enemiesKilled == self.map.waves[self.currentWave].length then
-        -- increment  to the next wave
+        -- increment to the next wave
         self:updateWave()
     end
         
@@ -257,6 +267,7 @@ function Game:paused(p)
         end
 
         self.isPaused = p
+        updatePauseButton(not p)
     else
         return self.isPaused
     end

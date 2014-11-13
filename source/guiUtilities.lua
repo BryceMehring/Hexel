@@ -221,7 +221,7 @@ function updateStatusText(status)
 end
 
 function updatePauseButton(paused)
-    pauseButton:setText(paused and "Paused" or "Start" .. " Wave")
+    pauseButton:setText((paused and "Pause" or "Start") .. " Wave")
 end
 
 function _resizeComponents(view)
