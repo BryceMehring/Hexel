@@ -3,7 +3,7 @@ local Towers = require "assets/towers"
 require "source/gridNeighbors"
 require "source/utilities/vector"
 
-local fireSound = MOAIUntzSound.new();
+local fireSound = MOAIUntzSound.new()
 fireSound:load("assets/sounds/laser2.wav")
 fireSound:setVolume(.1)
 fireSound:setLooping(false)

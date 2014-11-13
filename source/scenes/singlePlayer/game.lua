@@ -15,7 +15,7 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-local bgm = MOAIUntzSound.new();
+local bgm = MOAIUntzSound.new()
 bgm:load("assets/sounds/EPICSaxGuyLoop.wav")
 bgm:setVolume(.1)
 bgm:setLooping(true)
