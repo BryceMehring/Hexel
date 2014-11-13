@@ -8,6 +8,9 @@ local MOAIGridSpace = MOAIGridSpace
 local math = math
 
 Enemy = flower.class()
+Enemy.DIED = 1
+Enemy.END_OF_PATH = 2
+Enemy.CONTINUE = 3
 
 function Enemy:init(t)
     self.rectangle = flower.Rect(t.width, t.height)
@@ -28,12 +31,12 @@ function Enemy:update()
     local finalPosition = nil
     
     if self.health <= 0 then
-        return false
+        return self.DIED
     end
     
     if self.map.paths and self.map.paths[self.pathIndex] then
         if (self.currentPos == (#self.map.paths[self.pathIndex])) then
-            return false
+            return self.END_OF_PATH
         end
         
         finalPosition = vector{self.grid:getTileLoc(self.map.paths[self.pathIndex][self.currentPos + 1][1],
@@ -43,7 +46,7 @@ function Enemy:update()
         finalPosition = getPathDestination(self.grid, startingPosition, self.path)
         
         if finalPosition == nil then
-            return false
+            return self.END_OF_PATH
         end
     end
    
@@ -58,7 +61,7 @@ function Enemy:update()
     local newPosition = velocity + startingPosition
     self.rectangle:setPos(newPosition[1], newPosition[2])
     
-    return true
+    return self.CONTINUE
 end
 
 function Enemy:damage(damage)

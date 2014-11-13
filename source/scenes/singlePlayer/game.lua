@@ -119,6 +119,8 @@ function Game:run()
     local spawnColor = {1, 0, 0, 1}
     
     self.enemies = {}
+    self.enemiesKilled = 0
+    self.spawnedEnemies = 0
     
     -- Timer controlling when enemies spawn
     local spawnTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].spawnRate, function()
@@ -141,38 +143,16 @@ function Game:run()
             path = self.path,
         }
         table.insert(self.enemies, newEnemy)
+        self.spawnedEnemies = self.spawnedEnemies + 1
+        if self.spawnedEnemies >= self.map.waves[self.currentWave].length then
+            self.timers.spawnTimer:pause()
+            --spawnTimer:pause()
+        end
     end)
 
-    local waveTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].length, function()
-        if not self.timers then
-            return
-        end
-        
-        self:paused(true)
-       
-        self.currentWave = (self.currentWave + 1)
-        if self.currentWave > #self.map.waves then
-            self.currentWave = 1
-        end
-        
-        self.timers.spawnTimer:setSpan(self.map.waves[self.currentWave].spawnRate)
-        self.timers.waveTimer:setSpan(self.map.waves[self.currentWave].length)
-        
-        self:updateGUI()
-        updatePauseButton()
-        
-        -- TODO: move this code somewhere else?
-        local msgbox = widget.MsgBox {
-            size = {flower.viewWidth / 2, 100},
-            pos = {flower.viewWidth / 4, flower.viewHeight / 2},
-            text = "Wave: " .. self.currentWave,
-            parent = self.view,
-            priority = 100,
-        }
-        
-        msgbox:showPopup()
-        flower.Executors.callLaterTime(3, function() msgbox:hidePopup() end)
-    end)
+    --[[local waveTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].length, function()
+        spawnTimer:pause()
+    end)]]
 
     -- Timer controlling when the enemies change color(in the future this could change the wave type)
     local colorTimer = flower.Executors.callLoopTime(4, function()
@@ -183,14 +163,48 @@ function Game:run()
     self.timers = {
         spawnTimer = spawnTimer,
         colorTimer = colorTimer,
-        waveTimer = waveTimer,
     }
     
     self:paused(false)
     flower.Executors.callLoop(self.loop, self)
 end
 
+function Game:updateWave()
+    self:paused(true)
+    self.enemiesKilled = 0
+    self.spawnedEnemies = 0
+   
+    self.currentWave = (self.currentWave + 1)
+    if self.currentWave > #self.map.waves then
+        self.currentWave = 1
+    end
+    
+    self.timers.spawnTimer:setSpan(self.map.waves[self.currentWave].spawnRate)
+    
+    self:updateGUI()
+    updatePauseButton()
+    
+    -- TODO: move this code somewhere else?
+    local msgbox = widget.MsgBox {
+        size = {flower.viewWidth / 2, 100},
+        pos = {flower.viewWidth / 5, flower.viewHeight / 2},
+        text = "Wave: " .. self.currentWave,
+        parent = self.view,
+        priority = 100,
+    }
+    
+    msgbox:showPopup()
+    flower.Executors.callLaterTime(3, function() msgbox:hidePopup() end)
+end
+
 function Game:loop()
+    
+    if self.enemiesKilled == self.map.waves[self.currentWave].length then
+        -- increment  to the next wave
+        self:updateWave()
+    end
+        
+    
     for i = #self.attacks, 1, -1 do
         self.attacks[i]:setVisible(false)
         table.remove(self.attacks, i)
@@ -198,7 +212,14 @@ function Game:loop()
     
     for i = #self.enemies, 1, -1 do
         local enemy = self.enemies[i]
-        if not enemy:update() then
+        local enemyStatus = enemy:update()
+        if enemyStatus ~= Enemy.CONTINUE then
+            
+            --[[if enemyStatus == Enemy.DIED then
+                self.enemiesKilled = self.enemiesKilled + 1
+            end]]
+            self.enemiesKilled = self.enemiesKilled + 1
+            
             enemy:remove()
             table.remove(self.enemies, i)
         end
