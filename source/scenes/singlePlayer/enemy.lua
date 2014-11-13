@@ -24,6 +24,7 @@ function Enemy:init(t)
     self.map = t.map
     self.path = t.path
     self.health = 100
+    self.score = t.score
 end
 
 function Enemy:update()

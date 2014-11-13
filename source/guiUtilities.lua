@@ -224,6 +224,16 @@ function updatePauseButton(paused)
     pauseButton:setText((paused and "Pause" or "Start") .. " Wave")
 end
 
+function generateMsgBox(position, size, msg, parentView)
+    return widget.MsgBox {
+        size = size,
+        pos = position,
+        text = msg,
+        parent = parentView,
+        priority = 100,
+    }
+end
+
 function _resizeComponents(view)
     local buttonSize = {flower.viewWidth/6, 39}
     local xPosition = flower.viewWidth - flower.viewWidth/6

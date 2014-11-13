@@ -15,6 +15,9 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
+local POPUP_SIZE = {flower.viewWidth / 2, 100}
+local POPUP_POS = {flower.viewWidth / 5, flower.viewHeight / 2}
+
 local bgm = MOAIUntzSound.new()
 bgm:load("assets/sounds/EPICSaxGuyLoop.wav")
 bgm:setVolume(.1)
@@ -40,6 +43,7 @@ function Game:init(t)
     self.selectRange = ""
     self.selectDescription = ""
 
+    self.currentLives = 20
     self.currentCash = 200000
     self.currentInterest = 0
     self.currentScore = 0
@@ -74,7 +78,8 @@ function Game:generateItemInfo()
 end
 
 function Game:generateStatus()
-   return "Curent Wave: " .. self.currentWave ..
+   return "Wave: " .. self.currentWave ..
+          "  Lives: " .. self.currentLives ..
           "\nCash: " .. self.currentCash ..
           "  Interest: " .. self.currentInterest .. "%" ..
           "\nScore: " .. self.currentScore
@@ -152,6 +157,7 @@ function Game:run()
             grid = self.grid.grid,
             map = self.map,
             path = self.path,
+            score = 10
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1
@@ -191,17 +197,11 @@ function Game:updateWave()
     self:updateGUI()
     -- TODO: move this code somewhere else?
     
-    local msgbox = widget.MsgBox {
-        size = {flower.viewWidth / 2, 100},
-        pos = {flower.viewWidth / 5, flower.viewHeight / 2},
-        text = "Wave: " .. self.currentWave,
-        parent = self.view,
-        priority = 100,
-    }
+    local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Wave: " .. self.currentWave, self.view)
     
-    msgbox:showPopup()
+    msgBox:showPopup()
     flower.Executors.callLaterTime(3, function()
-        msgbox:hidePopup()
+        msgBox:hidePopup()
         self:paused(false)
     end)
 end
@@ -223,11 +223,12 @@ function Game:loop()
         local enemy = self.enemies[i]
         local enemyStatus = enemy:update()
         if enemyStatus ~= Enemy.CONTINUE then
-            
-            --[[if enemyStatus == Enemy.DIED then
-                self.enemiesKilled = self.enemiesKilled + 1
-            end]]
             self.enemiesKilled = self.enemiesKilled + 1
+            if enemyStatus == Enemy.DIED then
+                self.currentScore = self.currentScore + enemy.score
+            else
+                self:loseLife()
+            end
             
             enemy:remove()
             table.remove(self.enemies, i)
@@ -247,11 +248,20 @@ function Game:loop()
         end
     end
     
+    self:updateGUI()
+    
     while self:paused() do
         coroutine.yield()
     end
     
     return self:stopped()
+end
+
+function Game:loseLife()
+   self.currentLives = self.currentLives - 1
+   if self.currentLives <= 0 then
+       self:stopped(true) 
+    end
 end
 
 function Game:paused(p)
@@ -276,6 +286,7 @@ function Game:stopped(s)
     if s ~= nil then
         
         if s == true then
+            bgm:stop()
             for k, timer in pairs(self.timers) do
                 flower.Executors.cancel(timer)
             end
@@ -283,6 +294,10 @@ function Game:stopped(s)
             for i, enemy in ipairs(self.enemies) do
                 enemy:remove()
             end
+            
+            local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Game Over!", self.view)
+            msgBox:showPopup()
+            
         end
         
         self.isStopped = s
