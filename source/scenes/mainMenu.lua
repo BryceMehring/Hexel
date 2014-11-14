@@ -59,12 +59,9 @@ function createMenuList()
         end
     end
     
-    local yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
-    local xOffset = (flower.viewWidth - ITEM_WIDTH)/2
     for i, item in ipairs(MENU_ITEMS) do
         local menuItem = widget.Button {
             size = {ITEM_WIDTH, ITEM_HEIGHT},
-            pos = {xOffset, yOffset + (i-1)*(ITEM_HEIGHT + 5)},
             text = item.title,
             onClick = function()
                 onClickCallback(item)
@@ -77,13 +74,10 @@ function createMenuList()
     
     local quitButton = widget.Button {
         size = {ITEM_WIDTH, ITEM_HEIGHT},
-        pos = {xOffset, yOffset + (#MENU_ITEMS)*(ITEM_HEIGHT + 5)},
         text = "Quit",
         onClick = function()
             os.exit()
         end,
-        onDown = nil,
-        onUp = nil,
         enabled = true,
     }
     
@@ -110,6 +104,15 @@ function onCreate(e)
     
     view = widget.UIView {
         scene = scene,
+        layout = widget.BoxLayout {
+            gap = {5, 5},
+            padding = {10, 10, 10, 10},
+            align = {"center", "top"},
+        },
+        children = {{
+            -- TODO: need to center this
+            flower.Label("Hexel", 400, 200, nil, 128)
+        }}
     }
     
     createMenuList()
