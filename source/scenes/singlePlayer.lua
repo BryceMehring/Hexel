@@ -1,7 +1,7 @@
 module(..., package.seeall)
 
-require "source/scenes/singlePlayer/game"
-require "source/guiUtilities"
+require "source/game/game"
+require "source/gui/guiUtilities"
 
 local flower = flower
 

@@ -2,8 +2,8 @@
 
 require "source/utilities/vector"
 require "source/utilities/extensions/math"
-require "source/scenes/singlePlayer/enemy"
-require "source/scenes/singlePlayer/tower"
+require "source/game/enemy"
+require "source/game/tower"
 require "source/pathfinder"
 
 local Towers = require "assets/towers"
