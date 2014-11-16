@@ -96,7 +96,7 @@ function MapEditor._algorithmRippleOut(pos)
     table.insert(list, {position = pos, depth = 1})
     
     local counter = 1
-    while #list > 0 and counter < 100 do
+    while #list > 0 and counter < 20 do
         local currentNode = list[1]
         table.remove(list, 1)
         
