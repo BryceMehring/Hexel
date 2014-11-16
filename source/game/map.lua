@@ -55,14 +55,16 @@ function Map:Load(file)
             end
         end
     elseif type(self.map.tiles) == "string" then
+        
         -- Load file from stream
         local fileStream = MOAIFileStream.new()
-        local success = fileStream:open(self.map.tiles, MOAIFileStream.READ)
-        if success then
-            self.grid.grid:streamTilesIn(fileStream)
-            fileStream:close()
+        if not fileStream:open(self.map.tiles, MOAIFileStream.READ) then
+            return false
         end
         
+        self.grid.grid:streamTilesIn(fileStream)
+        fileStream:close()
+            
         -- TODO: turn the tower types into global variables instead of hardcoding them
         -- Check which tiles are enemy tiles
         self.spawnTiles = {}
