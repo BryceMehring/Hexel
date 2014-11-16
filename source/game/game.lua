@@ -5,6 +5,7 @@ require "source/utilities/extensions/math"
 require "source/game/enemy"
 require "source/game/tower"
 require "source/pathfinder"
+require "source/game/map"
 
 local Towers = require "assets/towers"
 
@@ -43,12 +44,12 @@ function Game:init(t)
     self.selectRange = ""
     self.selectDescription = ""
 
-    self.currentLives = 20
+    self.currentLives = 20000
     self.currentCash = 200000
     self.currentInterest = 0
     self.currentScore = 0
     self.layer = t.layer
-    self.map = t.map
+    self.mapFile = t.mapFile
     
     self.towers = {}
     self.attacks = {}
@@ -86,38 +87,16 @@ function Game:generateStatus()
 end
 
 function Game:buildGrid()
-    self.width = self.map.width or self.width
-    self.height = self.map.height or self.height
-    self.default_tile = self.map.default_tile or self.default_tile
-    
-    self.grid = flower.MapImage(self.texture,
-                                self.width, 
-                                self.height,
-                                self.tileWidth,
-                                self.tileHeight,
-                                self.radius)
-                                  
-    self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
-    self.grid:setLayer(self.layer)
-    
-    self.grid:setRepeat(false, false)
-    self.grid:setPos(0,0)
-    
-    --print(self.height, self.width)
-    for i = 1,self.width do
-        for j = 1,self.height do
-            self.grid.grid:setTile(i, j, self.default_tile)
-        end
-    end
-    
-    for i, data in ipairs(self.map.tiles) do
-        for j, pos in ipairs(data) do
-            self.grid.grid:setTile(pos[1], pos[2], i)
-        end
-    end
-    
-    local targetPos = self.map.paths and self.map.paths[1][#self.map.paths[1]] or self.map.targetPosition
-    self.path = not self.map.paths and findPath(self.grid.grid, vector{targetPos[1], targetPos[2]})
+    self.map = Map {
+        file = self.mapFile,
+        texture = self.texture,
+        width = self.width,
+        height = self.height,
+        tileWidth = self.tileWidth,
+        tileHeight = self.tileHeight,
+        radius = self.radius,
+        layer = self.layer,
+    }
 end
 
 function Game:run()
@@ -128,10 +107,9 @@ function Game:run()
     self.spawnedEnemies = 0
     
     -- Timer controlling when enemies spawn
-    local spawnTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].spawnRate, function()
-            
+    local spawnTimer = flower.Executors.callLoopTime(self.map.map.waves[self.currentWave].spawnRate, function()
         local function pauseIfWaveComplete()
-            if self.spawnedEnemies >= self.map.waves[self.currentWave].length then
+            if self.spawnedEnemies >= self.map.map.waves[self.currentWave].length then
                 self.timers.spawnTimer:pause()
                 return true
             end
@@ -140,32 +118,19 @@ function Game:run()
         if pauseIfWaveComplete() then
             return
         end
-            
-        -- Extract starting position from map
-        local startPosition = self.map.paths and self.map.paths[1][1] or self.map.startPosition
-        if type(startPosition) == "function" then startPosition = startPosition() end
-        
-        -- Convert starting position into world space
-        startPosition = vector{self.grid.grid:getTileLoc(startPosition[1], startPosition[2], MOAIGridSpace.TILE_CENTER)}
   
         local newEnemy = Enemy {
             layer = self.layer,
             width = 10, height = 10,
-            pos = startPosition,
+            pos = self.map:RandomStartingPosition(),
             color = spawnColor,
             speed = math.randomFloatBetween(2, 5),
-            grid = self.grid.grid,
             map = self.map,
-            path = self.path,
             score = 10
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1
     end)
-
-    --[[local waveTimer = flower.Executors.callLoopTime(self.map.waves[self.currentWave].length, function()
-        spawnTimer:pause()
-    end)]]
 
     -- Timer controlling when the enemies change color(in the future this could change the wave type)
     local colorTimer = flower.Executors.callLoopTime(4, function()
@@ -188,11 +153,11 @@ function Game:updateWave()
     self.spawnedEnemies = 0
    
     self.currentWave = (self.currentWave + 1)
-    if self.currentWave > #self.map.waves then
+    if self.currentWave > #self.map:GetWaves() then
         self.currentWave = 1
     end
     
-    self.timers.spawnTimer:setSpan(self.map.waves[self.currentWave].spawnRate)
+    self.timers.spawnTimer:setSpan(self.map:GetWaves()[self.currentWave].spawnRate)
     
     self:updateGUI()
     -- TODO: move this code somewhere else?
@@ -208,7 +173,7 @@ end
 
 function Game:loop()
     
-    if self.enemiesKilled == self.map.waves[self.currentWave].length then
+    if self.enemiesKilled == self.map:GetWaves()[self.currentWave].length then
         -- increment to the next wave
         self:updateWave()
     end
@@ -235,10 +200,11 @@ function Game:loop()
         end
     end
     
+    -- TODO: clean this up!
     for key, tower in pairs(self.towers) do
         local result = tower:fire(self.enemies)
         if result ~= nil then
-            v1 = vector{self.grid.grid:getTileLoc(tower.pos[1], tower.pos[2])}
+            v1 = vector{self.map:GetMOAIGrid():getTileLoc(tower.pos[1], tower.pos[2])}
             v2 = vector{self.enemies[result].rectangle:getPos()}
             local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
             attack:setColor(1,1,1,1)
@@ -312,13 +278,13 @@ end
 
 --TODO: clean this up
 function Game:onTouchDown(pos)
-    local tile = self.grid:getTile(pos[1], pos[2])
+    local tile = self.map:GetGrid():getTile(pos[1], pos[2])
     -- TODO: highlight map tile
     
     if tile == 5 and self.sideSelect ~= -1 then
         if self.currentCash >= Towers[self.sideSelect].cost then
             self.currentCash = self.currentCash - Towers[self.sideSelect].cost
-            self.grid:setTile(pos[1], pos[2], self.sideSelect)
+            self.map:GetGrid():setTile(pos[1], pos[2], self.sideSelect)
             self.towers[Tower.serialize_pos(pos)] = Tower(self.sideSelect, pos)
             self:updateGUI()
             -- TODO: update statusUI for cost

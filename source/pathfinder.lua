@@ -19,13 +19,13 @@ function getPathDestination(grid, pos, path)
 end
 
 -- Finds the shortest path from from every node on the map to the targetPosition
-function findPath(grid, targetPosition)
+function findPath(grid, targetPosition, validTileCallback)
     local width, height = grid:getSize()
     
     local function ValidTile(pos)
         return pos[1] >= 1 and pos[1] <= width and
                pos[2] >= 1 and pos[2] <= height and
-               grid:getTile(pos[1], pos[2]) == 6 -- TODO: this should be a parameter to change which tile is a wall
+               validTileCallback(grid:getTile(pos[1], pos[2]))
     end
     
     if not ValidTile(targetPosition) then

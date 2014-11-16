@@ -15,7 +15,7 @@ function onCreate(e)
     
     singlePlayerGame = Game {
         layer = layer,
-        map = e.data.map,
+        mapFile = e.data.mapFile,
         view = e.data.view,
         updateStatus = updateStatus,
         -- TODO: fill this out
@@ -25,7 +25,7 @@ function onCreate(e)
     buildUI("SinglePlayer", e.data.view, singlePlayerGame)
 
     flower.Runtime:addEventListener("resize", onResize)
-    addTouchEventListeners(singlePlayerGame.grid)
+    addTouchEventListeners(singlePlayerGame.map.grid)
 end
 
 function updateStatus(statusMsg)
@@ -67,7 +67,7 @@ function item_onTouchDown(e)
     x, y = prop:worldToModel(x, y)
     
     -- TODO: move this into the Game
-    local xCoord, yCoord = singlePlayerGame.grid.grid:locToCoord(x, y)
+    local xCoord, yCoord = singlePlayerGame.map:GetMOAIGrid():locToCoord(x, y)
     
     singlePlayerGame:onTouchDown(vector{xCoord, yCoord})
     

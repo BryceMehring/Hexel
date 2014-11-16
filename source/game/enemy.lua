@@ -17,12 +17,9 @@ function Enemy:init(t)
     self.rectangle:setPos(t.pos[1], t.pos[2])
     self.rectangle:setColor(t.color[1], t.color[2], t.color[3], t.color[4])
     self.rectangle:setLayer(t.layer)
-    self.pathIndex = t.pathIndex or 1
     self.currentPos = 1
     self.speed = t.speed or 5
-    self.grid = t.grid
     self.map = t.map
-    self.path = t.path
     self.health = 100
     self.score = t.score
 end
@@ -35,16 +32,18 @@ function Enemy:update()
         return self.DIED
     end
     
-    if self.map.paths and self.map.paths[self.pathIndex] then
-        if (self.currentPos == (#self.map.paths[self.pathIndex])) then
+    if self.map:GetPath() and self.map:GetPath()[1] then
+        if (self.currentPos == (#self.map:GetPath())) then
             return self.END_OF_PATH
         end
         
-        finalPosition = vector{self.grid:getTileLoc(self.map.paths[self.pathIndex][self.currentPos + 1][1],
-                                                    self.map.paths[self.pathIndex][self.currentPos + 1][2],
-                                                    MOAIGridSpace.TILE_CENTER)}
+        finalPosition = vector{self.map:GetMOAIGrid():getTileLoc(
+            self.map:GetPath()[self.currentPos + 1][1],
+            self.map:GetPath()[self.currentPos + 1][2],
+            MOAIGridSpace.TILE_CENTER)}
+    
     else
-        finalPosition = getPathDestination(self.grid, startingPosition, self.path)
+        finalPosition = getPathDestination(self.map:GetMOAIGrid(), startingPosition, self.map:GetPath())
         
         if finalPosition == nil then
             return self.END_OF_PATH
@@ -78,5 +77,5 @@ end
 
 function Enemy:get_tile()
     local pos = vector{self.rectangle:getPos()}
-    return vector{self.grid:locToCoord(pos[1], pos[2])}
+    return vector{self.map:GetMOAIGrid():locToCoord(pos[1], pos[2])}
 end

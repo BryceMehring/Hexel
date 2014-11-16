@@ -16,11 +16,11 @@ local view = nil
 -- MapEditor singleton
 MapEditor = {}
 MapEditor.texture = "hex-tiles.png"
-MapEditor.width = 50
-MapEditor.height = 100
+MapEditor.width = 10
+MapEditor.height = 35
 MapEditor.tileWidth = 128
 MapEditor.tileHeight = 111
-MapEditor.radius = 16
+MapEditor.radius = 24
 MapEditor.saveFile = "grid.sav"
 
 MapEditor.currentAlgorithm = 1
