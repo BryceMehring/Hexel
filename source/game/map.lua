@@ -101,7 +101,7 @@ function Map:Load(file)
 end
 
 function Map:RandomStartingPosition()
-    local startPosition = not self:IsPathDynamic() and self.path[1] or self.startPosition
+    local startPosition = not self:IsPathDynamic() and self.path[1]
     if not startPosition then
         local randomIndex = math.random(1, #self.spawnTiles)
         startPosition = self.spawnTiles[randomIndex]
