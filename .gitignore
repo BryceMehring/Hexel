@@ -11,5 +11,5 @@ $RECYCLE.BIN/
 # ZeroBrane backup files
 *.bak
 
-# Hexel grid save
-*.sav
+# Source packed into a single file
+scripts/singleFile.lua
