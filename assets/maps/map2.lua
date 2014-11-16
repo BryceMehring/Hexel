@@ -11,7 +11,7 @@ local map = {}
 map.width = 10
 map.height = 35
 
-map.tiles = "grid.sav"
+map.tiles = "assets/grid.sav"
 map.waves = {
     {enemies = {RED, YELLOW, GREEN}, spawnRate = 0.5, length = 100},
     {enemies = {RED, GREEN}, spawnRate = 0.4, length = 200},

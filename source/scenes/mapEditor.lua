@@ -21,7 +21,7 @@ MapEditor.height = 35
 MapEditor.tileWidth = 128
 MapEditor.tileHeight = 111
 MapEditor.radius = 24
-MapEditor.saveFile = "grid.sav"
+MapEditor.saveFile = "assets/grid.sav"
 
 MapEditor.currentAlgorithm = 1
 MapEditor.currentColor = 1
