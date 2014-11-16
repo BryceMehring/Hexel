@@ -44,7 +44,7 @@ function Game:init(t)
     self.selectRange = ""
     self.selectDescription = ""
 
-    self.currentLives = 20000
+    self.currentLives = 20
     self.currentCash = 200000
     self.currentInterest = 0
     self.currentScore = 0
@@ -226,6 +226,8 @@ end
 function Game:loseLife()
    self.currentLives = self.currentLives - 1
    if self.currentLives <= 0 then
+       local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Game Over!", self.view)
+        msgBox:showPopup()
        self:stopped(true) 
     end
 end
@@ -260,9 +262,6 @@ function Game:stopped(s)
             for i, enemy in ipairs(self.enemies) do
                 enemy:remove()
             end
-            
-            local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Game Over!", self.view)
-            msgBox:showPopup()
             
         end
         
