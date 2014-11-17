@@ -9,12 +9,14 @@ local MOAIUntzSound = MOAIUntzSound
 function SoundManager:init(t)
     t = t or {}
     self.sounds = {}
-    self.currentSound = nil
-    self.soundDir = t.soundDir or "assets/sounds/"
+    self.currentVolume = t.volume or 0.2
+    self.soundDir = t.soundDir
     
-    local soundFiles = io.files(self.soundDir)
-    for i, file in ipairs(soundFiles) do
-        self:addSound(file)
+    if self.soundDir then
+        local soundFiles = io.files(self.soundDir)
+        for i, file in ipairs(soundFiles) do
+            self:addSound(file)
+        end
     end
 end
 
@@ -22,35 +24,55 @@ end
 function SoundManager:addSound(file)
     local newSound = MOAIUntzSound.new()
     newSound:load(file)
-    newSound:setVolume(0.2)
+    newSound:setVolume(self.currentVolume)
     
     table.insert(self.sounds, newSound)
+    
+    return #self.sounds
 end
 
-function SoundManager:play()
+function SoundManager:setVolume(volume)
+    for i, sound in pairs(self.sounds) do
+        sound:setVolume(volume)
+    end
     
+    self.currentVolume = volume
+end
+
+function SoundManager:play(soundIndex)
+    if #self.sounds <= 0 then
+        return
+    end
+    
+    if soundIndex and soundIndex >= 1 and soundIndex <= #self.sounds then
+        self.currentSound = self.sounds[soundIndex]
+        self.currentSound:play()
+    end
+end
+
+function SoundManager:randomizedPlay()
     if #self.sounds <= 0 then
         return
     end
     
     local randomIndex = math.random(1, #self.sounds)
+        
+    self.currentSound = self.sounds[randomIndex]
+    local soundLength = self.currentSound:getLength()
     
-    self.randomSound = self.sounds[randomIndex]
-    local soungLength = self.randomSound:getLength()
-    
-    self.timer = flower.Executors.callLaterTime(soungLength + 1, SoundManager.playCallback, self)
+    self.timer = flower.Executors.callLaterTime(soundLength + 1, SoundManager.playCallback, self)
 
-    self.randomSound:play()
+    self.currentSound:play()
 end
 
 function SoundManager:playCallback()
-    self.randomSound:stop()
+    self.currentSound:stop()
     self:play()
 end
 
 function SoundManager:stop()
-    if self.randomSound then
-        self.randomSound:stop()
+    if self.currentSound then
+        self.currentSound:stop()
         flower.Executors.cancel(self.timer)
     end
 end

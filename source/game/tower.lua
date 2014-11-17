@@ -2,11 +2,12 @@ local class = flower.class
 local Towers = require "assets/towers"
 require "source/gridNeighbors"
 require "source/utilities/vector"
+require "source/sound/sound"
 
-local fireSound = MOAIUntzSound.new()
-fireSound:load("assets/sounds/laser2.wav")
-fireSound:setVolume(.1)
-fireSound:setLooping(false)
+local soundManager = SoundManager {
+    volume = 0.1,
+}
+local fireSound = soundManager:addSound("assets/sounds/laser2.wav")
 
 Tower = class()
 
@@ -34,7 +35,7 @@ function Tower:fire(enemies)
         for i=#enemies,1,-1 do
             local tile = enemies[i]:get_tile()
             if self.targets[Tower.serialize_pos(tile)] ~= nil then
-                fireSound:play()
+                soundManager:play(fireSound)
                 enemies[i]:damage(self.damage)
                 self.fire_tick = 0
                 return i
