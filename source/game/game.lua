@@ -6,6 +6,7 @@ require "source/game/enemy"
 require "source/game/tower"
 require "source/pathfinder"
 require "source/game/map"
+require "source/sound/sound"
 
 local Towers = require "assets/towers"
 
@@ -18,11 +19,6 @@ local ipairs = ipairs
 
 local POPUP_SIZE = {flower.viewWidth / 2, 100}
 local POPUP_POS = {flower.viewWidth / 5, flower.viewHeight / 2}
-
-local bgm = MOAIUntzSound.new()
-bgm:load("assets/sounds/EPICSaxGuyLoop.wav")
-bgm:setVolume(.1)
-bgm:setLooping(true)
 
 Game = flower.class()
 
@@ -59,9 +55,12 @@ function Game:init(t)
     self.updateStatus = t.updateStatus
     self.view = t.view
     
-    self:buildGrid()
+    self.soundManager = SoundManager {
+       soundDir = "assets/sounds/soundtrack/",
+    }
+    self.soundManager:play()
     
-    bgm:play()
+    self:buildGrid()
 end
 
 -- This function is used by the guiUtilities file to generate
@@ -254,7 +253,7 @@ function Game:stopped(s)
     if s ~= nil then
         
         if s == true then
-            bgm:stop()
+            self.soundManager:stop()
             for k, timer in pairs(self.timers) do
                 flower.Executors.cancel(timer)
             end
