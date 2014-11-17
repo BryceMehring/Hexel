@@ -12,14 +12,15 @@ end
 
 function io.files(dir)
     local files = {}
-    if io.fileExists(dir) then
-        for file in lfs.dir(dir) do
-            local fullPath = dir .. file
-            if lfs.attributes(fullPath,"mode") == "file" then
-                table.insert(files, fullPath)
-            end
+    
+    for file in lfs.dir(dir) do
+        local fullPath = dir .. file
+        print(fullPath)
+        if lfs.attributes(fullPath,"mode") == "file" then
+            table.insert(files, fullPath)
         end
     end
+ 
     
     return files
 end
