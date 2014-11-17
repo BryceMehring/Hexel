@@ -25,7 +25,8 @@ function onCreate(e)
     buildUI("SinglePlayer", e.data.view, singlePlayerGame)
 
     flower.Runtime:addEventListener("resize", onResize)
-    addTouchEventListeners(singlePlayerGame.map.grid)
+    
+    flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
 end
 
 function updateStatus(statusMsg)
@@ -46,23 +47,22 @@ function onStart(e)
 end
 
 function onStop(e)
+    flower.InputMgr:removeEventListener("mouseClick", item_onTouchDown)
     singlePlayerGame:paused(false)
     singlePlayerGame:stopped(true)
     singlePlayerGame = nil
 end
 
-function addTouchEventListeners(item)
-    item:addEventListener("touchDown", item_onTouchDown)
-end
-
 function item_onTouchDown(e)
-    local prop = e.prop
-    if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
+    if not e.down then
         return
     end
+    
+    -- TODO: check this later. Is this needed?
+    local prop = singlePlayerGame.map:GetGrid()
 
-    local x = e.wx
-    local y = e.wy
+    local x = e.x
+    local y = e.y
     x, y = layer:wndToWorld(x, y)
     x, y = prop:worldToModel(x, y)
     
@@ -70,8 +70,4 @@ function item_onTouchDown(e)
     local xCoord, yCoord = singlePlayerGame.map:GetMOAIGrid():locToCoord(x, y)
     
     singlePlayerGame:onTouchDown(vector{xCoord, yCoord})
-    
-    prop.touchDown = true
-    prop.touchIdx = e.idx
-    prop.touchLast = vector{e.wx, e.wy}
 end
