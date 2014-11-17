@@ -15,7 +15,6 @@ function io.files(dir)
     
     for file in lfs.dir(dir) do
         local fullPath = dir .. file
-        print(fullPath)
         if lfs.attributes(fullPath,"mode") == "file" then
             table.insert(files, fullPath)
         end
