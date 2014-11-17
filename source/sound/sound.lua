@@ -67,7 +67,7 @@ end
 
 function SoundManager:playCallback()
     self.currentSound:stop()
-    self:play()
+    self:randomizedPlay()
 end
 
 function SoundManager:stop()
