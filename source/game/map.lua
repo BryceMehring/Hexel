@@ -1,7 +1,6 @@
 
 require "source/pathfinder"
 require "source/utilities/vector"
-local Towers = require "assets/towers"
 
 Map = flower.class()
 
@@ -72,10 +71,10 @@ function Map:Load(file)
         for i = 1,self.width do
             for j = 1,self.height do
                 local tile = self.grid.grid:getTile(i, j)
-                if tile == 2 then
+                if tile == TOWER_TYPES.TARGET then
                     -- this tile is the desination
                     self.targetPosition[1], self.targetPosition[2] = i, j
-                elseif tile == 1 then
+                elseif tile == TOWER_TYPES.SPAWN then
                     table.insert(self.spawnTiles, {i, j})
                 end
             end
@@ -86,7 +85,7 @@ function Map:Load(file)
     
     -- TODO: make this a bit more dynamic
     local function validTileCallback(tile)
-        return tile == 6 or tile == 2 or tile == 1
+        return tile == TOWER_TYPES.ENEMY or tile == TOWER_TYPES.TARGET or tile == TOWER_TYPES.SPAWN
     end
     
     -- Find path in the map
