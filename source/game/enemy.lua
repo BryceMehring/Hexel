@@ -49,13 +49,16 @@ function Enemy:updateHealthBar()
         self.oldAction = self.healthBar:moveScl(newScl, 0, 0, 0.08, MOAIEaseType.LINEAR)
     end
     
-    if self.health < self.maxHealth and self.healthBar:getVisible() == false then
-       self.backgroundHealthBar:setVisible(true)
-       self.healthBar:setVisible(true)
-    elseif self.health == self.maxHealth and self.healthBar:getVisible() then
-        self.backgroundHealthBar:setVisible(false)
-        self.healthBar:setVisible(false)
+    if self.health < self.maxHealth then
+        self:setHealthVisibility(true)
+    else
+        self:setHealthVisibility(false)
     end
+end
+
+function Enemy:setHealthVisibility(isVisible)
+   self.backgroundHealthBar:setVisible(isVisible)
+   self.healthBar:setVisible(isVisible)
 end
 
 function Enemy:updatePos()
