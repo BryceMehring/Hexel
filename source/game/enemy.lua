@@ -48,15 +48,9 @@ function Enemy:updateHealthBar()
     end
 end
 
-function Enemy:update()
+function Enemy:updatePos()
     local startingPosition = vector{self.group:getPos()}
     local finalPosition = nil
-    
-    self:updateHealthBar()
-    
-    if self.health <= 0 then
-        return self.DIED
-    end
     
     if self.map:GetPath() and self.map:GetPath()[1] then
         if (self.currentPos == (#self.map:GetPath())) then
@@ -86,8 +80,17 @@ function Enemy:update()
     
     local newPosition = velocity + startingPosition
     self.group:setPos(newPosition[1], newPosition[2])
+end
+
+function Enemy:update()
+    if self.health <= 0 then
+        return self.DIED
+    end
     
-    return self.CONTINUE
+    self:updateHealthBar()
+    
+    local updateStatus = self:updatePos()
+    return updateStatus or self.CONTINUE
 end
 
 function Enemy:damage(damage)
