@@ -1,4 +1,4 @@
 return {
-    {title = "Map 1", path = "assets/maps/map1.lua"},
-    {title = "Pathfinding Test Map", path = "assets/maps/map2.lua"},
+    {title = "Map 1", path = "assets/maps/map1.lua", image = "map_1.png"},
+    {title = "Pathfinding Test Map", path = "assets/maps/map2.lua", image = "map_2.png"},
 }

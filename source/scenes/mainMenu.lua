@@ -49,6 +49,10 @@ end
 function createMenuList()
     
     local function onClickCallback(item)
+        if flower.SceneMgr.transitioning then
+            return
+        end
+        
         if item.scene then
             local childView = createChildView()
             local childScene = flower.openScene(item.scene, {animation = item.openAnime, params = item.params, view = childView})

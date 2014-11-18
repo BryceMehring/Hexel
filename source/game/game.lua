@@ -234,14 +234,16 @@ end
 function Game:paused(p)
     if p ~= nil then
 
-        for k, timer in pairs(self.timers) do
-            if p then
-                timer:pause()
-            else
-                timer:start()
+        if self.timers then
+            for k, timer in pairs(self.timers) do
+                if p then
+                    timer:pause()
+                else
+                    timer:start()
+                end
             end
         end
-
+        
         self.isPaused = p
         updatePauseButton(not p)
     else
@@ -254,14 +256,15 @@ function Game:stopped(s)
         
         if s == true then
             self.soundManager:stop()
-            for k, timer in pairs(self.timers) do
-                flower.Executors.cancel(timer)
+            if self.timers then
+                for k, timer in pairs(self.timers) do
+                    flower.Executors.cancel(timer)
+                end
+                
+                for i, enemy in ipairs(self.enemies) do
+                    enemy:remove()
+                end
             end
-            
-            for i, enemy in ipairs(self.enemies) do
-                enemy:remove()
-            end
-            
         end
         
         self.isStopped = s
