@@ -25,7 +25,6 @@ local images = {}
 
 local numImages = 0
 function temp(names, size)
-    print(numImages)
     for i=1, #names, 1 do
         u0 = (((i+numImages)-1)%sprites_per_line) * norm_asset_width -- X0
         v0 = math.floor(((i+numImages)-1)/sprites_per_line) * norm_asset_height -- Y0

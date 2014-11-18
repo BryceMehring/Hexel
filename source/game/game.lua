@@ -279,6 +279,10 @@ end
 
 --TODO: clean this up
 function Game:onTouchDown(pos)
+    if self:stopped() then
+        flower.closeScene({animation = "fade"})
+    end
+    
     local tile = self.map:GetGrid():getTile(pos[1], pos[2])
     -- TODO: highlight map tile
     

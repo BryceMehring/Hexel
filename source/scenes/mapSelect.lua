@@ -17,7 +17,6 @@ function createChildView()
                 size = {flower.viewWidth/6, 39},
                 text = "Back",
                 onClick = function()
-                    --flower.closeScene()
                     flower.closeScene({animation = "fade"})
                     selectedData = nil
                 end,
