@@ -19,16 +19,18 @@ function Enemy:init(t)
     local rectangle = flower.Rect(t.width, t.height)
     rectangle:setColor(t.color[1], t.color[2], t.color[3], t.color[4])
     
-    local backgroundHealthBar = flower.Rect(t.width, t.height / 4)
-    backgroundHealthBar:setPos(0, -t.height / 2)
-    backgroundHealthBar:setColor(0, 0, 0, 1)
+    self.backgroundHealthBar = flower.Rect(t.width, t.height / 4)
+    self.backgroundHealthBar:setPos(0, -t.height / 2)
+    self.backgroundHealthBar:setColor(0, 0, 0, 1)
+    self.backgroundHealthBar:setVisible(false)
     
     self.healthBar = flower.Rect(t.width, t.height / 4)
     self.healthBar:setPos(0, -t.height / 2)
     self.healthBar:setColor(1, 0, 0, 1)
+    self.healthBar:setVisible(false)
     
     self.group:addChild(rectangle)
-    self.group:addChild(backgroundHealthBar)
+    self.group:addChild(self.backgroundHealthBar)
     self.group:addChild(self.healthBar)
     
     self.currentPos = 1
@@ -45,6 +47,14 @@ function Enemy:updateHealthBar()
     
     if not self.oldAction or not self.oldAction:isActive() then
         self.oldAction = self.healthBar:moveScl(newScl, 0, 0, 0.08, MOAIEaseType.LINEAR)
+    end
+    
+    if self.health < self.maxHealth and self.healthBar:getVisible() == false then
+       self.backgroundHealthBar:setVisible(true)
+       self.healthBar:setVisible(true)
+    elseif self.health == self.maxHealth and self.healthBar:getVisible() then
+        self.backgroundHealthBar:setVisible(false)
+        self.healthBar:setVisible(false)
     end
 end
 
