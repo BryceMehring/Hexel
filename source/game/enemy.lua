@@ -49,11 +49,7 @@ function Enemy:updateHealthBar()
         self.oldAction = self.healthBar:moveScl(newScl, 0, 0, 0.08, MOAIEaseType.LINEAR)
     end
     
-    if self.health < self.maxHealth then
-        self:setHealthVisibility(true)
-    else
-        self:setHealthVisibility(false)
-    end
+    self:setHealthVisibility(self.health < self.maxHealth)
 end
 
 function Enemy:setHealthVisibility(isVisible)
