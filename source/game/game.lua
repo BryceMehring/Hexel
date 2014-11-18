@@ -204,7 +204,7 @@ function Game:loop()
         local result = tower:fire(self.enemies)
         if result ~= nil then
             local v1 = self.map:GridToWorldSpace(tower.pos)
-            local v2 = vector{self.enemies[result].rectangle:getPos()}
+            local v2 = vector{self.enemies[result].group:getPos()}
             local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
             attack:setColor(1,1,1,1)
             attack:setLayer(self.layer)
