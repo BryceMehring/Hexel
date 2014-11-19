@@ -77,8 +77,7 @@ end
 function MapEditor._algorithmRippleOut(pos)
     local function ValidTile(pos)
         return pos[1] >= 1 and pos[1] <= MapEditor.width and
-               pos[2] >= 1 and pos[2] <= MapEditor.height and
-               MapEditor.grid:getTile(pos[1], pos[2]) ~= 3
+               pos[2] >= 1 and pos[2] <= MapEditor.height
     end
     
     --[[if not ValidTile(pos) then
