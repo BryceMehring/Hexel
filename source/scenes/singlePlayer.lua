@@ -59,7 +59,7 @@ function item_onTouchDown(e)
     end
     
     -- TODO: check this later. Is this needed?
-    local prop = singlePlayerGame.map:GetGrid()
+    local prop = singlePlayerGame.map:getGrid()
 
     local x = e.x
     local y = e.y
@@ -67,7 +67,7 @@ function item_onTouchDown(e)
     x, y = prop:worldToModel(x, y)
     
     -- TODO: move this into the Game
-    local xCoord, yCoord = singlePlayerGame.map:GetMOAIGrid():locToCoord(x, y)
+    local xCoord, yCoord = singlePlayerGame.map:getMOAIGrid():locToCoord(x, y)
     
     singlePlayerGame:onTouchDown(vector{xCoord, yCoord})
 end

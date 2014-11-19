@@ -121,7 +121,7 @@ function Game:run()
         local newEnemy = Enemy {
             layer = self.layer,
             width = 10, height = 10,
-            pos = self.map:RandomStartingPosition(),
+            pos = self.map:randomStartingPosition(),
             color = spawnColor,
             speed = math.randomFloatBetween(2, 5),
             map = self.map,
@@ -152,11 +152,11 @@ function Game:updateWave()
     self.spawnedEnemies = 0
    
     self.currentWave = (self.currentWave + 1)
-    if self.currentWave > #self.map:GetWaves() then
+    if self.currentWave > #self.map:getWaves() then
         self.currentWave = 1
     end
     
-    self.timers.spawnTimer:setSpan(self.map:GetWaves()[self.currentWave].spawnRate)
+    self.timers.spawnTimer:setSpan(self.map:getWaves()[self.currentWave].spawnRate)
     
     self:updateGUI()
     -- TODO: move this code somewhere else?
@@ -172,7 +172,7 @@ end
 
 function Game:loop()
     
-    if self.enemiesKilled == self.map:GetWaves()[self.currentWave].length then
+    if self.enemiesKilled == self.map:getWaves()[self.currentWave].length then
         -- increment to the next wave
         self:updateWave()
     end
@@ -203,7 +203,7 @@ function Game:loop()
     for key, tower in pairs(self.towers) do
         local result = tower:fire(self.enemies)
         if result ~= nil then
-            local v1 = self.map:GridToWorldSpace(tower.pos)
+            local v1 = self.map:gridToWorldSpace(tower.pos)
             local v2 = vector{self.enemies[result].group:getPos()}
             local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
             attack:setColor(1,1,1,1)
@@ -283,13 +283,13 @@ function Game:onTouchDown(pos)
         flower.closeScene({animation = "fade"})
     end
     
-    local tile = self.map:GetGrid():getTile(pos[1], pos[2])
+    local tile = self.map:getGrid():getTile(pos[1], pos[2])
     -- TODO: highlight map tile
     
     if tile == 5 and self.sideSelect ~= -1 then
         if self.currentCash >= Towers[self.sideSelect].cost then
             self.currentCash = self.currentCash - Towers[self.sideSelect].cost
-            self.map:GetGrid():setTile(pos[1], pos[2], self.sideSelect)
+            self.map:getGrid():setTile(pos[1], pos[2], self.sideSelect)
             self.towers[Tower.serialize_pos(pos)] = Tower(self.sideSelect, pos)
             self:updateGUI()
             -- TODO: update statusUI for cost

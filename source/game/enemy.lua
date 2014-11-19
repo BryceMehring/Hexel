@@ -61,8 +61,8 @@ function Enemy:updatePos()
     local startingPosition = vector{self.group:getPos()}
     local finalPosition = nil
     
-    if self.map:GetPath() and self.map:GetPath()[1] then
-        if (self.currentPos == (#self.map:GetPath())) then
+    if self.map:getPath() and self.map:getPath()[1] then
+        if (self.currentPos == (#self.map:getPath())) then
             return self.END_OF_PATH
         end
         
@@ -72,7 +72,7 @@ function Enemy:updatePos()
             MOAIGridSpace.TILE_CENTER)}
     
     else
-        finalPosition = getPathDestination(self.map:GetMOAIGrid(), startingPosition, self.map:GetPath())
+        finalPosition = getPathDestination(self.map:getMOAIGrid(), startingPosition, self.map:getPath())
         
         if finalPosition == nil then
             return self.END_OF_PATH
@@ -115,5 +115,5 @@ end
 
 function Enemy:get_tile()
     local pos = vector{self.group:getPos()}
-    return vector{self.map:GetMOAIGrid():locToCoord(pos[1], pos[2])}
+    return vector{self.map:getMOAIGrid():locToCoord(pos[1], pos[2])}
 end
