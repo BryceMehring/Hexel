@@ -101,7 +101,7 @@ end
 -- Event Handler
 --------------------------------------------------------------------------------
 
-function onCreate(e)
+function onCreate(e)    
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     scene:addChild(layer)
@@ -114,14 +114,12 @@ function onCreate(e)
             align = {"center", "top"},
         },
         children = {{
-            -- TODO: need to center this
-            flower.Label("Hexel", 400, 200, nil, 128)
+            flower.Label("Hexel", nil, nil, nil, 128)
         }}
     }
     
     createMenuList()
     flower.Runtime:addEventListener("resize", onResize)
-
 end
 
 function onStart(e)

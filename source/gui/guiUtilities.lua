@@ -184,6 +184,18 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             end,
             parent = view,
         }
+        
+        voidSpace = widget.SheetButton {
+            pos = {blackSpace:getRight(), blackSpace:getTop()},
+            size = buttonSize,
+            normalTexture = "void_space.png",
+            onClick = function()
+                setColor(6)
+                --parentObj.currentColor = 6
+                statusUI:setText(parentObj:generateStatus())
+            end,
+            parent = view,
+        }
     
         toggleModeButton = widget.Button {
             pos = {xPosition, brownSpace:getBottom()},

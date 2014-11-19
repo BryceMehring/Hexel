@@ -10,6 +10,6 @@ themes = require "source/libraries/themes"
 flower.openWindow("Hexel", 1024, 768)
 
 math.randomseed(os.clock())
-flower.openScene("source/scenes/mainMenu")
+flower.openScene("source/scenes/splashScreen", {animation = "fade"})
 
 MOAIUntzSystem.initialize()
