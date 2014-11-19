@@ -180,8 +180,9 @@ function Game:loop()
         self:updateWave()
     end
         
-    
+    -- TODO: move the laser into its own class
     for i = #self.attacks, 1, -1 do
+        self.attacks[i]:setLayer(nil)
         self.attacks[i]:setVisible(false)
         table.remove(self.attacks, i)
     end
