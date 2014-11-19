@@ -49,8 +49,8 @@ end
 -- This function is used by the GuiUtilities file to generate
 -- the status field in the UI
 function MapEditor.generateStatus()
-    return "Current Algorithm: " .. MapEditor.currentAlgorithm ..
-        "\nCurrent Color: " .. MapEditor.currentColor
+    return "Current Algorithm: " .. MapEditor.algorithms[MapEditor.currentAlgorithm].name ..
+            "\nCurrent Color: " .. MapEditor.currentColor
 end
 
 -- Load/Save grid to file
@@ -69,13 +69,8 @@ function MapEditor.serializeGrid(file, streamIn)
     end
 end
 
-function MapEditor._updateStatus()
-   return "\nPaint Mode: " .. MapEditor.currentAlgorithm ..
-          "\nColor Mode: " .. MapEditor.currentColor
-end
-
 function MapEditor.onTouchDown(pos)
-    MapEditor.algorithms[MapEditor.currentAlgorithm](pos)
+    MapEditor.algorithms[MapEditor.currentAlgorithm].func(pos)
 end
 
 -- TODO: move these painting algorithms into another file
@@ -121,12 +116,8 @@ function MapEditor._algorithmFillSingleTile(pos, tile)
     MapEditor.grid:setTile(pos[1], pos[2], tile)
 end
 
--- Create a list of all algorithms that the map editor supports
-for k, v in pairs(MapEditor) do
-    if type(v) == "function" and string.match(k, "^_algorithm") then
-        table.insert(MapEditor.algorithms, v)
-    end
-end
+table.insert(MapEditor.algorithms, {name = "Tile", func = MapEditor._algorithmFillSingleTile})
+table.insert(MapEditor.algorithms, {name = "Fill", func = MapEditor._algorithmRippleOut})
 
 function MapEditor.setColor(colorNum)
     MapEditor.currentColor = colorNum
