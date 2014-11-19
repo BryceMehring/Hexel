@@ -1,5 +1,6 @@
 
 require "source/utilities/vector"
+require "source/game/healthBar"
 
 -- import
 local flower = flower
@@ -19,21 +20,14 @@ function Enemy:init(t)
     local rectangle = flower.Rect(t.width, t.height)
     rectangle:setColor(t.color[1], t.color[2], t.color[3], t.color[4])
     
-    self.healthBarGroup = flower.Group(nil, t.width, t.height)
-    
-    local backgroundHealthBar = flower.Rect(t.width, t.height / 4)
-    backgroundHealthBar:setPos(0, -t.height / 2)
-    backgroundHealthBar:setColor(0, 0, 0, 1)
-    
-    self.healthBar = flower.Rect(t.width, t.height / 4)
-    self.healthBar:setPos(0, -t.height / 2)
-    self.healthBar:setColor(1, 0, 0, 1)
-    
-    self.healthBarGroup:addChild(backgroundHealthBar)
-    self.healthBarGroup:addChild(self.healthBar)
-    
     self.group:addChild(rectangle)
-    self.group:addChild(self.healthBarGroup)
+    
+    self.healthBar = HealthBar {
+        parent = self.group,
+        width = t.width,
+        height = t.height,
+        moveSclTime = 0.08
+    }
     
     self.currentPos = 1
     self.speed = t.speed or 5
@@ -44,14 +38,8 @@ function Enemy:init(t)
 end
 
 function Enemy:updateHealthBar()
-    local currentScl = self.healthBar:getScl()
-    local newScl = (self.health / self.maxHealth) - currentScl
-    
-    if not self.oldAction or not self.oldAction:isActive() then
-        self.oldAction = self.healthBar:moveScl(newScl, 0, 0, 0.08, MOAIEaseType.LINEAR)
-    end
-    
-    self.healthBarGroup:setVisible(self.health < self.maxHealth)
+    self.healthBar:moveScl(self.health / self.maxHealth)
+    self.healthBar:setVisible(self.health < self.maxHealth)
 end
 
 function Enemy:updatePos()
