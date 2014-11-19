@@ -49,10 +49,8 @@ function createEvent()
 end
 
 function loadResources()
-    print("Loading SoundManager")
     soundManager = SoundManager {
         soundDir = "assets/sounds/soundtrack/",
     }
-    print("SoundManager loaded")
 end
 

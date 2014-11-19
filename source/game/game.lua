@@ -61,9 +61,7 @@ function Game:init(t)
     self.soundManager = SoundManager {
        soundDir = "assets/sounds/soundtrack/",
     }
-    print("SoundManager loaded")
     self.soundManager:randomizedPlay()
-    print("Randomized play")
     
     self:buildGrid()
 end
