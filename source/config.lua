@@ -62,6 +62,9 @@ MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)
 -- Sets the boost threshold
 MOAISim.setBoostThreshold(0)
 
+-- Turn on the garbage collector step
+MOAISim.setGCStep(100)
+
 -- Only log errors
 MOAILogMgr.setLogLevel(MOAILogMgr.LOG_ERROR)
 
