@@ -226,8 +226,8 @@ function Game:loseLife()
    self.currentLives = self.currentLives - 1
    if self.currentLives <= 0 then
        local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Game Over!", self.view)
-        msgBox:showPopup()
-       self:stopped(true) 
+       msgBox:showPopup()
+       self:stopped(true)
     end
 end
 
