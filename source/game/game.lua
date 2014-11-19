@@ -111,7 +111,7 @@ function Game:run()
     -- Timer controlling when enemies spawn
     local spawnTimer = flower.Executors.callLoopTime(self.map.map.waves[self.currentWave].spawnRate, function()
         local function pauseIfWaveComplete()
-            if self.spawnedEnemies >= self.map.map.waves[self.currentWave].length then
+            if not self.gameOver and self.spawnedEnemies >= self.map.map.waves[self.currentWave].length then
                 self.timers.spawnTimer:pause()
                 return true
             end
@@ -156,21 +156,22 @@ function Game:updateWave()
    
     self.currentWave = (self.currentWave + 1)
     if self.currentWave > #self.map:getWaves() then
-        self.currentWave = 1
+        self:showEndGameMessage("You Win!")
+        self.gameOver = true
+    else
+        self.timers.spawnTimer:setSpan(self.map:getWaves()[self.currentWave].spawnRate)
+        
+        self:updateGUI()
+        -- TODO: move this code somewhere else?
+        
+        local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Wave: " .. self.currentWave, self.view)
+        
+        msgBox:showPopup()
+        flower.Executors.callLaterTime(3, function()
+            msgBox:hidePopup()
+            self:paused(false)
+        end)
     end
-    
-    self.timers.spawnTimer:setSpan(self.map:getWaves()[self.currentWave].spawnRate)
-    
-    self:updateGUI()
-    -- TODO: move this code somewhere else?
-    
-    local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Wave: " .. self.currentWave, self.view)
-    
-    msgBox:showPopup()
-    flower.Executors.callLaterTime(3, function()
-        msgBox:hidePopup()
-        self:paused(false)
-    end)
 end
 
 function Game:loop()
@@ -229,9 +230,7 @@ end
 function Game:loseLife()
    self.currentLives = self.currentLives - 1
    if self.currentLives <= 0 then
-       local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Game Over!", self.view)
-       msgBox:showPopup()
-       self:stopped(true)
+       self:showEndGameMessage("Game Over!")
     end
 end
 
@@ -279,6 +278,12 @@ end
 
 function Game:updateGUI()
     self.updateStatus(self:generateStatus())
+end
+
+function Game:showEndGameMessage(msg)
+    local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, msg, self.view)
+    msgBox:showPopup()
+    self:stopped(true)
 end
 
 --TODO: clean this up
