@@ -1,3 +1,7 @@
+--------------------------------------------------------------------------------
+-- tower.lua - Defines a tower which has the ability to fire upon enemies
+--------------------------------------------------------------------------------
+
 local class = flower.class
 local Towers = require "assets/towers"
 require "source/gridNeighbors"

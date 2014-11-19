@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- enemy.lua - Defines an enemy that has a health bar which follows the path of the map
+--------------------------------------------------------------------------------
 
 require "source/utilities/vector"
 require "source/game/healthBar"

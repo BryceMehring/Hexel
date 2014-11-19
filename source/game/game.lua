@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- game.lua - Defines a game which(for now) manages the game logic for a single player game
+--------------------------------------------------------------------------------
 -- TODO: clean this up!
 
 require "source/utilities/vector"

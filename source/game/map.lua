@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- map.lua - Defines a map which manages the construction of the hex grid and the path within
+--------------------------------------------------------------------------------
 
 require "source/pathfinder"
 require "source/utilities/vector"

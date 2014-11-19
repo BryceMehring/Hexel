@@ -1,3 +1,7 @@
+--------------------------------------------------------------------------------
+-- healthBar.lua - Defines functionality which manages the creation and updating health bars.
+--------------------------------------------------------------------------------
+
 local flower = flower
 
 HealthBar = flower.class()
