@@ -1,5 +1,9 @@
+--------------------------------------------------------------------------------
+-- enemy.lua - Defines an enemy that has a health bar which follows the path of the map
+--------------------------------------------------------------------------------
 
 require "source/utilities/vector"
+require "source/game/healthBar"
 
 -- import
 local flower = flower
@@ -19,19 +23,14 @@ function Enemy:init(t)
     local rectangle = flower.Rect(t.width, t.height)
     rectangle:setColor(t.color[1], t.color[2], t.color[3], t.color[4])
     
-    self.backgroundHealthBar = flower.Rect(t.width, t.height / 4)
-    self.backgroundHealthBar:setPos(0, -t.height / 2)
-    self.backgroundHealthBar:setColor(0, 0, 0, 1)
-    self.backgroundHealthBar:setVisible(false)
-    
-    self.healthBar = flower.Rect(t.width, t.height / 4)
-    self.healthBar:setPos(0, -t.height / 2)
-    self.healthBar:setColor(1, 0, 0, 1)
-    self.healthBar:setVisible(false)
-    
     self.group:addChild(rectangle)
-    self.group:addChild(self.backgroundHealthBar)
-    self.group:addChild(self.healthBar)
+    
+    self.healthBar = HealthBar {
+        parent = self.group,
+        width = t.width,
+        height = t.height,
+        moveSclTime = 0.08
+    }
     
     self.currentPos = 1
     self.speed = t.speed or 5
@@ -42,27 +41,16 @@ function Enemy:init(t)
 end
 
 function Enemy:updateHealthBar()
-    local currentScl = self.healthBar:getScl()
-    local newScl = (self.health / self.maxHealth) - currentScl
-    
-    if not self.oldAction or not self.oldAction:isActive() then
-        self.oldAction = self.healthBar:moveScl(newScl, 0, 0, 0.08, MOAIEaseType.LINEAR)
-    end
-    
-    self:setHealthVisibility(self.health < self.maxHealth)
-end
-
-function Enemy:setHealthVisibility(isVisible)
-   self.backgroundHealthBar:setVisible(isVisible)
-   self.healthBar:setVisible(isVisible)
+    self.healthBar:moveScl(self.health / self.maxHealth)
+    self.healthBar:setVisible(self.health < self.maxHealth)
 end
 
 function Enemy:updatePos()
     local startingPosition = vector{self.group:getPos()}
     local finalPosition = nil
     
-    if self.map:GetPath() and self.map:GetPath()[1] then
-        if (self.currentPos == (#self.map:GetPath())) then
+    if self.map:getPath() and self.map:getPath()[1] then
+        if (self.currentPos == (#self.map:getPath())) then
             return self.END_OF_PATH
         end
         
@@ -72,7 +60,7 @@ function Enemy:updatePos()
             MOAIGridSpace.TILE_CENTER)}
     
     else
-        finalPosition = getPathDestination(self.map:GetMOAIGrid(), startingPosition, self.map:GetPath())
+        finalPosition = getPathDestination(self.map:getMOAIGrid(), startingPosition, self.map:getPath())
         
         if finalPosition == nil then
             return self.END_OF_PATH
@@ -115,5 +103,5 @@ end
 
 function Enemy:get_tile()
     local pos = vector{self.group:getPos()}
-    return vector{self.map:GetMOAIGrid():locToCoord(pos[1], pos[2])}
+    return vector{self.map:getMOAIGrid():locToCoord(pos[1], pos[2])}
 end

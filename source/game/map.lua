@@ -1,3 +1,6 @@
+--------------------------------------------------------------------------------
+-- map.lua - Defines a map which manages the construction of the hex grid and the path within
+--------------------------------------------------------------------------------
 
 require "source/pathfinder"
 require "source/utilities/vector"
@@ -12,12 +15,12 @@ function Map:init(t)
     end
     
     -- Try to load the map
-    if not self:Load() then
+    if not self:load() then
         print("Cannot Load Map: " .. self.file)
     end
 end
 
-function Map:Load(file)
+function Map:load(file)
     self.file = self.file or file
     if not (self.file and io.fileExists(self.file)) then
         return false
@@ -64,8 +67,6 @@ function Map:Load(file)
         self.grid.grid:streamTilesIn(fileStream)
         fileStream:close()
             
-        -- TODO: turn the tower types into global variables instead of hardcoding them
-        -- Check which tiles are enemy tiles
         self.spawnTiles = {}
         self.targetPosition = {}
         for i = 1,self.width do
@@ -89,8 +90,8 @@ function Map:Load(file)
     end
     
     -- Find path in the map
-    if self:IsPathDynamic() then
-        self.path = findPath(self:GetMOAIGrid(), vector{self.targetPosition[1], self.targetPosition[2]}, validTileCallback)
+    if self:isPathDynamic() then
+        self.path = findPath(self:getMOAIGrid(), vector{self.targetPosition[1], self.targetPosition[2]}, validTileCallback)
     else
         self.path = self.map.paths[1]
         self.targetPosition = self.path[#self.path]
@@ -99,22 +100,22 @@ function Map:Load(file)
     return true
 end
 
-function Map:RandomStartingPosition()
-    local startPosition = not self:IsPathDynamic() and self.path[1]
+function Map:randomStartingPosition()
+    local startPosition = not self:isPathDynamic() and self.path[1]
     if not startPosition then
         local randomIndex = math.random(1, #self.spawnTiles)
         startPosition = self.spawnTiles[randomIndex]
     end
     
-    return self:GridToWorldSpace(startPosition)
+    return self:gridToWorldSpace(startPosition)
 end
 
-function Map:GridToWorldSpace(pos)
-    return vector{self:GetMOAIGrid():getTileLoc(pos[1], pos[2], MOAIGridSpace.TILE_CENTER)}
+function Map:gridToWorldSpace(pos)
+    return vector{self:getMOAIGrid():getTileLoc(pos[1], pos[2], MOAIGridSpace.TILE_CENTER)}
 end
 
 -- Returns true if the path was found using a pathfinder
-function Map:IsPathDynamic()
+function Map:isPathDynamic()
     if self.map.paths then
         return false
     end
@@ -122,19 +123,19 @@ function Map:IsPathDynamic()
     return true
 end
 
-function Map:GetPath()
+function Map:getPath()
     return self.path
 end
 
-function Map:GetGrid()
+function Map:getGrid()
     return self.grid
 end
 
-function Map:GetWaves()
+function Map:getWaves()
     return self.map.waves
 end
 
-function Map:GetMOAIGrid()
-    return self:GetGrid().grid
+function Map:getMOAIGrid()
+    return self:getGrid().grid
 end
     
