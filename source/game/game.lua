@@ -10,8 +10,9 @@ require "source/game/tower"
 require "source/pathfinder"
 require "source/game/map"
 require "source/sound/sound"
+require "assets/enemies/enemyTypes"
 
-local Towers = require "assets/towers"
+local Towers = require "assets/towers/towers"
 
 -- import
 local flower = flower
@@ -102,16 +103,21 @@ function Game:buildGrid()
 end
 
 function Game:run()
-    local spawnColor = {1, 0, 0, 1}
     
     self.enemies = {}
     self.enemiesKilled = 0
     self.spawnedEnemies = 0
     
     -- Timer controlling when enemies spawn
-    local spawnTimer = flower.Executors.callLoopTime(self.map.map.waves[self.currentWave].spawnRate, function()
+    local spawnTimer = flower.Executors.callLoopTime(self.map:getWaves()[self.currentWave].spawnRate, function()
+        if self.gameOver then
+            return
+        end
+        
+        local currentWave = self.map:getWaves()[self.currentWave]
+            
         local function pauseIfWaveComplete()
-            if not self.gameOver and self.spawnedEnemies >= self.map.map.waves[self.currentWave].length then
+            if self.spawnedEnemies >= currentWave.length then
                 self.timers.spawnTimer:pause()
                 return true
             end
@@ -121,28 +127,24 @@ function Game:run()
             return
         end
   
+        local randomEnemyType = ENEMY_TYPES[math.randomListElement(currentWave.enemies)]
+        
         local newEnemy = Enemy {
             layer = self.layer,
-            width = 10, height = 10,
+            width = randomEnemyType.size, height = randomEnemyType.size,
             pos = self.map:randomStartingPosition(),
-            color = spawnColor,
-            speed = math.randomFloatBetween(2, 5),
+            color = randomEnemyType.color,
+            speed = randomEnemyType.speed,
             map = self.map,
-            score = 10
+            score = 10,
+            health = randomEnemyType.health,
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1
     end)
 
-    -- Timer controlling when the enemies change color(in the future this could change the wave type)
-    local colorTimer = flower.Executors.callLoopTime(4, function()
-        spawnColor = math.generateRandomNumbers(0.1, 1, 4)
-        spawnColor[4] = math.clamp(spawnColor[4], 0.95, 1.0)
-    end)
-
     self.timers = {
         spawnTimer = spawnTimer,
-        colorTimer = colorTimer,
     }
     
     self:paused(false)

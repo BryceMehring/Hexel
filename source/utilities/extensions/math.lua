@@ -44,6 +44,11 @@ function math.shuffleCopy(list)
     return listCopy
 end
 
+function math.randomListElement(list)
+    local randomIndex = math.random(1, #list)
+    return list[randomIndex]
+end
+
 function math.clamp(x, minValue, maxValue)
     return math.max(minValue, math.min(maxValue, x))
 end

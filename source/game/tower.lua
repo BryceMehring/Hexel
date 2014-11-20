@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
 local class = flower.class
-local Towers = require "assets/towers"
+local Towers = require "assets/towers/towers"
 require "source/gridNeighbors"
 require "source/utilities/vector"
 require "source/sound/sound"

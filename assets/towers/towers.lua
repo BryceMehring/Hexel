@@ -1,4 +1,4 @@
-require "assets/towerTypes"
+require "assets/towers/towerTypes"
 
 local towers = {}
 

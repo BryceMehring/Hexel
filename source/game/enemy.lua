@@ -35,7 +35,7 @@ function Enemy:init(t)
     self.currentPos = 1
     self.speed = t.speed or 5
     self.map = t.map
-    self.health = 100
+    self.health = t.health
     self.maxHealth = self.health
     self.score = t.score
 end

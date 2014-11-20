@@ -43,9 +43,9 @@ map.targetPosition = {7, 35}
 
 -- Wave details
 map.waves = {
-    {enemies = {TOWER_TYPES.RED, TOWER_TYPES.YELLOW, TOWER_TYPES.GREEN}, spawnRate = 0.5, length = 5},
-    {enemies = {TOWER_TYPES.RED, TOWER_TYPES.GREEN}, spawnRate = 0.4, length = 30},
-    {enemies = {TOWER_TYPES.RED}, spawnRate = 0.1, length = 200},
+    {enemies = {"NORMAL"}, spawnRate = 0.5, length = 5},
+    {enemies = {"NORMAL", "FAST"}, spawnRate = 0.4, length = 30},
+    {enemies = {"NORMAL", "FAST", "HEAVY"}, spawnRate = 0.2, length = 200},
 }
 
 return map

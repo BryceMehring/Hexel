@@ -1,7 +1,7 @@
 local flower = flower
 local widget = widget
 
-local TOWERS = require "assets/towers"
+local TOWERS = require "assets/towers/towers"
 
 local statusUI = nil
 local itemInfoUI = nil
