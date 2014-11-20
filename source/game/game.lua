@@ -131,7 +131,7 @@ function Game:run()
             layer = self.layer,
             map = self.map,
             pos = self.map:randomStartingPosition(),
-            type = ENEMY_TYPES[math.randomListElement(currentWave.enemies)],
+            type = ENEMY_TYPES[math.randomWeight(currentWave.enemies).type],
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1

@@ -43,10 +43,21 @@ map.targetPosition = {7, 35}
 
 -- Wave details
 map.waves = {
-    {enemies = {"NORMAL"}, spawnRate = 0.5, length = 5},
-    {enemies = {"NORMAL", "FAST"}, spawnRate = 0.4, length = 30},
-    {enemies = {"NORMAL", "FAST", "HEAVY"}, spawnRate = 0.2, length = 200},
-    {enemies = {"SUPER"}, spawnRate = 7, length = 5},
+    
+    {enemies = {{type = "NORMAL", weight = 1}},
+                spawnRate = 0.5, length = 5},
+    
+    {enemies = {{type = "NORMAL", weight = 10},
+                {type = "FAST",   weight = 50}},
+                spawnRate = 0.4, length = 100},
+        
+    {enemies = {{type = "NORMAL", weight = 20},
+                {type = "FAST", weight = 40},
+                {type = "HEAVY", weight = 80}},
+                spawnRate = 0.3, length = 200},
+        
+    {enemies = {{type = "SUPER", weight = 1}},
+                spawnRate = 5, length = 5},
 }
 
 return map

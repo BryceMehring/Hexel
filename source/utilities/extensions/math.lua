@@ -49,6 +49,27 @@ function math.randomListElement(list)
     return list[randomIndex]
 end
 
+-- TODO: need to verify that this is correct
+-- http://stackoverflow.com/a/2149533
+function math.randomWeight(list)
+    local totalWeight = 0
+    for i, v in ipairs(list) do
+        totalWeight = totalWeight + v.weight
+    end
+    
+    local weight = list[1].weight
+
+    local x = totalWeight * math.random()
+    local i = 1
+    while x > weight do
+        x = x - weight
+        i = i + 1
+        weight = list[i].weight
+    end
+    
+    return list[i]
+end
+
 function math.clamp(x, minValue, maxValue)
     return math.max(minValue, math.min(maxValue, x))
 end
