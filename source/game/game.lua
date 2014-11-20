@@ -136,7 +136,7 @@ function Game:run()
             color = randomEnemyType.color,
             speed = randomEnemyType.speed,
             map = self.map,
-            score = 10,
+            score = randomEnemyType.score,
             health = randomEnemyType.health,
         }
         table.insert(self.enemies, newEnemy)
