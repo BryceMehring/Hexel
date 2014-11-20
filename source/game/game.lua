@@ -21,8 +21,7 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-local POPUP_SIZE = {flower.viewWidth / 2, 100}
-local POPUP_POS = {flower.viewWidth / 5, flower.viewHeight / 2}
+
 
 Game = flower.class()
 
@@ -79,6 +78,15 @@ function Game:generateItemInfo()
     else
        return "" 
     end
+end
+
+
+function Game:getPopupPos()
+    return {flower.viewWidth / 5, flower.viewHeight / 2}
+end 
+
+function Game:getPopupSize()
+    return {flower.viewWidth / 2, 100}
 end
 
 function Game:generateStatus()
@@ -160,7 +168,7 @@ function Game:updateWave()
         self:updateGUI()
         -- TODO: move this code somewhere else?
         
-        local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, "Wave: " .. self.currentWave, self.view)
+        local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), "Wave: " .. self.currentWave, self.view)
         
         msgBox:showPopup()
         flower.Executors.callLaterTime(3, function()
@@ -277,7 +285,7 @@ function Game:updateGUI()
 end
 
 function Game:showEndGameMessage(msg)
-    local msgBox = generateMsgBox(POPUP_POS, POPUP_SIZE, msg, self.view)
+    local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.view)
     msgBox:showPopup()
     self:stopped(true)
 end
