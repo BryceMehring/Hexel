@@ -20,7 +20,9 @@ Enemy.CONTINUE = 3
 function Enemy:init(t)
     self.type = t.type
     self.group = flower.Group(t.layer, self.type.size, self.type.size)
-    self.group:setPos(t.pos[1], t.pos[2])
+    
+    local newPos = t.pos - vector{self.type.size/2, self.type.size/2}
+    self.group:setPos(newPos[1], newPos[2])
     
     local rectangle = flower.Rect(self.type.size, self.type.size)
     rectangle:setColor(self.type.color[1], self.type.color[2], self.type.color[3], self.type.color[4])
@@ -65,6 +67,8 @@ function Enemy:updatePos()
             return self.END_OF_PATH
         end
     end
+
+    finalPosition = finalPosition - vector{self.type.size / 2, self.type.size / 2}
    
     local positionDiff = finalPosition - startingPosition
     local angle = math.atan2(positionDiff[2], positionDiff[1])
