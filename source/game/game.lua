@@ -126,18 +126,12 @@ function Game:run()
         if pauseIfWaveComplete() then
             return
         end
-  
-        local randomEnemyType = ENEMY_TYPES[math.randomListElement(currentWave.enemies)]
         
         local newEnemy = Enemy {
             layer = self.layer,
-            width = randomEnemyType.size, height = randomEnemyType.size,
-            pos = self.map:randomStartingPosition(),
-            color = randomEnemyType.color,
-            speed = randomEnemyType.speed,
             map = self.map,
-            score = randomEnemyType.score,
-            health = randomEnemyType.health,
+            pos = self.map:randomStartingPosition(),
+            type = ENEMY_TYPES[math.randomListElement(currentWave.enemies)],
         }
         table.insert(self.enemies, newEnemy)
         self.spawnedEnemies = self.spawnedEnemies + 1
@@ -196,7 +190,7 @@ function Game:loop()
         if enemyStatus ~= Enemy.CONTINUE then
             self.enemiesKilled = self.enemiesKilled + 1
             if enemyStatus == Enemy.DIED then
-                self.currentScore = self.currentScore + enemy.score
+                self.currentScore = self.currentScore + enemy:getScore()
             else
                 self:loseLife()
             end

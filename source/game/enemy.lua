@@ -4,6 +4,7 @@
 
 require "source/utilities/vector"
 require "source/game/healthBar"
+require "assets/enemies/enemyTypes"
 
 -- import
 local flower = flower
@@ -17,32 +18,30 @@ Enemy.END_OF_PATH = 2
 Enemy.CONTINUE = 3
 
 function Enemy:init(t)
-    self.group = flower.Group(t.layer, t.width, t.height)
+    self.type = t.type
+    self.group = flower.Group(t.layer, self.type.size, self.type.size)
     self.group:setPos(t.pos[1], t.pos[2])
     
-    local rectangle = flower.Rect(t.width, t.height)
-    rectangle:setColor(t.color[1], t.color[2], t.color[3], t.color[4])
+    local rectangle = flower.Rect(self.type.size, self.type.size)
+    rectangle:setColor(self.type.color[1], self.type.color[2], self.type.color[3], self.type.color[4])
     
     self.group:addChild(rectangle)
     
     self.healthBar = HealthBar {
         parent = self.group,
-        width = t.width,
-        height = t.height,
+        width = self.type.size,
+        height = self.type.size,
         moveSclTime = 0.08
     }
     
     self.currentPos = 1
-    self.speed = t.speed or 5
     self.map = t.map
-    self.health = t.health
-    self.maxHealth = self.health
-    self.score = t.score
+    self.health = t.type.health
 end
 
 function Enemy:updateHealthBar()
-    self.healthBar:moveScl(self.health / self.maxHealth)
-    self.healthBar:setVisible(self.health < self.maxHealth)
+    self.healthBar:moveScl(self.health / self.type.health)
+    self.healthBar:setVisible(self.health < self.type.health)
 end
 
 function Enemy:updatePos()
@@ -69,7 +68,7 @@ function Enemy:updatePos()
    
     local positionDiff = finalPosition - startingPosition
     local angle = math.atan2(positionDiff[2], positionDiff[1])
-    local velocity = self.speed * vector{math.cos(angle), math.sin(angle)}
+    local velocity = self.type.speed * vector{math.cos(angle), math.sin(angle)}
     if math.abs(velocity[1]) >= math.abs(positionDiff[1]) and math.abs(velocity[2]) >= math.abs(positionDiff[2]) then
         velocity = positionDiff
         self.currentPos = self.currentPos + 1
@@ -104,4 +103,16 @@ end
 function Enemy:get_tile()
     local pos = vector{self.group:getPos()}
     return vector{self.map:getMOAIGrid():locToCoord(pos[1], pos[2])}
+end
+
+function Enemy:getScore()
+    return self.type.score
+end
+
+function Enemy:getType()
+    return self.type
+end
+
+function Enemy:isA(otherType)
+    return self.type == ENEMY_TYPES[otherType]
 end
