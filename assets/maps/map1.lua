@@ -46,6 +46,7 @@ map.waves = {
     {enemies = {"NORMAL"}, spawnRate = 0.5, length = 5},
     {enemies = {"NORMAL", "FAST"}, spawnRate = 0.4, length = 30},
     {enemies = {"NORMAL", "FAST", "HEAVY"}, spawnRate = 0.2, length = 200},
+    {enemies = {"SUPER"}, spawnRate = 7, length = 5},
 }
 
 return map
