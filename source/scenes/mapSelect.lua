@@ -1,29 +1,13 @@
 module(..., package.seeall)
 
 require "source/utilities/extensions/io"
+require "source/gui/guiUtilities"
 
 MAP_LIST = require "assets/maps/mapList"
 ITEM_HEIGHT = 32
 
 local selectedData = nil
 local view = nil
-
-function createChildView()
-    return widget.UIView {
-        scene = nil,
-        children = {{
-            widget.Button {
-                pos = {flower.viewWidth - flower.viewWidth/6, 0},
-                size = {flower.viewWidth/6, 39},
-                text = "Back",
-                onClick = function()
-                    flower.closeScene({animation = "fade"})
-                    selectedData = nil
-                end,
-            },
-        }},
-    }
-end
 
 function createMenuList()
     
@@ -33,7 +17,7 @@ function createMenuList()
         end
         
         if item.path then
-            local childView = createChildView()
+            local childView = createChildView(item.closeAnime, selectedData)
             local childScene = flower.openScene("source/scenes/singlePlayer", {animation = "fade", mapFile = item.path, view = childView})
             if childScene then
                 childView:setScene(childScene)

@@ -246,6 +246,23 @@ function generateMsgBox(position, size, msg, parentView)
     }
 end
 
+function createChildView(animation, selectedData)
+    return widget.UIView {
+        scene = nil,
+        children = {{
+            widget.Button {
+                pos = {flower.viewWidth - flower.viewWidth/6, 0},
+                size = {flower.viewWidth/6, 39},
+                text = "Back",
+                onClick = function()
+                    flower.closeScene({animation = animation and animation or "fade"})
+                    selectedData = nil
+                end,
+            },
+        }},
+    }
+end
+
 function _resizeComponents(view)
     local buttonSize = {flower.viewWidth/6, 39}
     local xPosition = flower.viewWidth - flower.viewWidth/6
