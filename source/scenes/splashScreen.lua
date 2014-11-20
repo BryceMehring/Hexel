@@ -36,7 +36,7 @@ end
 
 function onStart(e)
     flower.Executors.callLaterFrame(1, function()
-        loadResources()
+--        loadResources()
         flower.gotoScene("source/scenes/mainMenu", {animation="fade"})
     end)
 end

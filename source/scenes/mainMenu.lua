@@ -72,12 +72,7 @@ function createMenuList()
 end
 
 function updateLayout()
-    local yOffset = (flower.viewHeight - ((#MENU_ITEMS + 1) * (ITEM_HEIGHT + 5)))/2
-    local xOffset = (flower.viewWidth - ITEM_WIDTH)/2
-    
-    for i, item in ipairs(view.children) do
-        item:setPos(xOffset, yOffset + (i-1)*(ITEM_HEIGHT + 5))
-    end
+    view:updateViewport(0, 0, flower.viewWidth, flower.viewHeight)
 end
 
 --------------------------------------------------------------------------------

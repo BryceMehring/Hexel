@@ -43,6 +43,14 @@ function createMenuList()
 end
 
 function resizeMenuList()
+    for i, item in ipairs(view.children) do
+        if i == 1 then
+            item:setPos(flower.viewWidth - flower.viewWidth/6, 0)
+            item:setSize(flower.viewWidth/6, 39)
+        else    
+            item:setPos(flower.viewWidth * (i-1) / 6, flower.viewWidth/6)
+        end
+    end
 --    local itemWidth = flower.viewWidth - 20
 --    local itemHeight = ITEM_HEIGHT
     
