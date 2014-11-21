@@ -25,7 +25,7 @@ function onCreate(e)
             },
             flower.Label("Little Red Comet Games", nil, nil, nil, 64),
             widget.Button {
-                normalTexture = "LRC_logo_hi.png",
+                normalTexture = "logo.png",
                 size = {flower.viewWidth/2.5, flower.viewWidth/2.5},
             },
             flower.Label("Loading assets, please wait...", nil, nil, nil, 24),
