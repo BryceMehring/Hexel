@@ -105,8 +105,8 @@ function Enemy:get_tile()
     return vector{self.map:getMOAIGrid():locToCoord(pos[1], pos[2])}
 end
 
-function Enemy:getScore()
-    return self.type.score
+function Enemy:getCost()
+    return self.type.cost
 end
 
 function Enemy:getType()

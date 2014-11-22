@@ -44,9 +44,8 @@ function Game:init(t)
     self.selectDescription = ""
 
     self.currentLives = 20
-    self.currentCash = 200000
+    self.currentCash = 500
     self.currentInterest = 0
-    self.currentScore = 0
     self.layer = t.layer
     self.mapFile = t.mapFile
     
@@ -80,6 +79,13 @@ function Game:generateItemInfo()
     end
 end
 
+function Game:generateStatus()
+   return "Wave: " .. self.currentWave ..
+          "  Lives: " .. self.currentLives ..
+          "\nCash: " .. self.currentCash ..
+          "  Interest: " .. self.currentInterest .. "%"
+end
+
 
 function Game:getPopupPos()
     return {flower.viewWidth / 5, flower.viewHeight / 2}
@@ -87,14 +93,6 @@ end
 
 function Game:getPopupSize()
     return {flower.viewWidth / 2, 100}
-end
-
-function Game:generateStatus()
-   return "Wave: " .. self.currentWave ..
-          "  Lives: " .. self.currentLives ..
-          "\nCash: " .. self.currentCash ..
-          "  Interest: " .. self.currentInterest .. "%" ..
-          "\nScore: " .. self.currentScore
 end
 
 function Game:buildGrid()
@@ -198,7 +196,7 @@ function Game:loop()
         if enemyStatus ~= Enemy.CONTINUE then
             self.enemiesKilled = self.enemiesKilled + 1
             if enemyStatus == Enemy.DIED then
-                self.currentScore = self.currentScore + enemy:getScore()
+                self.currentCash = self.currentCash + enemy:getCost()
             else
                 self:loseLife()
             end
