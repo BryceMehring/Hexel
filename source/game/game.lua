@@ -297,7 +297,7 @@ function Game:onTouchDown(pos)
     local tile = self.map:getGrid():getTile(pos[1], pos[2])
     -- TODO: highlight map tile
     
-    if tile == 5 and self.sideSelect ~= -1 then
+    if tile == TOWER_TYPES.EMPTY and self.sideSelect ~= -1 then
         if self.currentCash >= Towers[self.sideSelect].cost then
             self.currentCash = self.currentCash - Towers[self.sideSelect].cost
             self.map:getGrid():setTile(pos[1], pos[2], self.sideSelect)
@@ -307,9 +307,10 @@ function Game:onTouchDown(pos)
         else
             -- TODO: alert for insufficient funds
         end
-    elseif tile ~= 5 then
+    elseif tile ~= TOWER_TYPES.EMPTY and tile ~= TOWER_TYPES.ENEMY then
         -- TODO: change statusUI for tower select from here
         -- TODO: upgrade and sell options appear
+        self.map:selectTile(pos)
     end
     
 end

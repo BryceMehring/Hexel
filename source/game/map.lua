@@ -31,18 +31,21 @@ function Map:load(file)
     self.width = self.map.width or self.width
     self.height = self.map.height or self.height
     
-    self.grid = flower.MapImage(self.texture,
-                                self.width,
-                                self.height,
-                                self.tileWidth,
-                                self.tileHeight,
-                                self.radius)
-                                  
+    self.grid = flower.MapImage(self.texture, self.width,
+                                self.height, self.tileWidth,
+                                self.tileHeight, self.radius)                          
     self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
     self.grid:setLayer(self.layer)
     
-    self.grid:setRepeat(false, false)
-    self.grid:setPos(0,0)
+    self.selectedImage = flower.SheetImage(self.texture)
+    self.selectedImage:setTileSize(self.tileWidth, self.tileHeight)
+    self.selectedImage:setLayer(self.layer)
+    
+    -- TODO: Fix these numbers
+    self.selectedImage:setScl(self.height / self.tileHeight / 1.3, self.height / self.tileHeight / 1.3)
+    self.selectedImage:setPiv(self.radius / 2, self.radius / 2)
+    self.selectedImage:setColor(0.2, 0.2, 0.2, 1)
+    self.selectedImage:setVisible(false)
     
     if type(self.map.tiles) == "table" then
         for i = 1,self.width do
@@ -100,6 +103,16 @@ function Map:load(file)
     return true
 end
 
+-- TODO: need to center the selected tile
+function Map:selectTile(pos)
+    
+    local worldPos = self:gridToWorldSpace(pos, MOAIGridSpace.TILE_LEFT_TOP)
+    
+    self.selectedImage:setVisible(true)
+    self.selectedImage:setIndex(self.grid:getTile(pos[1], pos[2]))
+    self.selectedImage:setPos(worldPos[1], worldPos[2])
+end
+
 function Map:randomStartingPosition()
     local startPosition = not self:isPathDynamic() and self.path[1]
     if not startPosition then
@@ -110,8 +123,8 @@ function Map:randomStartingPosition()
     return self:gridToWorldSpace(startPosition)
 end
 
-function Map:gridToWorldSpace(pos)
-    return vector{self:getMOAIGrid():getTileLoc(pos[1], pos[2], MOAIGridSpace.TILE_CENTER)}
+function Map:gridToWorldSpace(pos, alignment)
+    return vector{self:getMOAIGrid():getTileLoc(pos[1], pos[2], alignment or MOAIGridSpace.TILE_CENTER)}
 end
 
 -- Returns true if the path was found using a pathfinder
