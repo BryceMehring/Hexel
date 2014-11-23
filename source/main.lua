@@ -12,4 +12,4 @@ flower.openWindow("Hexel", 1024, 768)
 math.randomseed(os.clock())
 flower.openScene("source/scenes/splashScreen", {animation = "crossFade"})
 
-MOAIUntzSystem.initialize()
+MOAIUntzSystem.initialize(44100, 1000)
