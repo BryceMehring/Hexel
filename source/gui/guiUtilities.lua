@@ -66,23 +66,14 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     
     if gameMode == "SinglePlayer" then
         
+        -- TODO: create a method in the game that sets the current tower
         local function trySelect(parentObj, child)
-            if parentObj.sideSelect == child.id then
-                parentObj.sideSelect = -1
-                parentObj.selectName = ""
-                parentObj.selectCost = ""
-                parentObj.selectDescription = ""
-                parentObj.selectDamage = ""
-                parentObj.selectRange = ""
+            if parentObj.towerSelected and parentObj.towerSelected.id == child.id then
+                parentObj.towerSelected = nil
             else
-                parentObj.sideSelect = child.id
-                parentObj.selectName = child.name
-                parentObj.selectCost = child.cost
-                parentObj.selectDescription = child.description
-                parentObj.selectDamage = child.damage
-                parentObj.selectRange = child.range
+                parentObj.towerSelected = child
             end
-            itemInfoUI:setText(parentObj:generateItemInfo()) 
+            itemInfoUI:setText(parentObj:generateItemInfo())
         end
         
         local lastElem = nil
@@ -230,6 +221,10 @@ end
 
 function updateStatusText(status)
     statusUI:setText(status)
+end
+
+function updateItemText(text)
+    itemInfoUI:setText(text)
 end
 
 function updatePauseButton(paused)

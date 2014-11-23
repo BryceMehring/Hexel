@@ -17,7 +17,6 @@ function onCreate(e)
         layer = layer,
         mapFile = e.data.mapFile,
         view = e.data.view,
-        updateStatus = updateStatus,
         -- TODO: fill this out
     }
 
@@ -27,10 +26,6 @@ function onCreate(e)
     flower.Runtime:addEventListener("resize", onResize)
     
     flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
-end
-
-function updateStatus(statusMsg)
-   updateStatusText(statusMsg)
 end
 
 function updateLayout()
