@@ -35,13 +35,6 @@ function Game:init(t)
     self.radius = 24
     self.default_tile = 0
     self.direction = 1
-    
-    self.sideSelect = -1
-    self.selectName = ""
-    self.selectCost = ""
-    self.selectDamage = ""
-    self.selectRange = ""
-    self.selectDescription = ""
 
     self.currentLives = 20
     self.currentCash = 500
@@ -54,7 +47,6 @@ function Game:init(t)
     
     self.currentWave = 1
     
-    self.updateStatus = t.updateStatus
     self.view = t.view
     
     self.soundManager = SoundManager {
