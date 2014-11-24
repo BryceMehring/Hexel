@@ -21,8 +21,6 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-
-
 Game = flower.class()
 
 function Game:init(t)
@@ -54,7 +52,16 @@ function Game:init(t)
     }
     self.soundManager:randomizedPlay()
     
-    self:buildGrid()
+    self.map = Map {
+        file = self.mapFile,
+        texture = self.texture,
+        width = self.width,
+        height = self.height,
+        tileWidth = self.tileWidth,
+        tileHeight = self.tileHeight,
+        radius = self.radius,
+        layer = self.layer,
+    }
 end
 
 -- This function is used by the guiUtilities file to generate
@@ -88,19 +95,7 @@ function Game:getPopupSize()
     return {flower.viewWidth / 2, 100}
 end
 
-function Game:buildGrid()
-    self.map = Map {
-        file = self.mapFile,
-        texture = self.texture,
-        width = self.width,
-        height = self.height,
-        tileWidth = self.tileWidth,
-        tileHeight = self.tileHeight,
-        radius = self.radius,
-        layer = self.layer,
-    }
-end
-
+-- Initializes the game to run by turning on the spawning of enemies
 function Game:run()
     
     self.enemies = {}
@@ -144,6 +139,8 @@ function Game:run()
     flower.Executors.callLoop(self.loop, self)
 end
 
+-- Updates to the next wave while taking account the win condition
+-- TODO: clean up win condition
 function Game:updateWave()
     self:paused(true)
     self.enemiesKilled = 0
@@ -152,12 +149,11 @@ function Game:updateWave()
     self.currentWave = (self.currentWave + 1)
     if self.currentWave > #self.map:getWaves() then
         self:showEndGameMessage("You Win!")
-        self.gameOver = true
+        self.gameOver = true -- todo: this is really messed up as of right now. Change it!
     else
         self.timers.spawnTimer:setSpan(self.map:getWaves()[self.currentWave].spawnRate)
         
         self:updateGUI()
-        -- TODO: move this code somewhere else?
         
         local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), "Wave: " .. self.currentWave, self.view)
         
@@ -169,6 +165,7 @@ function Game:updateWave()
     end
 end
 
+-- Main game loop which updates all of the entities in the game
 function Game:loop()
     
     if self.enemiesKilled == self.map:getWaves()[self.currentWave].length then
@@ -222,13 +219,16 @@ function Game:loop()
     return self:stopped()
 end
 
+-- Looses a life and ends the game if the lives count reaches 0
 function Game:loseLife()
-   self.currentLives = self.currentLives - 1
-   if self.currentLives <= 0 then
-       self:showEndGameMessage("Game Over!")
+    self.currentLives = self.currentLives - 1
+    if self.currentLives <= 0 then
+        self:showEndGameMessage("Game Over!")
     end
 end
 
+-- Pauses the game if p is true, unpauses the game if p is false
+-- If p is nil, paused() return true if the game is paused
 function Game:paused(p)
     if p ~= nil then
 
@@ -249,6 +249,8 @@ function Game:paused(p)
     end
 end
 
+-- Stops the game if s is true
+-- Returns true if the game if s is nil
 function Game:stopped(s)
     if s ~= nil then
         
@@ -275,12 +277,24 @@ function Game:updateGUI()
     updateStatusText(self:generateStatus())
 end
 
+-- Shows a message box with a message just before ending the game
 function Game:showEndGameMessage(msg)
     local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.view)
     msgBox:showPopup()
     self:stopped(true)
 end
 
+-- Updates the current tower selected
+function Game:selectedTower(tower)
+    self.towerSelected = tower
+    updateItemText(self:generateItemInfo())
+    
+    if tower then
+        return self.towerSelected
+    end
+end
+
+-- Event callback for mouse touch input
 --TODO: clean this up
 function Game:onTouchDown(pos)
     if self:stopped() then
@@ -301,9 +315,7 @@ function Game:onTouchDown(pos)
         end
     elseif tile ~= TOWER_TYPES.EMPTY and tile ~= TOWER_TYPES.ENEMY then
         -- TODO: upgrade and sell options appear
-        self.towerSelected = Towers[tile]
-        updateItemText(self:generateItemInfo())
-        
+        self:selectedTower(Towers[tile])
         self.map:selectTile(pos)
     end
     

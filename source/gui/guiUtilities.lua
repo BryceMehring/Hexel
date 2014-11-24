@@ -68,12 +68,12 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
         
         -- TODO: create a method in the game that sets the current tower
         local function trySelect(parentObj, child)
-            if parentObj.towerSelected and parentObj.towerSelected.id == child.id then
-                parentObj.towerSelected = nil
+            local towerSelected = parentObj:selectedTower()
+            if towerSelected and towerSelected.id == child.id then
+                parentObj:selectedTower(nil)
             else
-                parentObj.towerSelected = child
+                parentObj:selectedTower(child)
             end
-            itemInfoUI:setText(parentObj:generateItemInfo())
         end
         
         local lastElem = nil
