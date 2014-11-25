@@ -67,16 +67,7 @@ end
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
 function Game:generateItemInfo()
-    
-    if not self.towerSelected then
-        return ""
-    end
-
-    return "Selected: " .. self.towerSelected.name .. 
-           "\nCost:" .. self.towerSelected.cost ..
-           "\n" .. self.towerSelected.description ..
-           "\nRange:" .. self.towerSelected.range .. 
-           "  Damage:".. self.towerSelected.damage
+    return self.towerSelected and self.towerSelected:getDescription() or ""
 end
 
 function Game:generateStatus()
@@ -285,13 +276,14 @@ function Game:showEndGameMessage(msg)
 end
 
 -- Updates the current tower selected
-function Game:selectedTower(tower)
+function Game:selectTower(tower)
     self.towerSelected = tower
     updateItemText(self:generateItemInfo())
-    
-    if tower then
-        return self.towerSelected
-    end
+end
+
+-- Returns the selected tower
+function Game:getSelectedTower()
+    return self.towerSelected
 end
 
 -- Event callback for mouse touch input
@@ -304,18 +296,24 @@ function Game:onTouchDown(pos)
     local tile = self.map:getGrid():getTile(pos[1], pos[2])
     
     if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil then
-        if self.currentCash >= self.towerSelected.cost then
-            self.currentCash = self.currentCash - self.towerSelected.cost
-            self.map:getGrid():setTile(pos[1], pos[2], self.towerSelected.id)
-            self.towers[Tower.serialize_pos(pos)] = Tower(self.towerSelected.id, pos)
+        -- Try to place new tower down
+        if self.currentCash >= self.towerSelected.type.cost then
+            
+            -- Decrease cash amount
+            self.currentCash = self.currentCash - self.towerSelected.type.cost
+            
+            -- Place tower on map
+            self.map:getGrid():setTile(pos[1], pos[2], self.towerSelected.type.id)
+            self.towers[Tower.serialize_pos(pos)] = Tower(self.towerSelected.type, pos)
+            
             self:updateGUI()
-            -- TODO: update statusUI for cost
         else
             -- TODO: alert for insufficient funds
         end
     elseif tile ~= TOWER_TYPES.EMPTY and tile ~= TOWER_TYPES.ENEMY then
+        -- Select already placed tower
         -- TODO: upgrade and sell options appear
-        self:selectedTower(Towers[tile])
+        self:selectTower(self.towers[Tower.serialize_pos(pos)])
         self.map:selectTile(pos)
     end
     

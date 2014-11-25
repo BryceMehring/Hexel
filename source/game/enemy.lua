@@ -91,6 +91,7 @@ end
 
 function Enemy:damage(damage)
     self.health = self.health - damage
+    return self.health <= 0
 end
 
 function Enemy:remove()

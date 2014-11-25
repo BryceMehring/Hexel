@@ -65,14 +65,12 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     }
     
     if gameMode == "SinglePlayer" then
-        
-        -- TODO: create a method in the game that sets the current tower
         local function trySelect(parentObj, child)
-            local towerSelected = parentObj:selectedTower()
-            if towerSelected and towerSelected.id == child.id then
-                parentObj:selectedTower(nil)
+            local towerSelected = parentObj:getSelectedTower()
+            if towerSelected and towerSelected.type.id == child.id then
+                parentObj:selectTower(nil)
             else
-                parentObj:selectedTower(child)
+                parentObj:selectTower(Tower(child))
             end
         end
         

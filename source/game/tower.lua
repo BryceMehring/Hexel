@@ -3,7 +3,6 @@
 --------------------------------------------------------------------------------
 
 local class = flower.class
-local Towers = require "assets/towers/towers"
 require "source/gridNeighbors"
 require "source/utilities/vector"
 require "source/sound/sound"
@@ -21,27 +20,39 @@ end
 
 ---
 -- The constructor.
-function Tower:init(type, pos, layer)
-    self.type = type
+function Tower:init(towerType, pos)
+    self.type = towerType
     self.pos = pos
     self.targets = {}
     self.level = 1
-    self.range = Towers[type].range
-    self.damage = Towers[type].damage
-    self.speed = Towers[type].speed
-    self.fire_tick = self.speed
-    
-    self:calculate_targets()
+    self.killCount = 0
+    self.fire_tick = self.type.speed
+    if self.pos then
+        self:calculate_targets()
+    end
+end
+
+function Tower:getDescription()
+    return self.type.name ..
+        "\nCost:" .. self.type.cost ..
+        "\n" .. self.type.description ..
+        "\nRange:" .. self.type.range ..
+        "  Damage:".. self.type.damage
 end
 
 function Tower:fire(enemies)
-    if self.fire_tick == self.speed then
-        for i=#enemies,1,-1 do
+    if self.fire_tick == self.type.speed then
+        for i=#enemies,1, -1 do
             local tile = enemies[i]:get_tile()
             if self.targets[Tower.serialize_pos(tile)] ~= nil then
                 soundManager:play(fireSound)
-                enemies[i]:damage(self.damage)
                 self.fire_tick = 0
+                
+                local isDead = enemies[i]:damage(self.type.damage)
+                if isDead then
+                    self.killCount = self.killCount + 1
+                end
+                
                 return i
             end
         end
@@ -52,7 +63,7 @@ end
 
 function Tower:calculate_targets()
     self.targets[Tower.serialize_pos(self.pos)] = self.pos
-    for i=1,self.range do
+    for i=1, self.type.range do
         local temp_targets = flower.table.copy(self.targets)
         for key, pos in pairs(temp_targets) do
             local neighbors = getHexNeighbors(pos)
