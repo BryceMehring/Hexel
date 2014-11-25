@@ -35,9 +35,9 @@ end
 function Tower:getDescription()
     return self.type.name ..
         "\nCost:" .. self.type.cost ..
-        "\n" .. self.type.description ..
         "\nRange:" .. self.type.range ..
-        "  Damage:".. self.type.damage
+        "  Damage:".. self.type.damage ..
+        ((self.killCount > 0 and (" \nKilled: " .. self.killCount)) or "")
 end
 
 function Tower:fire(enemies)

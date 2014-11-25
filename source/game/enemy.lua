@@ -79,7 +79,7 @@ function Enemy:updatePos()
 end
 
 function Enemy:update()
-    if self.health <= 0 then
+    if self.dead then
         return self.DIED
     end
     
@@ -90,8 +90,16 @@ function Enemy:update()
 end
 
 function Enemy:damage(damage)
+    if self.dead then
+        return
+    end
+    
     self.health = self.health - damage
-    return self.health <= 0
+    if self.health <= 0 then
+        self.dead = true
+    end
+    
+    return self.dead
 end
 
 function Enemy:remove()

@@ -266,6 +266,7 @@ end
 
 function Game:updateGUI()
     updateStatusText(self:generateStatus())
+    updateItemText(self:generateItemInfo())
 end
 
 -- Shows a message box with a message just before ending the game
@@ -278,7 +279,7 @@ end
 -- Updates the current tower selected
 function Game:selectTower(tower)
     self.towerSelected = tower
-    updateItemText(self:generateItemInfo())
+    self:updateGUI()
 end
 
 -- Returns the selected tower
