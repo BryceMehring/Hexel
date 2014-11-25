@@ -31,7 +31,7 @@ function Enemy:init(t)
         parent = self.group,
         width = self.type.size,
         height = self.type.size,
-        moveSclTime = 0.08
+        moveSclTime = 0.1
     }
     
     self.currentPos = 1
@@ -39,12 +39,20 @@ function Enemy:init(t)
     self.health = t.type.health
 end
 
+function Enemy:healthBarCallback()
+    self.dead = true
+end
+
 function Enemy:updateHealthBar()
-    self.healthBar:moveScl(self.health / self.type.health)
+    self.healthBar:moveScl(self.health / self.type.health, Enemy.healthBarCallback, self)
     self.healthBar:setVisible(self.health < self.type.health)
 end
 
 function Enemy:updatePos()
+    if self.dying or self.dead then
+        return
+    end
+    
     local startingPosition = vector{self.group:getPos()}
     local finalPosition = nil
     
@@ -90,16 +98,16 @@ function Enemy:update()
 end
 
 function Enemy:damage(damage)
-    if self.dead then
+    if self.dying then
         return
     end
     
     self.health = self.health - damage
     if self.health <= 0 then
-        self.dead = true
+        self.dying = true
     end
     
-    return self.dead
+    return self.dying
 end
 
 function Enemy:remove()

@@ -26,12 +26,21 @@ function HealthBar:init(t)
     self.moveSclMode = t.moveSclMode or MOAIEaseType.LINEAR
 end
 
-function HealthBar:moveScl(percent)
-    if not self.oldAction or not self.oldAction:isActive() then
+function HealthBar:moveScl(percent, callback, args)
+    if not self:isActive() then
         local currentScl = self.healthBar:getScl()
         local newScl = percent - currentScl
+        
         self.oldAction = self.healthBar:moveScl(newScl, 0, 0, self.moveSclTime, self.moveSclMode)
+        
+        if (currentScl - newScl) <= 0 then
+            flower.Executors.callLaterTime(self.moveSclTime, callback, args)
+        end
     end
+end
+
+function HealthBar:isActive()
+    return self.oldAction and self.oldAction:isActive()
 end
 
 function HealthBar:setVisible(visible)
