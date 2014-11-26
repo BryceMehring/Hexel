@@ -43,7 +43,7 @@ function Tower:fire(enemies)
     if self.fire_tick == self.type.speed then
         for i=#enemies,1, -1 do
             local tile = enemies[i]:get_tile()
-            if self.targets[Tower.serialize_pos(tile)] ~= nil then
+            if self.targets[Tower.serialize_pos(tile)] ~= nil and not enemies[i]:isDead() then
                 soundManager:play(fireSound)
                 self.fire_tick = 0
                 

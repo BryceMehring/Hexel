@@ -39,6 +39,10 @@ function Enemy:init(t)
     self.health = t.type.health
 end
 
+function Enemy:isDead()
+    return self.dead or self.dying
+end
+
 function Enemy:healthBarCallback()
     self.dead = true
 end
