@@ -109,6 +109,7 @@ function Enemy:damage(damage)
     self.health = self.health - damage
     if self.health <= 0 then
         self.dying = true
+        self.health = 0
     end
     
     return self.dying
