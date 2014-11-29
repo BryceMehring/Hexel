@@ -25,7 +25,8 @@ function onCreate(e)
 
     flower.Runtime:addEventListener("resize", onResize)
     
-    flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
+    flower.InputMgr:addEventListener("mouseClick", onMouseEvent)
+    flower.InputMgr:addEventListener("mouseMove", onMouseEvent)
 end
 
 function updateLayout()
@@ -42,15 +43,19 @@ function onStart(e)
 end
 
 function onStop(e)
-    flower.InputMgr:removeEventListener("mouseClick", item_onTouchDown)
+    flower.InputMgr:removeEventListener("mouseClick", onMouseEvent)
+    flower.InputMgr:removeEventListener("mouseMove", onMouseEvent)
+    
     singlePlayerGame:paused(false)
     singlePlayerGame:stopped(true)
     singlePlayerGame = nil
 end
 
-function item_onTouchDown(e)
-    if not e.down then
-        return
+function onMouseEvent(e)
+    if e.type == "mouseClick" then
+        if not e.down then
+            return
+        end
     end
     
     -- TODO: check this later. Is this needed?
@@ -62,7 +67,13 @@ function item_onTouchDown(e)
     x, y = prop:worldToModel(x, y)
     
     -- TODO: move this into the Game
-    local xCoord, yCoord = singlePlayerGame.map:getMOAIGrid():locToCoord(x, y)
+    local pos = vector{singlePlayerGame.map:getMOAIGrid():locToCoord(x, y)}
     
-    singlePlayerGame:onTouchDown(vector{xCoord, yCoord})
+    if e.type == "mouseClick" then
+        singlePlayerGame:onTouchDown(pos)
+    elseif e.type == "mouseMove" then
+        singlePlayerGame:onMouseMove(pos)
+    else
+        error("Unknown input event: " .. e.type)
+    end
 end

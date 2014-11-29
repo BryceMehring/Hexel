@@ -319,3 +319,8 @@ function Game:onTouchDown(pos)
     end
     
 end
+
+function Game:onMouseMove(pos)
+    -- TODO: use mouse move event to show the user where the tower will be placed on the grid
+    -- and show the radius of the tower being placed
+end
