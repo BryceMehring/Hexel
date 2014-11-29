@@ -136,16 +136,29 @@ function Map:isPathDynamic()
     return true
 end
 
+function Map:clearTile(pos)
+    self:setTile(pos, TOWER_TYPES.EMPTY)
+end
+
+function Map:setTile(pos, index)
+    self:getGrid():setTile(pos[1], pos[2], index)
+end
+
+function Map:getTile(pos)
+    return self:getGrid():getTile(pos[1], pos[2])
+end
+
 function Map:getPath()
     return self.path
 end
 
-function Map:getGrid()
-    return self.grid
-end
-
 function Map:getWaves()
     return self.map.waves
+end
+
+-- TODO: remove these methods to return the grid
+function Map:getGrid()
+    return self.grid
 end
 
 function Map:getMOAIGrid()

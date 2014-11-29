@@ -7,6 +7,11 @@ local flower = flower
 
 local singlePlayerGame = nil
 local view = nil
+local mouseEvents = {
+    "mouseClick",
+    "mouseMove",
+    "mouseRightClick",
+}
 
 function onCreate(e)
     layer = flower.Layer()
@@ -25,8 +30,9 @@ function onCreate(e)
 
     flower.Runtime:addEventListener("resize", onResize)
     
-    flower.InputMgr:addEventListener("mouseClick", onMouseEvent)
-    flower.InputMgr:addEventListener("mouseMove", onMouseEvent)
+    for i, v in ipairs(mouseEvents) do
+        flower.InputMgr:addEventListener(v, onMouseEvent)
+    end
 end
 
 function updateLayout()
@@ -43,8 +49,9 @@ function onStart(e)
 end
 
 function onStop(e)
-    flower.InputMgr:removeEventListener("mouseClick", onMouseEvent)
-    flower.InputMgr:removeEventListener("mouseMove", onMouseEvent)
+    for i, v in ipairs(mouseEvents) do
+        flower.InputMgr:removeEventListener(v, onMouseEvent)
+    end
     
     singlePlayerGame:paused(false)
     singlePlayerGame:stopped(true)
@@ -52,7 +59,7 @@ function onStop(e)
 end
 
 function onMouseEvent(e)
-    if e.type == "mouseClick" then
+    if e.type ~= "mouseMove" then
         if not e.down then
             return
         end
@@ -69,8 +76,8 @@ function onMouseEvent(e)
     -- TODO: move this into the Game
     local pos = vector{singlePlayerGame.map:getMOAIGrid():locToCoord(x, y)}
     
-    if e.type == "mouseClick" then
-        singlePlayerGame:onTouchDown(pos)
+    if e.type == "mouseClick" or e.type == "mouseRightClick" then
+        singlePlayerGame:onTouchDown(pos, e.type)
     elseif e.type == "mouseMove" then
         singlePlayerGame:onMouseMove(pos)
     else

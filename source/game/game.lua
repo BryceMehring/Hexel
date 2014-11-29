@@ -289,12 +289,12 @@ end
 
 -- Event callback for mouse touch input
 --TODO: clean this up
-function Game:onTouchDown(pos)
+function Game:onTouchDown(pos, inputType)
     if self:stopped() then
         flower.closeScene({animation = "fade"})
     end
     
-    local tile = self.map:getGrid():getTile(pos[1], pos[2])
+    local tile = self.map:getTile(pos)
     
     if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil then
         -- Try to place new tower down
@@ -304,7 +304,7 @@ function Game:onTouchDown(pos)
             self.currentCash = self.currentCash - self.towerSelected.type.cost
             
             -- Place tower on map
-            self.map:getGrid():setTile(pos[1], pos[2], self.towerSelected.type.id)
+            self.map:setTile(pos, self.towerSelected.type.id)
             self.towers[Tower.serialize_pos(pos)] = Tower(self.towerSelected.type, pos)
             
             self:updateGUI()
@@ -312,12 +312,20 @@ function Game:onTouchDown(pos)
             -- TODO: alert for insufficient funds
         end
     elseif tile ~= TOWER_TYPES.EMPTY and tile ~= TOWER_TYPES.ENEMY then
+        local key = Tower.serialize_pos(pos)
+        local tower = self.towers[key]
         -- Select already placed tower
         -- TODO: upgrade and sell options appear
-        self:selectTower(self.towers[Tower.serialize_pos(pos)])
-        self.map:selectTile(pos)
-    end
-    
+        if inputType == "mouseRightClick" then
+            -- Sell the tower
+            self.currentCash = self.currentCash + tower.type.cost / 2
+            self.map:clearTile(pos)
+            self.towers[key] = nil
+        elseif inputType == "mouseClick" then
+            self:selectTower(tower)
+            self.map:selectTile(pos)
+        end
+    end    
 end
 
 function Game:onMouseMove(pos)
