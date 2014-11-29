@@ -296,7 +296,7 @@ function Game:onTouchDown(pos, inputType)
     
     local tile = self.map:getTile(pos)
     
-    if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil then
+    if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil and inputType == "mouseClick" then
         -- Try to place new tower down
         if self.currentCash >= self.towerSelected.type.cost then
             
