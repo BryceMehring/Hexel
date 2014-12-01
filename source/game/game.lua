@@ -191,7 +191,7 @@ function Game:loop()
     for key, tower in pairs(self.towers) do
         local result = tower:fire(self.enemies)
         if result ~= nil then
-            local v1 = self.map:gridToWorldSpace(tower.pos)
+            local v1 = self.map:gridToScreenSpace(tower.pos)
             local v2 = vector{self.enemies[result].group:getPos()}
             local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
             attack:setColor(1,1,1,1)

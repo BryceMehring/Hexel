@@ -65,10 +65,7 @@ function Enemy:updatePos()
             return self.END_OF_PATH
         end
         
-        finalPosition = vector{self.map:getMOAIGrid():getTileLoc(
-            self.map:getPath()[self.currentPos + 1][1],
-            self.map:getPath()[self.currentPos + 1][2],
-            MOAIGridSpace.TILE_CENTER)}
+        finalPosition = self.map:gridToScreenSpace({self.map:getPath()[self.currentPos + 1][1], self.map:getPath()[self.currentPos + 1][2]})
     
     else
         finalPosition = getPathDestination(self.map:getMOAIGrid(), startingPosition, self.map:getPath())

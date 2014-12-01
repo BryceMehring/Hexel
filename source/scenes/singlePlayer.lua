@@ -65,16 +65,7 @@ function onMouseEvent(e)
         end
     end
     
-    -- TODO: check this later. Is this needed?
-    local prop = singlePlayerGame.map:getGrid()
-
-    local x = e.x
-    local y = e.y
-    x, y = layer:wndToWorld(x, y)
-    x, y = prop:worldToModel(x, y)
-    
-    -- TODO: move this into the Game
-    local pos = vector{singlePlayerGame.map:getMOAIGrid():locToCoord(x, y)}
+    local pos = singlePlayerGame.map:screenToGridSpace(e.x, e.y, layer)
     
     if e.type == "mouseClick" or e.type == "mouseRightClick" then
         singlePlayerGame:onTouchDown(pos, e.type)

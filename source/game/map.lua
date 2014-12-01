@@ -106,7 +106,7 @@ end
 -- TODO: need to center the selected tile
 function Map:selectTile(pos)
     
-    local worldPos = self:gridToWorldSpace(pos, MOAIGridSpace.TILE_LEFT_TOP)
+    local worldPos = self:gridToScreenSpace(pos, MOAIGridSpace.TILE_LEFT_TOP)
     
     self.selectedImage:setVisible(true)
     self.selectedImage:setIndex(self.grid:getTile(pos[1], pos[2]))
@@ -120,10 +120,19 @@ function Map:randomStartingPosition()
         startPosition = self.spawnTiles[randomIndex]
     end
     
-    return self:gridToWorldSpace(startPosition)
+    return self:gridToScreenSpace(startPosition)
 end
 
-function Map:gridToWorldSpace(pos, alignment)
+function Map:screenToGridSpace(x, y, layer)
+    local prop = self:getGrid()
+
+    x, y = layer:wndToWorld(x, y)
+    x, y = prop:worldToModel(x, y)
+    
+    return vector{self:getMOAIGrid():locToCoord(x, y)}
+end
+
+function Map:gridToScreenSpace(pos, alignment)
     return vector{self:getMOAIGrid():getTileLoc(pos[1], pos[2], alignment or MOAIGridSpace.TILE_CENTER)}
 end
 
