@@ -76,7 +76,6 @@ function Map:load(file)
             for j = 1,self.height do
                 local tile = self.grid.grid:getTile(i, j)
                 if tile == TOWER_TYPES.TARGET then
-                    -- this tile is the desination
                     self.targetPosition[1], self.targetPosition[2] = i, j
                 elseif tile == TOWER_TYPES.SPAWN then
                     table.insert(self.spawnTiles, {i, j})
@@ -103,6 +102,10 @@ function Map:load(file)
     return true
 end
 
+function Map:isTileSelected()
+    return self.tileSelected
+end
+
 -- TODO: need to center the selected tile
 function Map:selectTile(pos)
     
@@ -111,6 +114,13 @@ function Map:selectTile(pos)
     self.selectedImage:setVisible(true)
     self.selectedImage:setIndex(self.grid:getTile(pos[1], pos[2]))
     self.selectedImage:setPos(worldPos[1], worldPos[2])
+    
+    self.tileSelected = true
+end
+
+function Map:unselectTile()
+    self.selectedImage:setVisible(false)
+    self.tileSelected = false
 end
 
 function Map:randomStartingPosition()
@@ -133,7 +143,12 @@ function Map:screenToGridSpace(x, y, layer)
 end
 
 function Map:gridToScreenSpace(pos, alignment)
-    return vector{self:getMOAIGrid():getTileLoc(pos[1], pos[2], alignment or MOAIGridSpace.TILE_CENTER)}
+    alignment = alignment or MOAIGridSpace.TILE_CENTER
+    if type(pos) == "table" then
+        return vector{self:getMOAIGrid():getTileLoc(pos[1], pos[2], alignment)}
+    elseif type(pos) == "number" then
+        return self:getMOAIGrid():getTileLoc(pos, 0, alignment)
+    end
 end
 
 -- Returns true if the path was found using a pathfinder

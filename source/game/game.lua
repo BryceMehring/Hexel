@@ -279,6 +279,22 @@ end
 -- Updates the current tower selected
 function Game:selectTower(tower)
     self.towerSelected = tower
+    
+    if self.hoverCircle then
+        self.hoverCircle:setLayer(nil)
+    end
+    
+    if self.towerSelected then
+        local screenPos = (self.towerSelected and self.towerSelected.pos) and self.map:gridToScreenSpace(self.towerSelected.pos) or self.cursorPos
+        local range = self.map:gridToScreenSpace(tower.type.range) / 1.7 -- TODO: where does this number come from?
+        self.hoverCircle = flower.Circle(range, 100)
+        self.hoverCircle:setPos(screenPos[1], screenPos[2])
+        self.hoverCircle:setColor(0.6, 0.4, 0.4, 0.1)
+        self.hoverCircle:setLayer(self.layer)
+        
+        self.map:unselectTile()
+    end
+    
     self:updateGUI()
 end
 
@@ -295,6 +311,11 @@ function Game:onTouchDown(pos, inputType)
     end
     
     local tile = self.map:getTile(pos)
+    
+    -- The user clicked a tile that we want to ignore
+    if tile == 0 then
+        return
+    end
     
     if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil and inputType == "mouseClick" then
         -- Try to place new tower down
@@ -316,19 +337,28 @@ function Game:onTouchDown(pos, inputType)
         local tower = self.towers[key]
         -- Select already placed tower
         -- TODO: upgrade and sell options appear
-        if inputType == "mouseRightClick" then
+        if inputType == "mouseClick" then
+            if self.towerSelected == tower then
+                self:selectTower(nil)
+                self.map:unselectTile()
+            else
+                self:selectTower(tower)
+                self.map:selectTile(pos)
+            end
+        elseif inputType == "mouseRightClick" then
             -- Sell the tower
             self.currentCash = self.currentCash + tower.type.cost / 2
             self.map:clearTile(pos)
             self.towers[key] = nil
-        elseif inputType == "mouseClick" then
-            self:selectTower(tower)
-            self.map:selectTile(pos)
-        end
-    end    
+        end        
+    end
 end
 
 function Game:onMouseMove(pos)
     -- TODO: use mouse move event to show the user where the tower will be placed on the grid
     -- and show the radius of the tower being placed
+    self.cursorPos = self.map:gridToScreenSpace(pos)
+    if self.hoverCircle and not self.map:isTileSelected() then
+        self.hoverCircle:setPos(self.cursorPos[1], self.cursorPos[2])
+    end
 end
