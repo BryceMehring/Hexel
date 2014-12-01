@@ -3331,6 +3331,31 @@ function Line:onDraw(index, xOff, yOff, xFlip, yFlip)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Circle
+--
+-- Class to draw a circle. <br>
+-- NOTE: This uses immediate mode drawing and so has a high performance impact when
+-- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
+-- wish to minimize draw calls.
+----------------------------------------------------------------------------------------------------
+
+Circle = class(DrawableObject)
+M.Circle = Circle
+
+function Circle:init(radius, steps)
+    DrawableObject.init(self, radius, radius)
+    
+    self.rad = radius
+    self.steps = steps
+    self.drawFunction = MOAIDraw.fillCircle 
+end
+
+function Circle:onDraw(index, xOff, yOff, xFlip, yFlip)
+    MOAIGfxDevice.setPenColor(self:getColor())
+    self.drawFunction(0, 0, self.rad, self.steps)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type Texture
 --
 -- Texture class.
