@@ -19,6 +19,8 @@ Enemy.CONTINUE = 3
 
 function Enemy:init(t)
     self.type = t.type
+    self.stats = flower.table.deepCopy(t.type)
+    
     self.group = flower.Group(t.layer, self.type.size, self.type.size)
     self.group:setPos(t.pos[1], t.pos[2])
     
@@ -36,7 +38,6 @@ function Enemy:init(t)
     
     self.currentPos = 1
     self.map = t.map
-    self.health = t.type.health
 end
 
 function Enemy:isDead()
@@ -48,8 +49,8 @@ function Enemy:healthBarCallback()
 end
 
 function Enemy:updateHealthBar()
-    self.healthBar:moveScl(self.health / self.type.health, Enemy.healthBarCallback, self)
-    self.healthBar:setVisible(self.health < self.type.health)
+    self.healthBar:moveScl(self.stats.health / self.type.health, Enemy.healthBarCallback, self)
+    self.healthBar:setVisible(self.stats.health < self.type.health)
 end
 
 function Enemy:updatePos()
@@ -77,7 +78,7 @@ function Enemy:updatePos()
    
     local positionDiff = finalPosition - startingPosition
     local angle = math.atan2(positionDiff[2], positionDiff[1])
-    local velocity = self.type.speed * vector{math.cos(angle), math.sin(angle)}
+    local velocity = self.stats.speed * vector{math.cos(angle), math.sin(angle)}
     if math.abs(velocity[1]) >= math.abs(positionDiff[1]) and math.abs(velocity[2]) >= math.abs(positionDiff[2]) then
         velocity = positionDiff
         self.currentPos = self.currentPos + 1
@@ -98,18 +99,26 @@ function Enemy:update()
     return updateStatus or self.CONTINUE
 end
 
-function Enemy:damage(damage)
+function Enemy:damage(params)
     if self.dying then
         return
     end
     
-    self.health = self.health - damage
-    if self.health <= 0 then
+    self.stats.health = self.stats.health - params.damage
+    if self.stats.health <= 0 then
         self.dying = true
-        self.health = 0
+        self.stats.health = 0
     end
     
     return self.dying
+end
+
+function Enemy:slow(params)
+    local oldSpeed = self.stats.speed
+    self.stats.speed = self.stats.speed * params.slowAmount
+    flower.Executors.callLaterTime(params.time, function()
+        self.stats.speed = oldSpeed
+    end)
 end
 
 function Enemy:remove()
@@ -125,7 +134,7 @@ function Enemy:get_tile()
 end
 
 function Enemy:getCost()
-    return self.type.cost
+    return self.stats.cost
 end
 
 function Enemy:getType()

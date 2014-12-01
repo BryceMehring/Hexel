@@ -27,6 +27,10 @@ function Tower:init(towerType, pos)
     self.level = 1
     self.killCount = 0
     self.fire_tick = self.type.speed
+    
+    self.damageFunct = Enemy[self.type.damage.func]
+    assert(self.damageFunct, "Invalid damage function")
+    
     if self.pos then
         self:calculate_targets()
     end
@@ -34,7 +38,8 @@ end
 
 function Tower:getDescription()
     return self.type.name ..
-        "\nCost:" .. self.type.cost .. "  Damage: " .. self.type.damage ..
+        "\nCost:" .. self.type.cost .. "  Type: " .. self.type.damage.func .. "\n" ..
+        (self.type.damage.params.damage and ("Damage: " .. self.type.damage.params.damage) or ("Slow Amount: " .. self.type.damage.params.slowAmount)) ..
         "\nRange:" .. self.type.range .. "  Attack Rate: " .. self.type.speed ..
         ((self.killCount > 0 and (" \nKills: " .. self.killCount)) or "")
 end
@@ -47,7 +52,7 @@ function Tower:fire(enemies)
                 soundManager:play(fireSound)
                 self.fire_tick = 0
                 
-                local isDead = enemies[i]:damage(self.type.damage)
+                local isDead = self.damageFunct(enemies[i], self.type.damage.params)
                 if isDead then
                     self.killCount = self.killCount + 1
                 end
