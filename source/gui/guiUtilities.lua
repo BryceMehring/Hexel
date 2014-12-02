@@ -128,7 +128,11 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             parent = view,
             onClick = function()
                 if gameMode == "MultiPlayer" then
-                    parentObj:submitText(textInput:getText())
+                    local inputText = textInput:getText()
+                    if #inputText > 0 then
+                        parentObj:submitText(inputText)
+                        textInput:setText("")
+                    end
                 end
                 -- TODO: implement
             end,
