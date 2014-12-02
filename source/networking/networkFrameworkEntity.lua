@@ -16,7 +16,7 @@ function NetworkFrameworkEntity:run()
         print("Network connection info:")
         print(self.server:getsockname())
         
-        self.server:settimeout(15)
+        self.server:settimeout(30)
         self.client, self.servError = self.server:accept()
     else
         self.client, self.servError = socket.connect(self.theirIP, self.port)
