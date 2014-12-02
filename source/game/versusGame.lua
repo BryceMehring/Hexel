@@ -38,7 +38,7 @@ function VersusGame:init(t)
     self.IP = "192.168.0.10"
     
     self.messageBoxText = ""
-    self.chatLog = ""
+    self.chatLog = "hello"
 
     self.currentWave = 1
     
@@ -48,7 +48,6 @@ end
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
 function VersusGame:generateItemInfo()
-   self.chatLog = self.chatLog .. "\n" .. self.messageBoxText .. "" 
    return self.chatLog
 end
 
@@ -56,8 +55,10 @@ function VersusGame:generateStatus()
    return "Welcome to Multiplayer: " .. self.IP .. ""
 end
 function VersusGame:submitText(text)
-    self.messageBoxText = text
-    self.generateItemInfo()
+    --self.messageBoxText = text
+    self.chatLog = self.chatLog .. "\n" .. text..""--self.messageBoxText .. "" 
+    --self.generateItemInfo()
+    self:updateGUI()
 end
 
 function VersusGame:getPopupPos()
@@ -170,7 +171,7 @@ end
 
 function VersusGame:updateGUI()
     updateStatusText(self:generateStatus())
-    updateItemText(self:generateItemInfo())
+    updateChatText(self:generateItemInfo())
 end
 
 -- Shows a message box with a message just before ending the VersusGame

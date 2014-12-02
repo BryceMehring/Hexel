@@ -4,7 +4,7 @@ local widget = widget
 local TOWERS = require "assets/towers/towers"
 
 local statusUI = nil
-local itemInfoUI = nil
+local chatLogTextbox = nil
 
 local fontSize = 12
 
@@ -90,7 +90,7 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             lastElem = tower:getBottom()
         end
         
-        itemInfoUI = widget.TextBox {
+        chatLogTextbox = widget.TextBox {
             pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
             size = {buttonSize[1], 70},
             text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
@@ -106,7 +106,7 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
         local listX = xPosition
 
         
-        itemInfoUI = widget.TextBox {
+        chatLogTextbox = widget.TextBox {
             pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
             size = {buttonSize[1], 210},
             text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
@@ -115,7 +115,7 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
         }
         
         textInput = widget.TextInput {
-            pos = {xPosition,  lastElem and lastElem or itemInfoUI:getBottom()},
+            pos = {xPosition,  lastElem and lastElem or chatLogTextbox:getBottom()},
             size = {buttonSize[1], 70},
             text =  "...",--"Info UI",--parentObj:generateStatus(),
             textSize = fontSize,
@@ -128,7 +128,7 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             parent = view,
             onClick = function()
                 if gameMode == "MultiPlayer" then
-                    parentObj:submitText(text)
+                    parentObj:submitText(textInput:getText())
                 end
                 -- TODO: implement
             end,
@@ -258,8 +258,8 @@ function updateStatusText(status)
     statusUI:setText(status)
 end
 
-function updateItemText(text)
-    itemInfoUI:setText(text)
+function updateChatText(text)
+    chatLogTextbox:setText(text)
 end
 
 function updatePauseButton(paused)
