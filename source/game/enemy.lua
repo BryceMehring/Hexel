@@ -78,7 +78,9 @@ function Enemy:updatePos()
     
     -- Update speed
     if self.moveAction and self.moveAction:isActive() then
-        self.stats.speed = self.moveSpeed:getPos()
+        local newSpeed = (self.type.speed * (self.type.speedRecovery)) + self.stats.speed
+        self.stats.speed = math.min(newSpeed, self.type.speed)--self.moveSpeed:getPos()
+        print(newSpeed .. " " .. self.stats.speed)
     elseif self.moveAction then
         self.moveAction = nil
         self.moveSpeed = nil
