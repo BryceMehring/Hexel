@@ -15,10 +15,12 @@ function NetworkFrameworkEntity:init(t)
         
         self.server:settimeout(15)
         self.client, self.servError = self.server:accept()
+    else
+        self.client, self.servError = socket.connect("localhost", self.port)
+    end
         
-        if self.client then
-            self.client:settimeout(0)
-        end
+    if self.client then
+        self.client:settimeout(0)
     end
 end
 

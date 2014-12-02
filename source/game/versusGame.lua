@@ -66,6 +66,9 @@ function VersusGame:submitText(text, recieve)
     
     if not recieve then
         self.nfe:talker(text)
+        text = "You: " .. text
+    else
+        text = "Them: " .. text
     end
     
     --self.messageBoxText = text
