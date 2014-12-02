@@ -13,3 +13,8 @@ $RECYCLE.BIN/
 
 # Source packed into a single file
 scripts/singleFile.lua
+
+assets/*
+
+.DS_Store
+
