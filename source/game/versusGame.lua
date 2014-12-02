@@ -154,7 +154,9 @@ function VersusGame:stopped(s)
     if s ~= nil then
         
         if s == true then
-            self.soundManager:stop()
+            if self.soundManager then
+                self.soundManager:stop()
+            end
             if self.timers then
                 for k, timer in pairs(self.timers) do
                     flower.Executors.cancel(timer)
