@@ -45,9 +45,9 @@ function VersusGame:init(t)
     self.view = t.view
     
     self.nfe = NetworkFrameworkEntity{}
-    if not self.nfe:isConnected() then
-        --TODO: why does this not exit the scene?
-        self:showEndGameMessage("Cannot Connect to server")
+    local connected, networkError = self.nfe:isConnected()
+    if not connected then
+        self:showEndGameMessage("Cannot connect to server: " .. (networkError or ""))
     end    
 end
 
@@ -60,7 +60,14 @@ end
 function VersusGame:generateStatus()
    return "Welcome to Multiplayer: " .. self.IP .. ""
 end
-function VersusGame:submitText(text)
+
+-- TODO: this could be cleaned up, I don't really like using the bool `recieve` here
+function VersusGame:submitText(text, recieve)
+    
+    if not recieve then
+        self.nfe:talker(text)
+    end
+    
     --self.messageBoxText = text
     self.chatLog = self.chatLog .. "\n" .. text..""--self.messageBoxText .. "" 
     --self.generateItemInfo()
@@ -116,6 +123,11 @@ end
 function VersusGame:loop()
     
     self:updateGUI()
+    
+    local data = self.nfe:listener()
+    if data then
+        self:submitText(data, true)
+    end
     
     while self:paused() do
         coroutine.yield()
