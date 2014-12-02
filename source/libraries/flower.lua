@@ -10,6 +10,8 @@
 -- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
+require "source/utilities/extensions/string"
+
 -- module
 local M = {}
 
@@ -1148,6 +1150,7 @@ function InputMgr:initialize()
         event.type = down and Event.KEY_DOWN or Event.KEY_UP
         event.key = key
         event.down = down
+        event.character = string.charSafe(key)
 
         self:dispatchEvent(event)
     end

@@ -2715,6 +2715,11 @@ end
 -- @param e event
 function TextInput:onKeyDown(e)
     local key = e.key
+    
+    -- ignore shift
+    if key == 481 or key == 485 then
+        return
+    end
 
     if key == KeyCode.DEL or key == KeyCode.BACKSPACE then
         local text = self:getText()
@@ -2724,7 +2729,7 @@ function TextInput:onKeyDown(e)
     -- TODO: LF
     else
         if self:getMaxLength() == 0 or self:getTextLength() < self:getMaxLength() then
-            self:addText(string.char(key))
+            self:addText(e.character)
         end
     end
 
