@@ -11,15 +11,16 @@ function NetworkFrameworkEntity:init(t)
 end
 
 function NetworkFrameworkEntity:run()
-    self.server, self.servError = socket.bind("*", self.port)
-    if self.server then
-        print("Network connection info:")
-        print(self.server:getsockname())
-        
-        self.server:settimeout(30)
-        self.client, self.servError = self.server:accept()
-    else
-        self.client, self.servError = socket.connect(self.theirIP, self.port)
+    self.client, self.servError = socket.connect(self.theirIP, self.port)
+    if not self.client then
+        self.server, self.servError = socket.bind("*", self.port)
+        if self.server then
+            print("Network connection info:")
+            print(self.server:getsockname())
+            
+            self.server:settimeout(30)
+            self.client, self.servError = self.server:accept()
+        end
     end
         
     if self.client then
