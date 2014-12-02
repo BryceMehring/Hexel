@@ -5,7 +5,7 @@
 
 _Configuration = {
     --["Disable Sound"] = true,
-    ["Disable Networking"] = true,
+    --["Disable Networking"] = true,
 }
     
 function Configuration(key)
