@@ -20,7 +20,7 @@ Enemy.CONTINUE = 3
 function Enemy:init(t)
     self.type = t.type
     self.stats = flower.table.deepCopy(t.type)
-    
+
     self.group = flower.Group(t.layer, self.type.size, self.type.size)
     self.group:setPos(t.pos[1], t.pos[2])
     
@@ -123,7 +123,8 @@ end
 
 function Enemy:slow(params)
     local oldSpeed = self.stats.speed
-    self.stats.speed = self.stats.speed * params.slowAmount
+    
+    self.stats.speed = math.max(1, self.stats.speed * params.slowAmount)
     
     self.moveSpeed = flower.DisplayObject()
     self.moveSpeed:setPos(self.stats.speed, 0)
