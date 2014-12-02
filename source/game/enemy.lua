@@ -75,6 +75,14 @@ function Enemy:updatePos()
             return self.END_OF_PATH
         end
     end
+    
+    -- Update speed
+    if self.moveAction and self.moveAction:isActive() then
+        self.stats.speed = self.moveSpeed:getPos()
+    elseif self.moveAction then
+        self.moveAction = nil
+        self.moveSpeed = nil
+    end
    
     local positionDiff = finalPosition - startingPosition
     local angle = math.atan2(positionDiff[2], positionDiff[1])
@@ -116,9 +124,10 @@ end
 function Enemy:slow(params)
     local oldSpeed = self.stats.speed
     self.stats.speed = self.stats.speed * params.slowAmount
-    flower.Executors.callLaterTime(params.time, function()
-        self.stats.speed = oldSpeed
-    end)
+    
+    self.moveSpeed = flower.DisplayObject()
+    self.moveSpeed:setPos(self.stats.speed, 0)
+    self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * oldSpeed, 0, 0, params.time, MOAIEaseType.SHARP_EASE_OUT)
 end
 
 function Enemy:remove()

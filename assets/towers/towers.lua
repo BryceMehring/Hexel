@@ -9,7 +9,7 @@ YellowTower.cost = 200
 YellowTower.damage = {
     func = "slow",
     params = {
-        slowAmount = 0.6,
+        slowAmount = 0.4,
         time = 10,
     }
 }
