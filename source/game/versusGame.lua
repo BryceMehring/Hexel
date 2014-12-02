@@ -175,6 +175,7 @@ function VersusGame:stopped(s)
     if s ~= nil then
         
         if s == true then
+            self.nfe:stop()
             if self.soundManager then
                 self.soundManager:stop()
             end

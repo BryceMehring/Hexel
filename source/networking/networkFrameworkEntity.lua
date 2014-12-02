@@ -5,9 +5,12 @@ local socket = require("socket")
 NetworkFrameworkEntity = flower.class()
 
 function NetworkFrameworkEntity:init(t)
-    --self.MyIP = nil
-    self.TheirIP = "192.168.1.21"
-    self.port = 48310
+    self.theirIP = t.theirIP or "localhost"
+    self.port = t.port or 48310
+    self:run()
+end
+
+function NetworkFrameworkEntity:run()
     self.server, self.servError = socket.bind("*", self.port)
     if self.server then
         print("Network connection info:")
@@ -16,12 +19,25 @@ function NetworkFrameworkEntity:init(t)
         self.server:settimeout(15)
         self.client, self.servError = self.server:accept()
     else
-        self.client, self.servError = socket.connect("localhost", self.port)
+        self.client, self.servError = socket.connect(self.theirIP, self.port)
     end
         
     if self.client then
         self.client:settimeout(0)
     end
+end
+
+function NetworkFrameworkEntity:stop()
+    if self:isConnected() then
+        self.client:close()
+        
+        if self.server then
+            self.server:close()
+        end
+    end
+    
+    self.client = nil
+    self.server = nil
 end
 
 function NetworkFrameworkEntity:isConnected()
