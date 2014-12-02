@@ -261,6 +261,7 @@ end
 function updateChatText(text)
     chatLogTextbox:setText(text)
 end
+updateItemText = updateChatText
 
 function updatePauseButton(paused)
     pauseButton:setText((paused and "Pause" or "Start") .. " Wave")
