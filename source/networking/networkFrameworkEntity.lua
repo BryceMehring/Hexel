@@ -49,15 +49,25 @@ function NetworkFrameworkEntity:isConnected()
     return false, (self.servError or "Unknown error")
 end
 
+function NetworkFrameworkEntity:stopIfClosed(e)
+    if e == "closed" then
+        self.servError = e
+        self:stop()
+    end
+end
+
 function NetworkFrameworkEntity:talker(text)
     if self:isConnected() then
-        assert(self.client:send(text .. "\n"))
+        local b, e = self.client:send(text .. "\n")
+        self:stopIfClosed(e)
     end
 end
 
 function NetworkFrameworkEntity:listener()
     if self:isConnected() then
         local l, e = self.client:receive()
+        self:stopIfClosed(e)
+        
         return l
     end
 end

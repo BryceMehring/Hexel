@@ -130,6 +130,8 @@ function VersusGame:loop()
     local data = self.nfe:listener()
     if data then
         self:submitText(data, true)
+    elseif not self.nfe:isConnected() then
+        self:showEndGameMessage("Disconnected from server")
     end
     
     while self:paused() do
