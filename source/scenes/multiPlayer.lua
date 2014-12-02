@@ -57,7 +57,7 @@ function item_onTouchDown(e)
     local x = e.x
     local y = e.y
     x, y = layer:wndToWorld(x, y)
-    x, y = prop:worldToModel(x, y)
+    --x, y = prop:worldToModel(x, y)
     
 
 

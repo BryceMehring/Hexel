@@ -90,7 +90,7 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             lastElem = tower:getBottom()
         end
         
-        chatLogTextbox = widget.TextBox {
+        itemInfoUI = widget.TextBox {
             pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
             size = {buttonSize[1], 70},
             text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
@@ -256,6 +256,10 @@ end
 
 function updateStatusText(status)
     statusUI:setText(status)
+end
+
+function updateItemText(text)
+    itemInfoUI:setText(text)
 end
 
 function updateChatText(text)
