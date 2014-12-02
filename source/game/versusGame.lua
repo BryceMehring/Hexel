@@ -9,7 +9,7 @@ require "source/game/enemy"
 require "source/game/tower"
 require "source/pathfinder"
 require "source/game/map"
-require "source/Networking/NetworkFrameworkEntity"
+require "source/networking/networkFrameworkEntity"
 
 require "assets/enemies/enemyTypes"
 
