@@ -9,6 +9,7 @@ require "source/game/enemy"
 require "source/game/tower"
 require "source/pathfinder"
 require "source/game/map"
+require "source/Networking/NetworkFrameworkEntity"
 
 require "assets/enemies/enemyTypes"
 
@@ -43,6 +44,9 @@ function VersusGame:init(t)
     self.currentWave = 1
     
     self.view = t.view
+    
+    self.nfe = NetworkFrameworkEntity{}
+    
 end
 
 -- This function is used by the guiUtilities file to generate
