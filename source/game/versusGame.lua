@@ -34,8 +34,6 @@ function VersusGame:init(t)
     self.radius = 24
     self.default_tile = 0
     self.direction = 1
-
-    self.IP = "192.168.0.10"
     
     self.messageBoxText = ""
     self.chatLog = "hello"
@@ -58,7 +56,7 @@ function VersusGame:generateItemInfo()
 end
 
 function VersusGame:generateStatus()
-   return "Welcome to Multiplayer: " .. self.IP .. ""
+   return "Welcome to Multiplayer:\n " .. self.nfe.theirIP .. ""
 end
 
 -- TODO: this could be cleaned up, I don't really like using the bool `recieve` here
