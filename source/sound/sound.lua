@@ -1,16 +1,22 @@
 require "lfs"
 require "source/utilities/extensions/io"
+require "source/gameConfig"
 
 SoundManager = flower.class()
 
 local flower = flower
 local MOAIUntzSound = MOAIUntzSound
+local soundDisabled = Configuration("Disable Sound")
 
 function SoundManager:init(t)
     t = t or {}
     self.sounds = {}
     self.currentVolume = t.volume or 0.2
     self.soundDir = t.soundDir
+    
+    if soundDisabled then
+        return
+    end
     
     if self.soundDir then
         local soundFiles = io.files(self.soundDir)
@@ -22,6 +28,10 @@ end
 
 
 function SoundManager:addSound(file)
+    if soundDisabled then
+        return
+    end
+    
     local newSound = MOAIUntzSound.new()
     newSound:load(file)
     newSound:setVolume(self.currentVolume)
