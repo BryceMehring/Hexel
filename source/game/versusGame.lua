@@ -47,7 +47,7 @@ function VersusGame:init(t)
     self.nfe = NetworkFrameworkEntity{}
     local connected, networkError = self.nfe:isConnected()
     if not connected then
-        self:showEndGameMessage("Cannot connect to server: " .. (networkError or ""))
+        self:showEndGameMessage("Cannot connect to server: " .. networkError)
     end    
 end
 

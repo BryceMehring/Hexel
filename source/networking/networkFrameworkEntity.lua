@@ -12,12 +12,12 @@ function NetworkFrameworkEntity:init(t)
     if self.server then
         print("Network connection info:")
         print(self.server:getsockname())
-        if self.server then
-            self.server:settimeout(15)
-            self.client, self.servError = self.server:accept()
-            if self.client then
-                self.client:settimeout(0)
-            end
+        
+        self.server:settimeout(15)
+        self.client, self.servError = self.server:accept()
+        
+        if self.client then
+            self.client:settimeout(0)
         end
     end
 end
@@ -27,7 +27,7 @@ function NetworkFrameworkEntity:isConnected()
         return true
     end
     
-    return false, self.servError
+    return false, (self.servError or "Unknown error")
 end
 
 function NetworkFrameworkEntity:talker(text)
@@ -38,7 +38,7 @@ end
 
 function NetworkFrameworkEntity:listener()
     if self:isConnected() then
-        l, e = self.client:receive()
+        local l, e = self.client:receive()
         return l
     end
 end
