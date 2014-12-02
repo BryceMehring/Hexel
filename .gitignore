@@ -18,3 +18,5 @@ assets/*
 
 .DS_Store
 
+*.exe
+
