@@ -10,10 +10,8 @@ local fontSize = 12
 
 function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     local buttonSize = {flower.viewWidth/6, 39}
-    local xPosition = flower.viewWidth - flower.viewWidth/6
     
     saveButton = widget.Button {
-        pos = {xPosition, 39},
         size = buttonSize,
         text = "Save State",
         parent = view,
@@ -21,13 +19,11 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             if gameMode == "MapEditor" then
                 saveGrid(saveFile)
             end
-            -- TODO: implement
         end,
         enabled = gameMode == "MapEditor" and true or false,
     }
     
     loadButton = widget.Button {
-        pos = {xPosition,  saveButton:getBottom()},
         size = buttonSize,
         text = "Load State",
         parent = view,
@@ -37,9 +33,9 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
         end,
         enabled = false,
     }
+    
     if parentObj.paused then
         pauseButton = widget.Button {
-            pos = {xPosition,  loadButton:getBottom()},
             size = buttonSize,
             text = "Pause Wave",
             parent = view,
@@ -57,7 +53,6 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     end
     
     statusUI = widget.TextBox {
-        pos = {xPosition,  pauseButton and pauseButton:getBottom() or loadButton:getBottom()},
         size = {buttonSize[1], 50},
         text =  parentObj:generateStatus(),
         textSize = fontSize,
@@ -74,26 +69,27 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             end
         end
         
-        local lastElem = nil
-        local listX = xPosition
+        towerGroup = widget.UIGroup {
+            layout = widget.BoxLayout {
+                direction = "horizotal", --Yes, this has to be mispelled   
+            },
+            parent = view,
+        }
+        
         for i, item in ipairs(TOWERS) do
             tower = widget.SheetButton{
-                pos = {listX,  statusUI:getBottom()},
                 size = buttonSize,
                 normalTexture = item.texture,
                 onClick = function() 
                     trySelect(parentObj, item)
                 end,
-                parent = view,
+                parent = towerGroup,
             }
-            listX = tower:getRight()
-            lastElem = tower:getBottom()
         end
         
         itemInfoUI = widget.TextBox {
-            pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
             size = {buttonSize[1], 70},
-            text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
+            text =  parentObj:generateItemInfo(),
             textSize = fontSize,
             parent = view,
         }
@@ -102,27 +98,20 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     
     if gameMode == "MultiPlayer" then
         
-        local lastElem = nil
-        local listX = xPosition
-
-        
         chatLogTextbox = widget.TextBox {
-            pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
             size = {buttonSize[1], 210},
             text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
             textSize = fontSize,
             parent = view,
         }
         
-        textInput = widget.TextInput {
-            pos = {xPosition,  lastElem and lastElem or chatLogTextbox:getBottom()},
+        textInput = widget.TextInput {chatLogTextbox:getBottom()},
             size = {buttonSize[1], 70},
             text =  "...",--"Info UI",--parentObj:generateStatus(),
             textSize = fontSize,
             parent = view,
         }
         submitButton = widget.Button {
-            pos ={xPosition,  lastElem and lastElem or textInput:getBottom()},
             size = buttonSize,
             text = "Submit",
             parent = view,
@@ -143,92 +132,63 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     
     if gameMode == "MapEditor" then
         
-        yellowTower = widget.SheetButton {
-            pos = {xPosition,  statusUI:getBottom()},
-            size = buttonSize,
-            normalTexture = "yellow_tower.png",
-            onClick = function()
-                setColor(1)
-                --parentObj.currentColor = 1 -- used in mapEditor
-                statusUI:setText( parentObj:generateStatus()) 
-            end,
+        towerGroup = widget.UIGroup {
+            layout = widget.BoxLayout {
+                direction = "horizotal", --Yes, this has to be mispelled   
+            },
             parent = view,
         }
         
-        redTower = widget.SheetButton {
-            pos = { yellowTower:getRight(),  yellowTower:getTop()},
-            size = buttonSize,
-            normalTexture = "red_tower.png",
-            onClick = function()
-                setColor(2)
-                --parentObj.currentColor = 2
-                statusUI:setText( parentObj:generateStatus())
-            end,
-            parent = view,
-        }
+        for i, item in ipairs(TOWERS) do
+            tower = widget.SheetButton{
+                size = buttonSize,
+                normalTexture = item.texture,
+                onClick = function() 
+                    setColor(i)
+                    statusUI:setText( parentObj:generateStatus()) 
+                end,
+                parent = towerGroup,
+            }
+        end
         
-        greenTower = widget.SheetButton {
-            pos = { redTower:getRight(),  redTower:getTop()},
-            size = buttonSize,
-            normalTexture = "green_tower.png",
-            onClick = function()
-                setColor(3)
-                --parentObj.currentColor = 3
-                statusUI:setText( parentObj:generateStatus())
-            end,
-            parent = view,
-        }
-        
-        blueTower = widget.SheetButton {
-            pos = { greenTower:getRight(),  greenTower:getTop()},
-            size = buttonSize,
-            normalTexture = "blue_tower.png",
-            onClick = function()
-                setColor(4)
-                --parentObj.currentColor = 4
-                statusUI:setText(parentObj:generateStatus())
-            end,
+        nonTowerGroup = widget.UIGroup {
+            layout = widget.BoxLayout {
+                direction = "horizotal",
+            },
             parent = view,
         }
         
         blackSpace = widget.SheetButton {
-            pos = {yellowTower:getLeft(), yellowTower:getBottom()},
             size = buttonSize,
             normalTexture = "black_space.png",
             onClick = function()
                 setColor(5)
-                --parentObj.currentColor = 5
                 statusUI:setText(parentObj:generateStatus())
             end,
-            parent = view,
+            parent = nonTowerGroup,
         }
     
         brownSpace = widget.SheetButton {
-            pos = {blackSpace:getRight(), blackSpace:getTop()},
             size = buttonSize,
             normalTexture = "brown_space.png",
             onClick = function()
                 setColor(6)
-                --parentObj.currentColor = 6
                 statusUI:setText(parentObj:generateStatus())
             end,
-            parent = view,
+            parent = nonTowerGroup,
         }
         
         voidSpace = widget.SheetButton {
-            pos = {blackSpace:getRight(), blackSpace:getTop()},
             size = buttonSize,
             normalTexture = "void_space.png",
             onClick = function()
-                setColor(6)
-                --parentObj.currentColor = 6
+                setColor(7)
                 statusUI:setText(parentObj:generateStatus())
             end,
-            parent = view,
+            parent = nonTowerGroup,
         }
     
         toggleModeButton = widget.Button {
-            pos = {xPosition, brownSpace:getBottom()},
             size = buttonSize,
             text = "Toggle Mode",
             parent = view,
@@ -246,7 +206,6 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
         }
     
         clearButton = widget.Button {
-            pos = {xPosition, toggleModeButton:getBottom()},
             size = buttonSize,
             text = "Clear Grid",
             parent = view,
@@ -287,9 +246,12 @@ end
 function createChildView(animation, selectedData)
     return widget.UIView {
         scene = nil,
+        layout = widget.BoxLayout {
+            align = {"right", "top"},
+        },
         children = {{
             widget.Button {
-                pos = {flower.viewWidth - flower.viewWidth/6, 0},
+                --pos = {flower.viewWidth - flower.viewWidth/6, 0},
                 size = {flower.viewWidth/6, 39},
                 text = "Back",
                 onClick = function()
@@ -302,26 +264,27 @@ function createChildView(animation, selectedData)
 end
 
 function _resizeComponents(view)
-    local buttonSize = {flower.viewWidth/6, 39}
-    local xPosition = flower.viewWidth - flower.viewWidth/6
+--    local buttonSize = {flower.viewWidth/6, 39}
+--    local xPosition = flower.viewWidth - flower.viewWidth/6
 
-    timesRepeated = 0
+--    timesRepeated = 0
     
-    prevY = -1
-    prevItem = nil
-   for i, item in ipairs(view.children) do
-        if (item:getTop() == prevY) then--If it has the same Y as the prev elem
-            timesRepeated = timesRepeated + 1
-            item:setPos(xPosition+(item:getWidth()*timesRepeated), prevItem:getTop())
-        else
-            timesRepeated = 0
-            item:setPos(xPosition, item:getTop())
-            item:setSize(buttonSize[1], item:getHeight())
-        end
+--    prevY = -1
+--    prevItem = nil
+--   for i, item in ipairs(view.children) do
+--        if (item:getTop() == prevY) then--If it has the same Y as the prev elem
+--            timesRepeated = timesRepeated + 1
+--            item:setPos(xPosition+(item:getWidth()*timesRepeated), prevItem:getTop())
+--        else
+--            timesRepeated = 0
+--            item:setPos(xPosition, item:getTop())
+--            item:setSize(buttonSize[1], item:getHeight())
+--        end
           
-        prevY = item:getTop()
-        prevItem = item
-    end 
+--        prevY = item:getTop()
+--        prevItem = item
+--    end 
+    view:updateViewport(0, 0, flower.viewWidth, flower.viewHeight)
 end
 
 
