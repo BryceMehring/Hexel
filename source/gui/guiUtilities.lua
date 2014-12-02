@@ -100,6 +100,43 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
         
     end
     
+    if gameMode == "MultiPlayer" then
+        
+        local lastElem = nil
+        local listX = xPosition
+
+        
+        itemInfoUI = widget.TextBox {
+            pos = {xPosition,  lastElem and lastElem or statusUI:getBottom()},
+            size = {buttonSize[1], 210},
+            text =  parentObj:generateItemInfo(),--"Info UI",--parentObj:generateStatus(),
+            textSize = fontSize,
+            parent = view,
+        }
+        
+        textInput = widget.TextInput {
+            pos = {xPosition,  lastElem and lastElem or itemInfoUI:getBottom()},
+            size = {buttonSize[1], 70},
+            text =  "...",--"Info UI",--parentObj:generateStatus(),
+            textSize = fontSize,
+            parent = view,
+        }
+        submitButton = widget.Button {
+            pos ={xPosition,  lastElem and lastElem or textInput:getBottom()},
+            size = buttonSize,
+            text = "Submit",
+            parent = view,
+            onClick = function()
+                if gameMode == "MultiPlayer" then
+                    parentObj:submitText(text)
+                end
+                -- TODO: implement
+            end,
+            enabled = gameMode == "MultiPlayer" and true or false,
+        }
+        
+    end
+    
     if gameMode == "MapEditor" then
         
         yellowTower = widget.SheetButton {
