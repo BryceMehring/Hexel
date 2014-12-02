@@ -35,7 +35,6 @@ function VersusGame:init(t)
     self.default_tile = 0
     self.direction = 1
 
-
     self.IP = "192.168.0.10"
     
     self.messageBoxText = ""
@@ -46,7 +45,10 @@ function VersusGame:init(t)
     self.view = t.view
     
     self.nfe = NetworkFrameworkEntity{}
-    
+    if not self.nfe:isConnected() then
+        --TODO: why does this not exit the scene?
+        self:showEndGameMessage("Cannot Connect to server")
+    end    
 end
 
 -- This function is used by the guiUtilities file to generate
