@@ -105,7 +105,7 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             parent = view,
         }
         
-        textInput = widget.TextInput {chatLogTextbox:getBottom()},
+        textInput = widget.TextInput {
             size = {buttonSize[1], 70},
             text =  "...",--"Info UI",--parentObj:generateStatus(),
             textSize = fontSize,
