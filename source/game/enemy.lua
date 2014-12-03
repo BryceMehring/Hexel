@@ -18,15 +18,20 @@ Enemy.END_OF_PATH = 2
 Enemy.CONTINUE = 3
 
 function Enemy:init(t)
+    self.rank = t.rank
     self.type = t.type
-    self.stats = flower.table.deepCopy(t.type)
+    self.type.health = self.type.health * ((self.rank * 0.02) + 1.0)
+    self.stats = flower.table.deepCopy(self.type)
+end
 
-    self.group = flower.Group(t.layer, self.type.size, self.type.size)
-    self.group:setPos(t.pos[1], t.pos[2])
+function Enemy:spawn(layer, map)
+    local pos = map:randomStartingPosition()
+    
+    self.group = flower.Group(layer, self.type.size, self.type.size)
+    self.group:setPos(pos[1], pos[2])
     
     local rectangle = flower.Rect(self.type.size, self.type.size)
     rectangle:setColor(self.type.color[1], self.type.color[2], self.type.color[3], self.type.color[4])
-    
     self.group:addChild(rectangle)
     
     self.healthBar = HealthBar {
@@ -37,8 +42,9 @@ function Enemy:init(t)
     }
     
     self.currentPos = 1
-    self.map = t.map
+    self.map = map
 end
+
 
 function Enemy:isDead()
     return self.dead or self.dying

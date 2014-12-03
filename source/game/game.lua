@@ -5,6 +5,7 @@
 
 require "source/utilities/vector"
 require "source/utilities/extensions/math"
+require "source/game/wave"
 require "source/game/enemy"
 require "source/game/tower"
 require "source/pathfinder"
@@ -43,8 +44,6 @@ function Game:init(t)
     self.towers = {}
     self.attacks = {}
     
-    self.currentWave = 1
-    
     self.view = t.view
     
     self.soundManager = SoundManager {
@@ -62,6 +61,14 @@ function Game:init(t)
         radius = self.radius,
         layer = self.layer,
     }
+    
+    self.difficulty = 1
+    self.currentWave = Wave {
+        number = 0, 
+        difficulty = self.difficulty, 
+        --layer = self.layer, 
+        --map = self.map
+    }
 end
 
 -- This function is used by the guiUtilities file to generate
@@ -71,7 +78,7 @@ function Game:generateItemInfo()
 end
 
 function Game:generateStatus()
-   return "Wave: " .. self.currentWave ..
+   return "Wave: " .. self.currentWave.number ..
           "  Lives: " .. self.currentLives ..
           "\nCash: " .. self.currentCash ..
           "  Interest: " .. self.currentInterest .. "%"
@@ -90,78 +97,19 @@ end
 function Game:run()
     
     self.enemies = {}
-    self.enemiesKilled = 0
-    self.spawnedEnemies = 0
+    self.enemiesToSpawn = {}
     
-    -- Timer controlling when enemies spawn
-    local spawnTimer = flower.Executors.callLoopTime(self.map:getWaves()[self.currentWave].spawnRate, function()
-        if self.gameOver then
-            return
-        end
-        
-        local currentWave = self.map:getWaves()[self.currentWave]
-            
-        local function pauseIfWaveComplete()
-            if self.spawnedEnemies >= currentWave.length then
-                self.timers.spawnTimer:pause()
-                return true
-            end
-        end
-        
-        if pauseIfWaveComplete() then
-            return
-        end
-        
-        local newEnemy = Enemy {
-            layer = self.layer,
-            map = self.map,
-            pos = self.map:randomStartingPosition(),
-            type = ENEMY_TYPES[math.randomWeight(currentWave.enemies).type],
-        }
-        table.insert(self.enemies, newEnemy)
-        self.spawnedEnemies = self.spawnedEnemies + 1
-    end)
-
-    self.timers = {
-        spawnTimer = spawnTimer,
-    }
-    
-    self:paused(false)
     flower.Executors.callLoop(self.loop, self)
 end
 
--- Updates to the next wave while taking account the win condition
--- TODO: clean up win condition
-function Game:updateWave()
-    self:paused(true)
-    self.enemiesKilled = 0
-    self.spawnedEnemies = 0
-   
-    self.currentWave = (self.currentWave + 1)
-    if self.currentWave > #self.map:getWaves() then
-        self:showEndGameMessage("You Win!")
-        self.gameOver = true -- todo: this is really messed up as of right now. Change it!
-    else
-        self.timers.spawnTimer:setSpan(self.map:getWaves()[self.currentWave].spawnRate)
-        
-        self:updateGUI()
-        
-        local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), "Wave: " .. self.currentWave, self.view)
-        
-        msgBox:showPopup()
-        flower.Executors.callLaterTime(3, function()
-            msgBox:hidePopup()
-            self:paused(false)
-        end)
-    end
-end
 
 -- Main game loop which updates all of the entities in the game
 function Game:loop()
     
-    if self.enemiesKilled == self.map:getWaves()[self.currentWave].length then
+    --if self.enemiesKilled == self.map:getWaves()[self.currentWave].length then
+    if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
         -- increment to the next wave
-        self:updateWave()
+        self:setupNextWave()
     end
         
     -- TODO: move the laser into its own class
@@ -208,6 +156,64 @@ function Game:loop()
     end
     
     return self:stopped()
+end
+
+function Game:setupNextWave()
+    self:paused(true)
+    self.currentWave.number = self.currentWave.number + 1
+    
+    if self.currentWave.number > 50 then
+        self:showEndGameMessage("You've Won the main game")
+        -- self.gameOver = true -- todo: this is really messed up as of right now. Change it!
+    end
+    
+    self.enemiesKilled = 0
+    self.spawnedEnemies = 0
+    self.enemies = {}
+    
+    self.currentWave:setup()
+    self.enemiesToSpawn = self.currentWave:getEnemies()
+    
+    
+    self:updateGUI()
+    local msgBox = generateMsgBox(
+        self:getPopupPos(), 
+        self:getPopupSize(), 
+        "Wave: " .. self.currentWave.number, 
+        self.view)
+    msgBox:showPopup()
+    flower.Executors.callLaterTime(3, function()
+        msgBox:hidePopup()
+        self:paused(false)
+        self:startSpawnLoop()
+    end)
+end
+
+function Game:startSpawnLoop()
+    -- TODO: move somewhere else so that it is defined only once
+    function spawnLoop()
+        if self.gameOver then
+            return
+        end
+        
+        if #self.enemiesToSpawn == 0 then
+            self.timers.spawnTimer:pause()
+            return
+        end
+        
+        local enemySpawn = table.remove(self.enemiesToSpawn)
+        enemySpawn:spawn(self.layer, self.map)
+        table.insert(self.enemies, enemySpawn)
+        self.spawnedEnemies = self.spawnedEnemies + 1
+        
+    end
+    
+    local spawnTimer = flower.Executors.callLoopTime(spawnRate, spawnLoop)
+    self.timers = {
+        spawnTimer = spawnTimer,
+    }
+    
+    self.timers.spawnTimer:start()
 end
 
 -- Looses a life and ends the game if the lives count reaches 0
