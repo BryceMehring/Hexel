@@ -36,7 +36,7 @@ function Game:init(t)
     self.direction = 1
 
     self.currentLives = 20
-    self.currentCash = 500
+    self.currentCash = 5000
     self.currentInterest = 0
     self.layer = t.layer
     self.mapFile = t.mapFile
@@ -45,6 +45,7 @@ function Game:init(t)
     self.attacks = {}
     
     self.view = t.view
+    self.popupView = t.popupView
     
     self.soundManager = SoundManager {
        soundDir = "assets/sounds/soundtrack/",
@@ -175,14 +176,17 @@ function Game:setupNextWave()
     self.enemiesToSpawn = self.currentWave:getEnemies()
     
     self:updateGUI()
+    
     local msgBox = generateMsgBox(
         self:getPopupPos(), 
         self:getPopupSize(), 
         "Wave: " .. self.currentWave.number, 
-        self.view)
+        self.popupView)
+    
     msgBox:showPopup()
     flower.Executors.callLaterTime(3, function()
         msgBox:hidePopup()
+        self.popupView:removeChild(msgBox)
         self:paused(false)
         self:startSpawnLoop()
     end)
@@ -278,8 +282,12 @@ end
 
 -- Shows a message box with a message just before ending the game
 function Game:showEndGameMessage(msg)
-    local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.view)
+    local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.popupView)
     msgBox:showPopup()
+    flower.Executors.callLaterTime(3, function()
+        msgBox:hidePopup()
+        self.popupView:removeChild(msgBox)
+    end)
     self:stopped(true)
 end
 

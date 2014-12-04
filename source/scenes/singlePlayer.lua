@@ -18,10 +18,18 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
+    local popupView = widget.UIView {
+        scene = scene,
+        layout = widget.BoxLayout {
+            align = {"center", "center"},
+        },
+    }
+    
     singlePlayerGame = Game {
         layer = layer,
         mapFile = e.data.mapFile,
         view = e.data.view,
+        popupView = popupView,
         -- TODO: fill this out
     }
 
