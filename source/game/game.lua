@@ -174,7 +174,6 @@ function Game:setupNextWave()
     self.currentWave:setup()
     self.enemiesToSpawn = self.currentWave:getEnemies()
     
-    
     self:updateGUI()
     local msgBox = generateMsgBox(
         self:getPopupPos(), 
@@ -208,6 +207,8 @@ function Game:startSpawnLoop()
         
     end
     
+    local spawnRate = self.currentWave.time / #self.enemiesToSpawn
+    print("SpawnRate = " .. spawnRate .. " seconds per enemy")
     local spawnTimer = flower.Executors.callLoopTime(spawnRate, spawnLoop)
     self.timers = {
         spawnTimer = spawnTimer,

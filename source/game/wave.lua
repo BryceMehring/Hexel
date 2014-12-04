@@ -18,7 +18,7 @@ end
 
 function Wave:setup()
     self.time = 9 + self.number *.75
-    self.powerSpawnRate = 30 + .50 * self.number * math.log10(self.number)
+    self.powerSpawnRate = 25 + .50 * self.number * math.log10(self.number)
     self.totalPower = self.powerSpawnRate * self.time
 end
 
@@ -31,16 +31,16 @@ function Wave:getEnemies()
     local enemies = {}
     
     for key, enemyType in pairs(enemyTypes) do
-        maxPowerThisType = self.totalPower / #enemyTypes
-        currentTypePower = 0
+        local rankedEnemyType = flower.table.deepCopy(ENEMY_TYPES[enemyType])
+        rankedEnemyType.health = rankedEnemyType.health * ((self.number * 0.02) + 1.0)
+        local costPerEnemy = rankedEnemyType.cost
         
-        while currentTypePower < maxPowerThisType do
+        local maxPowerThisType = self.totalPower / #enemyTypes
+        for i= 0 , maxPowerThisType, costPerEnemy do
             local newEnemy = Enemy {
-                type = ENEMY_TYPES[enemyType],
-                rank = self.number
+                type = rankedEnemyType
             }
             table.insert(enemies, newEnemy)
-            currentTypePower = currentTypePower + newEnemy.stats.cost
         end
         
     end
