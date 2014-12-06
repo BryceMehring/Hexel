@@ -14,8 +14,11 @@ function Queue:pop()
     table.remove(self.queue, 1)
 end
 
-function Queue:push(data)
-    table.insert(self.queue, data)
+function Queue:push(...)
+    local vars = {...}
+    for i=1, #vars do
+        table.insert(self.queue, vars[i])
+    end
 end
 
 function Queue:front()

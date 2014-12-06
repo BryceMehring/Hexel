@@ -12,7 +12,7 @@ end
 function CircularQueue:push(...)
     Queue.push(self, ...)
     
-    if self:size() > self.maxSize then
+    while self:size() > self.maxSize do
         self:pop()
     end
 end
