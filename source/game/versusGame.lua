@@ -10,6 +10,7 @@ require "source/game/tower"
 require "source/pathfinder"
 require "source/game/map"
 require "source/networking/networkFrameworkEntity"
+require "source/utilities/limitedQueue"
 
 require "assets/enemies/enemyTypes"
 
@@ -36,7 +37,8 @@ function VersusGame:init(t)
     self.direction = 1
     
     self.messageBoxText = ""
-    self.chatLog = "hello"
+    self.chatQueue = LimitedQueue(12)
+    self.chatQueue:push("Hello")
 
     self.currentWave = 1
     
@@ -52,7 +54,7 @@ end
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
 function VersusGame:generateItemInfo()
-   return self.chatLog
+   return self.chatQueue:toString()
 end
 
 function VersusGame:generateStatus()
@@ -69,9 +71,8 @@ function VersusGame:submitText(text, recieve)
         text = "Them: " .. text
     end
     
-    --self.messageBoxText = text
-    self.chatLog = self.chatLog .. "\n" .. text..""--self.messageBoxText .. "" 
-    --self.generateItemInfo()
+    self.chatQueue:push(text)
+
     self:updateGUI()
 end
 
@@ -104,7 +105,6 @@ function VersusGame:updateWave()
     self.currentWave = (self.currentWave + 1)
     if self.currentWave > #self.map:getWaves() then
         self:showEndGameMessage("You Win!")
-        self.gameOver = true -- todo: this is really messed up as of right now. Change it!
     else
         self.timers.spawnTimer:setSpan(self.map:getWaves()[self.currentWave].spawnRate)
         
