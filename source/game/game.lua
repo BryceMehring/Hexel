@@ -187,8 +187,8 @@ function Game:setupNextWave()
     flower.Executors.callLaterTime(3, function()
         msgBox:hidePopup()
         self.popupView:removeChild(msgBox)
-        self:paused(false)
         self:startSpawnLoop()
+        self:paused(false)
     end)
 end
 
