@@ -3,6 +3,7 @@
 
 require "source/gridNeighbors"
 require "source/utilities/vector"
+require "source/utilities/queue"
 
 local function posToKey(gridWidth, pos)
     return pos[1] + pos[2] * (gridWidth + 1)
@@ -33,23 +34,24 @@ function findPath(grid, targetPosition, validTileCallback)
     end
     
     local visited = {}
-    local list = {}
+    local list = Queue()
     
-    table.insert(list, {position = targetPosition, parent = nil})
-    visited[posToKey(width, targetPosition)] = list[1]
+    list:push({position = targetPosition, parent = nil})
+    visited[posToKey(width, targetPosition)] = list:front()
     
-    while #list > 0 do
+    while not list:empty() do
         -- Pop the front node from the queue
-        local currentNode = list[1]
-        table.remove(list, 1)
+        local currentNode = list:front()
+        list:pop()
         
         local directions = getHexNeighbors(currentNode.position)
         for i, dir in ipairs(directions) do
             local newPos = currentNode.position + dir
             local key = posToKey(width, newPos)
             if ValidTile(newPos) and not visited[key] then
-                table.insert(list, {position = newPos, parent = currentNode})
-                visited[key] = list[#list]
+                local newNode = {position = newPos, parent = currentNode}
+                list:push(newNode)
+                visited[key] = newNode
             end
         end
     end
