@@ -10,7 +10,7 @@ require "source/game/tower"
 require "source/pathfinder"
 require "source/game/map"
 require "source/networking/networkFrameworkEntity"
-require "source/utilities/limitedQueue"
+require "source/utilities/circularQueue"
 
 require "assets/enemies/enemyTypes"
 
@@ -37,7 +37,7 @@ function VersusGame:init(t)
     self.direction = 1
     
     self.messageBoxText = ""
-    self.chatQueue = LimitedQueue(12)
+    self.chatQueue = CircularQueue(12)
     self.chatQueue:push("Hello")
 
     self.currentWave = 1

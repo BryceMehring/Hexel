@@ -1,14 +1,15 @@
 require "source/utilities/queue"
 
-LimitedQueue = flower.class(Queue)
+-- TODO: is this a good name for this class?
+CircularQueue = flower.class(Queue)
 
-function LimitedQueue:init(size, ...)
+function CircularQueue:init(size, ...)
     Queue.init(self, ...)
     
     self.maxSize = size
 end
 
-function LimitedQueue:push(...)
+function CircularQueue:push(...)
     Queue.push(self, ...)
     
     if self:size() > self.maxSize then
