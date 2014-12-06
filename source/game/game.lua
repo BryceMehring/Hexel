@@ -192,28 +192,26 @@ function Game:setupNextWave()
     end)
 end
 
-function Game:startSpawnLoop()
-    -- TODO: move somewhere else so that it is defined only once
-    function spawnLoop()
-        if self.gameOver then
-            return
-        end
+function Game:spawnLoop()
+    if self.gameOver then
+        return
+    end
         
-        if #self.enemiesToSpawn == 0 then
-            self.timers.spawnTimer:pause()
-            return
-        end
-        
-        local enemySpawn = table.remove(self.enemiesToSpawn)
-        enemySpawn:spawn(self.layer, self.map)
-        table.insert(self.enemies, enemySpawn)
-        self.spawnedEnemies = self.spawnedEnemies + 1
-        
+    if #self.enemiesToSpawn == 0 then
+        self.timers.spawnTimer:pause()
+        return true
     end
     
+    local enemySpawn = table.remove(self.enemiesToSpawn)
+    enemySpawn:spawn(self.layer, self.map)
+    table.insert(self.enemies, enemySpawn)
+    self.spawnedEnemies = self.spawnedEnemies + 1
+end
+
+function Game:startSpawnLoop()    
     local spawnRate = self.currentWave.time / #self.enemiesToSpawn
     print("SpawnRate = " .. spawnRate .. " seconds per enemy")
-    local spawnTimer = flower.Executors.callLoopTime(spawnRate, spawnLoop)
+    local spawnTimer = flower.Executors.callLoopTime(spawnRate, self.spawnLoop, self)
     self.timers = {
         spawnTimer = spawnTimer,
     }

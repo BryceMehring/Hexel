@@ -19,7 +19,6 @@ Enemy.CONTINUE = 3
 
 function Enemy:init(t)
     self.type = t.type
-    -- self.type.health = self.type.health * ((self.rank * 0.02) + 1.0)
     self.stats = flower.table.deepCopy(self.type)
 end
 

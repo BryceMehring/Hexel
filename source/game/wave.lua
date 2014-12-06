@@ -27,7 +27,7 @@ function Wave:getEnemies()
         self.setup()
     end
     
-    local enemyTypes = getTypesAllowed(self.number)
+    local enemyTypes = Wave.getTypesAllowed(self.number)
     local enemies = {}
     
     for key, enemyType in pairs(enemyTypes) do
@@ -49,7 +49,7 @@ function Wave:getEnemies()
     return enemies
 end
 
-function getTypesAllowed(waveNum)
+function Wave.getTypesAllowed(waveNum)
     if waveNum >= 50 then
         return {"NORMAL", "FAST", "HEAVY", "SUPER"}
     elseif waveNum % 10 == 0 then
