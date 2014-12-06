@@ -165,7 +165,6 @@ function Game:setupNextWave()
     
     if self.currentWave.number > 50 then
         self:showEndGameMessage("You've Won the main game")
-        -- self.gameOver = true -- todo: this is really messed up as of right now. Change it!
     end
     
     self.enemiesKilled = 0
@@ -193,7 +192,7 @@ function Game:setupNextWave()
 end
 
 function Game:spawnLoop()
-    if self.gameOver then
+    if self:stopped() then
         return
     end
         
