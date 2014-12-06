@@ -29,3 +29,12 @@ end
 function Queue:size()
     return #self.queue
 end
+
+function Queue:toString()
+    local text = ""
+    for i, d in ipairs(self.queue) do
+        text = text .. d .. '\n'
+    end
+    
+    return text
+end
