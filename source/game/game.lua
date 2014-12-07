@@ -29,22 +29,13 @@ Game.INTEREST_INCREMENT = 3
 function Game:init(t)
     -- TODO: pass is variables instead of hardcoding them
     self.texture = "hex-tiles.png"
-    self.width = 50
-    self.height = 100
     self.tileWidth = 128
     self.tileHeight = 111
     self.radius = 24
     self.default_tile = 0
     self.direction = 1
-
-    self.currentLives = 20
-    self.currentCash = 5000
-    self.currentInterest = 0
     self.layer = t.layer
     self.mapFile = t.mapFile
-    
-    self.towers = {}
-    self.attacks = {}
     
     self.view = t.view
     self.popupView = t.popupView
@@ -53,6 +44,16 @@ function Game:init(t)
        soundDir = "assets/sounds/soundtrack/",
     }
     self.soundManager:randomizedPlay()
+    
+    -- BEGIN Necessary Client Data
+    self.width = 50
+    self.height = 100
+    self.currentLives = 20
+    self.currentCash = 5000
+    self.currentInterest = 0
+    
+    self.towers = {}
+    self.attacks = {}
     
     self.map = Map {
         file = self.mapFile,
@@ -72,6 +73,7 @@ function Game:init(t)
         --layer = self.layer, 
         --map = self.map
     }
+    -- END Necessary Client Data
 end
 
 -- This function is used by the guiUtilities file to generate
