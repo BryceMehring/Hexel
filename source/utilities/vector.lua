@@ -69,6 +69,10 @@ function vector:equal(other)
     return true
 end
 
+function vector:unPack()
+    return self[1], self[2], self[3], self[4]
+end
+
 vector.__interface.__add = vector.add
 vector.__interface.__sub = vector.sub
 vector.__interface.__unm = vector.negate

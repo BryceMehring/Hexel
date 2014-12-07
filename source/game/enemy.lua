@@ -32,9 +32,9 @@ function Enemy:spawn(layer, map)
     self.group = flower.Group(layer, self.type.size, self.type.size)
     self.group:setPos(pos[1], pos[2])
     
-    local rectangle = flower.Rect(self.type.size, self.type.size)
-    rectangle:setColor(self.type.color[1], self.type.color[2], self.type.color[3], self.type.color[4])
-    self.group:addChild(rectangle)
+    self.rectangle = flower.Rect(self.type.size, self.type.size)
+    self.rectangle:setColor(self.type.color[1], self.type.color[2], self.type.color[3], self.type.color[4])
+    self.group:addChild(self.rectangle)
     
     self.healthBar = HealthBar {
         parent = self.group,
@@ -174,6 +174,10 @@ function Enemy:updatePos()
     if self:isSlowed() then
         local newSpeed = self.moveSpeed:getPos()
         self.stats.speed = math.clamp(newSpeed, self.type.minSpeed, self.type.speed)
+        local currentColor = vector(self.type.color)
+        currentColor = currentColor * (self.stats.speed / self.type.speed)
+        currentColor[4] = 1.0
+        self.rectangle:setColor(currentColor:unPack())
     elseif self.moveAction then
         self.moveAction = nil
         self.moveSpeed = nil
