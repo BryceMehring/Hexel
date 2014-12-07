@@ -134,11 +134,40 @@ function Server:loop()
     end
     
     -- SEND STATE TO CLIENTS
-    
+    object.currentCash = self.currentCash
+    object = {currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, map=self.map, difficulty=self.difficulty, currentWave=self.currentWave}
+    local temp = JSON.encode(object)
+    self:nfe.talker(temp)
     --COMMAND NEEDED: Send enemies map towers etc
     
     return self:stopped() -- Needed?
 end
+
+self.currentLives = 20
+    self.currentCash = 5000
+    self.currentInterest = 0
+    
+    self.towers = {}
+    self.attacks = {}
+    
+    self.map = Map {
+        file = self.mapFile,
+        texture = self.texture,
+        width = self.width,
+        height = self.height,
+        tileWidth = self.tileWidth,
+        tileHeight = self.tileHeight,
+        radius = self.radius,
+        layer = self.layer,
+    }
+    
+    self.difficulty = 1
+    self.currentWave = Wave {
+        number = 0, 
+        difficulty = self.difficulty, 
+        --layer = self.layer, 
+        --map = self.map
+    }
 
 function Server:setupNextWave()
     self:paused(true)
@@ -276,13 +305,15 @@ end
 --end
 
 function Server:handleData(text)
-  local data = JSON:decode(text)
-  if data.message ~= nil then
-    self:submitText(data.message, true)
-  end
-  if data.tower_place ~= nil then
-    --call place tower function
-  end
+    local data = JSON:decode(text)
+    if data.message ~= nil then
+        self:submitText(data.message, true)
+    end
+    if data.tower_place ~= nil then
+        --call place tower function
+    if data.tower_sell ~= nil then
+        --call sell tower function
+    end
 end
 
 -- TODO: this could be cleaned up, I don't really like using the bool `recieve` here
@@ -300,5 +331,4 @@ function Server:submitText(text, recieve)
     
     self.chatQueue:push(text)
 
-    self:updateGUI()
 end
