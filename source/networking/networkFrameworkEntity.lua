@@ -49,6 +49,10 @@ function NetworkFrameworkEntity:isConnected()
     return false, (self.servError or "Unknown error")
 end
 
+function NetworkFrameworkEntity:isServer()
+    return self.server and true
+end
+
 function NetworkFrameworkEntity:stopIfClosed(e)
     if e == "closed" then
         self.servError = e
