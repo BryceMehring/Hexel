@@ -294,26 +294,44 @@ function Game:showEndGameMessage(msg)
     self:stopped(true)
 end
 
+-- not self.map:isTileSelected() mouse has the circle
 -- Updates the current tower selected
 function Game:selectTower(tower)
     self.towerSelected = tower
-    
-    if self.hoverCircle then
+
+    if self.hoverCircle and self.hoverCircle.layer ~= nil then
         self.hoverCircle:setLayer(nil)
     end
     
     if self.towerSelected then
         local screenPos = (self.towerSelected and self.towerSelected.pos) and self.map:gridToScreenSpace(self.towerSelected.pos) or self.cursorPos
         local range = self.map:gridToScreenSpace(tower.type.range) / 1.7 -- TODO: where does this number come from?
-        self.hoverCircle = flower.Circle(range, 100)
-        self.hoverCircle:setPos(screenPos[1], screenPos[2])
-        self.hoverCircle:setColor(0.6, 0.4, 0.4, 0.1)
-        self.hoverCircle:setLayer(self.layer)
         
+        if self.towerSelected.pos == nil then
+            self:drawCircle(range, screenPos)
+        else
+            if self.hoverCircle == nil then
+                self:drawCircle(range, screenPos)
+            else
+                if self.hoverCircle:getLeft() == screenPos[1] and self.hoverCircle:getTop() == screenPos[2] and self.map:isTileSelected() then
+                    self.hoverCircle:setLayer(nil)
+                    self.hoverCircle = nil
+                else
+                    self:drawCircle(range, screenPos)
+                end
+            end
+        end
         self.map:unselectTile()
     end
     
     self:updateGUI()
+end
+
+function Game:drawCircle(range, screenPos)
+    self.hoverCircle = flower.Circle(range, 100)
+    self.hoverCircle:setPos(screenPos[1], screenPos[2])
+    self.hoverCircle:setColor(0.6, 0.4, 0.4, 0.1)
+    self.hoverCircle:setLayer(self.layer)
 end
 
 -- Returns the selected tower
@@ -362,6 +380,7 @@ function Game:onTouchDown(pos, inputType)
             else
                 self:selectTower(tower)
                 self.map:selectTile(pos)
+                self.towerSelected = nil
             end
         elseif inputType == "mouseRightClick" then
             -- Sell the tower
