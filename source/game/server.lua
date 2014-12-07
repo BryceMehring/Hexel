@@ -72,10 +72,10 @@ function Server:init(t)
     self.chatQueue = CircularQueue(12)
     self.chatQueue:push("Hello")
     
-    self.nfe = NetworkFrameworkEntity{}
+    self.nfe = t.nfe
     local connected, networkError = self.nfe:isConnected()
     if not connected then
-        self:showEndGameMessage("Cannot connect to server: " .. networkError)
+        return
     end 
 end
 

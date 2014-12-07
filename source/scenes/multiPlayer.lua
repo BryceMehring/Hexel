@@ -1,6 +1,11 @@
 module(..., package.seeall)
 
-require "source/game/versusGame"
+require "source/networking/networkFrameworkEntity"
+local JSON = require "source/libraries/JSON"
+
+--require "source/game/versusGame"
+require "source/game/server"
+require "source/game/client"
 require "source/gui/guiUtilities"
 
 local flower = flower
@@ -13,14 +18,35 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
-    multiPlayerGame = VersusGame {
-        layer = layer,
-        view = e.data.view,
-        -- TODO: fill this out
-    }
+    self.nfe = NetworkFrameworkEntity{}
+    local connected, networkError = self.nfe:isConnected()
+    if not connected then
+        return
+    end        
+    
+    if self.nfe.isServer() then
+        multiplayerGame =  Server {
+            layer = layer,
+            view = e.data.view
+            nfe = self.nfe,
+        }
+    else
+        multiplayerGame = Client {
+            layer = layer,
+            view = e.data.view
+            nfe = self.nfe,
+        }
+    end
+    
+--    multiPlayerGame = VersusGame {
+--        layer = layer,
+--        view = e.data.view,
+--        -- TODO: fill this out
+--    }
 
     view = e.data.view
-    buildUI("MultiPlayer", e.data.view, multiPlayerGame)
+    buildUI("SinglePlayer", e.data.view,
+        multiPlayerGame)
 
     flower.Runtime:addEventListener("resize", onResize)
     
