@@ -140,22 +140,23 @@ function Client:loop()
 end
 
 function Client:handleData(text)
-  local data = JSON:decode(text)
-  
-  if data.message ~= nil then
-    self:submitText(data.message, true)
-  end
-  
-  if data.game_data ~= nil then
-    self.currentLives      = data.game_data.currentLives
-    self.currentCash       = data.game_data.currentCash
-    self.currentInterest   = data.game_data.currentLives
-    self.towers            = data.game_data.towers
-    self.attacks           = data.game_data.attacks
-    self.map               = data.game_data.map
-    self.difficulty        = data.game_data.difficulty
-    self.currentWave       = data.game_data.currentWave
-  end
+    local data = JSON:decode(text)
+
+    if data.message ~= nil then
+        self:submitText(data.message, true)
+    end
+
+    if data.game_data ~= nil then
+        self.currentLives      = data.game_data.currentLives
+        self.currentCash       = data.game_data.currentCash
+        self.currentInterest   = data.game_data.currentLives
+        self.towers            = data.game_data.towers
+        self.attacks           = data.game_data.attacks
+        self.map               = data.game_data.map
+        self.difficulty        = data.game_data.difficulty
+        self.currentWave       = data.game_data.currentWave
+        self.map.setLayer(self.layer)
+    end
 end
 
 -- Pauses the game if p is true, unpauses the game if p is false

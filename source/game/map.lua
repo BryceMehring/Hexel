@@ -33,7 +33,7 @@ function Map:load(file)
     
     self.grid = flower.MapImage(self.texture, self.width,
                                 self.height, self.tileWidth,
-                                self.tileHeight, self.radius)                          
+                                self.tileHeight, self.radius)
     self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
     self.grid:setLayer(self.layer)
     
@@ -187,5 +187,11 @@ end
 
 function Map:getMOAIGrid()
     return self:getGrid().grid
+end
+
+function Map:setLayer(layer)
+    self.layer = layer
+    self.grid:setLayer(self.layer)
+    self.selectedImage:setLayer(self.layer)
 end
     
