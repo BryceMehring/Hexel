@@ -22,6 +22,10 @@ function Enemy:init(t)
     self.stats = flower.table.deepCopy(self.type)
 end
 
+--- Places the enemy on the map at a random starting location specified by the map.
+-- @param the layer in which the enemy shall spawn on
+-- @param the map in which the enemy will spawn on
+-- TODO: remove layer as a parameter
 function Enemy:spawn(layer, map)
     local pos = map:randomStartingPosition()
     
@@ -43,17 +47,100 @@ function Enemy:spawn(layer, map)
     self.map = map
 end
 
+--- The enemy will continue to follow its path and update its health bar.
+-- @return self.DIED will be returned when the enemy is finished dying. self.CONTINUE will be returned if the enemy shall still be updated
+function Enemy:update()
+    if self.dead then
+        return self.DIED
+    end
+    
+    self:updateHealthBar()
+    
+    local updateStatus = self:updatePos()
+    return updateStatus or self.CONTINUE
+end
+
+--- Do damage to the enemy.
+-- @param table which has the member `params.damage` which specifies how much of the enemies health is lost
+-- @return true if the enemy is dying, else nil
+function Enemy:damage(params)
+    if self.dying then
+        return
+    end
+    
+    self.stats.health = self.stats.health - params.damage
+    if self.stats.health <= 0 then
+        self.dying = true
+        self.stats.health = 0
+    end
+    
+    return self.dying
+end
+
+--- Slows down the enemy.
+-- @param table which has the following members, 
+--      `params.slowAmount` which specifies a percentage of the current speed to slow down to
+--      `params.time` which specifies how long the enemy will take to speed up. Note that the enemy can effect the time via `ENEMY_TYPES[type].speedRecovery`
+function Enemy:slow(params)
+    
+    local speedDiff = -self.stats.speed * params.slowAmount
+    local easeInTime = math.max(1, self.type.speed / 2)
+    
+    -- slow down
+    self.moveSpeed = flower.DisplayObject()
+    self.moveSpeed:setPos(self.stats.speed, 0)
+    self.moveAction = self.moveSpeed:moveLoc(speedDiff, 0, 0, easeInTime, MOAIEaseType.SHARP_EASE_IN)
+    
+    flower.Executors.callLaterTime(easeInTime + 0.1, function()
+        -- speed up
+        self.moveSpeed = flower.DisplayObject()
+        self.moveSpeed:setPos(self.stats.speed, 0)
+        self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * self.type.speed,
+            0, 0, params.time * (1 / self.type.speedRecovery), MOAIEaseType.SHARP_EASE_OUT)
+    end)
+end
+
+--- Removes the enemy from the layer.
+function Enemy:remove()
+    if self.group then
+        self.group:setVisible(false)
+        self.group:setLayer(nil)
+    end
+end
+
+--- Retreives the current tile the enemy is currently on.
+-- @return the current tile as a vector in grid space
+function Enemy:get_tile()
+    local pos = vector{self.group:getPos()}
+    return vector{self.map:getMOAIGrid():locToCoord(pos[1], pos[2])}
+end
+
+--- Retreives the enemy cost.
+-- Onces the enemy dies, the user will recieve this amount of money for thier effort.
+-- @return the enemy cost
+function Enemy:getCost()
+    return self.stats.cost
+end
+
+--- Returns the enemy type.
+-- @return a table which describes the type enemy
+function Enemy:getType()
+    return self.type
+end
+
+--- Returns whether or not the enemy is slowed.
+-- @return true if the enemy is currently actively slowed, nil otherwise
 function Enemy:isSlowed()
     return self.moveAction and self.moveAction:isActive()
 end
 
+--- Returns whether or not the enemy is dead.
+-- @return true if the enemy is dead or dying, else nil
 function Enemy:isDead()
     return self.dead or self.dying
 end
 
-function Enemy:healthBarCallback()
-    self.dead = true
-end
+------------------- Internal methods, do not call these externally -------------------
 
 function Enemy:updateHealthBar()
     self.healthBar:moveScl(self.stats.health / self.type.health, Enemy.healthBarCallback, self)
@@ -104,70 +191,6 @@ function Enemy:updatePos()
     self.group:setPos(newPosition[1], newPosition[2])
 end
 
-function Enemy:update()
-    if self.dead then
-        return self.DIED
-    end
-    
-    self:updateHealthBar()
-    
-    local updateStatus = self:updatePos()
-    return updateStatus or self.CONTINUE
-end
-
-function Enemy:damage(params)
-    if self.dying then
-        return
-    end
-    
-    self.stats.health = self.stats.health - params.damage
-    if self.stats.health <= 0 then
-        self.dying = true
-        self.stats.health = 0
-    end
-    
-    return self.dying
-end
-
-function Enemy:slow(params)
-    
-    local speedDiff = -self.stats.speed * params.slowAmount
-    local easeInTime = math.max(1, self.type.speed / 2)
-    
-    -- slow down
-    self.moveSpeed = flower.DisplayObject()
-    self.moveSpeed:setPos(self.stats.speed, 0)
-    self.moveAction = self.moveSpeed:moveLoc(speedDiff, 0, 0, easeInTime, MOAIEaseType.SHARP_EASE_IN)
-    
-    flower.Executors.callLaterTime(easeInTime + 0.1, function()
-        -- speed up
-        self.moveSpeed = flower.DisplayObject()
-        self.moveSpeed:setPos(self.stats.speed, 0)
-        self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * self.type.speed,
-            0, 0, params.time * (1 / self.type.speedRecovery), MOAIEaseType.SHARP_EASE_OUT)
-    end)
-end
-
-function Enemy:remove()
-    if self.group then
-        self.group:setVisible(false)
-        self.group:setLayer(nil)
-    end
-end
-
-function Enemy:get_tile()
-    local pos = vector{self.group:getPos()}
-    return vector{self.map:getMOAIGrid():locToCoord(pos[1], pos[2])}
-end
-
-function Enemy:getCost()
-    return self.stats.cost
-end
-
-function Enemy:getType()
-    return self.type
-end
-
-function Enemy:isA(otherType)
-    return self.type == ENEMY_TYPES[otherType]
+function Enemy:healthBarCallback()
+    self.dead = true
 end
