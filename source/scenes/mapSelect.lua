@@ -30,7 +30,6 @@ function createMenuList()
         scene = scene,
         layout = widget.BoxLayout {
             align = {"center", "top"},
---            direction = "horizotal",
         },
         children = {{
             widget.Button {
@@ -41,7 +40,7 @@ function createMenuList()
     
     mapGroup = widget.UIGroup {
         layout = widget.BoxLayout {
-            gap = {100, 100},--flower.viewHeight/6, flower.viewWidth/6},
+            gap = {100, 100},
             direction = "horizotal",
         },
         parent = newView,
@@ -49,7 +48,6 @@ function createMenuList()
     
     for i, item in ipairs(MAP_LIST) do
         local map = widget.SheetButton{
---            pos = {flower.viewWidth * i / 6, flower.viewWidth/6},
             size = {128, 128},
             text = item.title,
             textColor = {0.8, 0.8, 0.8, 1},
@@ -66,23 +64,6 @@ end
 function resizeMenuList()
     _resizeComponents(view)
     _resizeComponents(newView)
---    for i, item in ipairs(view.children) do
---        if i == 1 then
---            item:setPos(flower.viewWidth - flower.viewWidth/6, 0)
---            item:setSize(flower.viewWidth/6, 39)
---        else    
---            item:setPos(flower.viewWidth * (i-1) / 6, flower.viewWidth/6)
---        end
---    end
---    local itemWidth = flower.viewWidth - 20
---    local itemHeight = ITEM_HEIGHT
-    
---    view.children[1]:setPos(flower.viewWidth-flower.viewWidth/6, 0)
---    view.children[1]:setSize(flower.viewWidth/6, 39)
-    
---    for i, menuItem in ipairs(menuList) do
---        menuItem:setSize(itemWidth, itemHeight)
---    end
 end
 
 --------------------------------------------------------------------------------

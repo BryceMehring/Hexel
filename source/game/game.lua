@@ -22,6 +22,9 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
+--Add 3% to the interest rate each turn
+local INTEREST_INCREMENT = 3 
+
 Game = flower.class()
 
 function Game:init(t)
@@ -113,6 +116,11 @@ function Game:loop()
     
     --if self.enemiesKilled == self.map:getWaves()[self.currentWave].length then
     if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
+        if self.currentWave.number > 0 then
+            self.currentInterest = self.currentInterest + INTEREST_INCREMENT
+            self.currentCash = math.floor(self.currentCash * (1+INTEREST_INCREMENT/100))
+        end
+        
         -- increment to the next wave
         self:setupNextWave()
     end
@@ -161,6 +169,7 @@ end
 
 function Game:setupNextWave()
     self:paused(true)
+    
     self.currentWave:increment()
     
     -- TODO: add an option so that the game keeps on going, like a survival mode, issue #51
