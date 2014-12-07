@@ -68,6 +68,14 @@ function Server:init(t)
         --map = self.map
     }
     -- END Necessary Client Data
+    self.chatQueue = CircularQueue(12)
+    self.chatQueue:push("Hello")
+    
+    self.nfe = NetworkFrameworkEntity{}
+    local connected, networkError = self.nfe:isConnected()
+    if not connected then
+        self:showEndGameMessage("Cannot connect to server: " .. networkError)
+    end 
 end
 
 -- Initializes the game to run by turning on the spawning of enemies
@@ -118,6 +126,12 @@ function Server:loop()
     end
     
     -- CONSUME INPUTS
+    local data = self.nfe:listener()
+    if data then
+        self:handleData(data)
+    elseif not self.nfe:isConnected() then
+        self:showEndGameMessage("Disconnected from server")
+    end
     
     -- SEND STATE TO CLIENTS
     
@@ -128,6 +142,7 @@ end
 
 function Server:setupNextWave()
     self:paused(true)
+    --SEND PAUSED COMMAND (3 seconds, "Wave: " .. self.currentWave.number)
     
     self.currentWave:increment()
     
@@ -253,4 +268,37 @@ function Server:stopped(s)
     else
         return self.isStopped
     end
+end
+
+-- The chat queue needs to be handled similarly to this
+--function VersusGame:generateItemInfo()
+--   return self.chatQueue:toString()
+--end
+
+function Server:handleData(text)
+  local data = JSON:decode(text)
+  if data.message ~= nil then
+    self:submitText(data.message, true)
+  end
+  if data.tower_place ~= nil then
+    --call place tower function
+  end
+end
+
+-- TODO: this could be cleaned up, I don't really like using the bool `recieve` here
+function Server:submitText(text, recieve)
+    
+    if not recieve then
+        local data = {}
+        data.message = text
+        jsonString = JSON:encode(data)
+        self.nfe:talker(jsonString)
+        text = "You: " .. text
+    else
+        text = "Them: " .. text
+    end
+    
+    self.chatQueue:push(text)
+
+    self:updateGUI()
 end
