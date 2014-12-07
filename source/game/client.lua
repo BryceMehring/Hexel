@@ -23,11 +23,11 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-Game = flower.class()
+Client = flower.class()
 --Add 3% to the interest rate each turn
-Game.INTEREST_INCREMENT = 3 
+Client.INTEREST_INCREMENT = 3 
 
-function Game:init(t)
+function Client:init(t)
     -- TODO: pass is variables instead of hardcoding them
     self.texture = "hex-tiles.png"
     self.width = 50
@@ -88,11 +88,11 @@ end
 
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
-function Game:generateItemInfo()
+function Client:generateItemInfo()
     return self.towerSelected and self.towerSelected:getDescription() or ""
 end
 
-function Game:generateStatus()
+function Client:generateStatus()
    return "Wave: " .. self.currentWave.number ..
           "  Lives: " .. self.currentLives ..
           "\nCash: " .. self.currentCash ..
@@ -100,11 +100,11 @@ function Game:generateStatus()
 end
 
 
-function Game:getPopupPos()
+function Client:getPopupPos()
     return {flower.viewWidth / 5, flower.viewHeight / 2}
 end 
 
-function Game:getPopupSize()
+function Client:getPopupSize()
     return {flower.viewWidth / 2, 100}
 end
 
@@ -112,7 +112,7 @@ end
 -- CHANGE
 ------------------------------------------------------------------------------------------------------------
 -- Initializes the game to run by turning on the spawning of enemies
-function Game:run()    
+function Client:run()    
     self.enemies = {}
     self.enemiesToSpawn = {}
     
@@ -123,7 +123,7 @@ end
 
 
 -- Main game loop which updates all of the entities in the game
-function Game:loop()
+function Client:loop()
     ------------------------------------------------------------------
     -- Get Network updates
     ------------------------------------------------------------------
@@ -139,9 +139,28 @@ function Game:loop()
     return self:stopped()
 end
 
+function Client:handleData(text)
+  local data = JSON:decode(text)
+  
+  if data.message ~= nil then
+    self:submitText(data.message, true)
+  end
+  
+  if data.game_data ~= nil then
+    self.currentLives      = data.game_data.currentLives
+    self.currentCash       = data.game_data.currentCash
+    self.currentInterest   = data.game_data.currentLives
+    self.towers            = data.game_data.towers
+    self.attacks           = data.game_data.attacks
+    self.map               = data.game_data.map
+    self.difficulty        = data.game_data.difficulty
+    self.currentWave       = data.game_data.currentWave
+  end
+end
+
 -- Pauses the game if p is true, unpauses the game if p is false
 -- If p is nil, paused() return true if the game is paused
-function Game:paused(p)
+function Client:paused(p)
     if p ~= nil then
 
         if self.timers then
@@ -163,7 +182,7 @@ end
 
 -- Stops the game if s is true
 -- Returns true if the game if s is nil
-function Game:stopped(s)
+function Client:stopped(s)
     if s ~= nil then
         
         if s == true then
@@ -185,14 +204,14 @@ function Game:stopped(s)
     end
 end
 
-function Game:updateGUI()
+function Client:updateGUI()
     updateStatusText(self:generateStatus())
     updateItemText(self:generateItemInfo())
 end
 
 -- not self.map:isTileSelected() mouse has the circle
 -- Updates the current tower selected
-function Game:selectTower(tower)
+function Client:selectTower(tower)
     self.towerSelected = tower
 
     if self.hoverCircle and self.hoverCircle.layer ~= nil then
@@ -223,7 +242,7 @@ function Game:selectTower(tower)
     self:updateGUI()
 end
 
-function Game:drawCircle(range, screenPos)
+function Client:drawCircle(range, screenPos)
     self.hoverCircle = flower.Circle(range, 100)
     self.hoverCircle:setPos(screenPos[1], screenPos[2])
     self.hoverCircle:setColor(0.6, 0.4, 0.4, 0.1)
@@ -231,13 +250,13 @@ function Game:drawCircle(range, screenPos)
 end
 
 -- Returns the selected tower
-function Game:getSelectedTower()
+function Client:getSelectedTower()
     return self.towerSelected
 end
 
 -- Event callback for mouse touch input
 --TODO: clean this up
-function Game:onTouchDown(pos, inputType)
+function Client:onTouchDown(pos, inputType)
     if self:stopped() then
         flower.closeScene({animation = "fade"})
     end
@@ -284,21 +303,11 @@ function Game:onTouchDown(pos, inputType)
     end
 end
 
-function Game:onMouseMove(pos)
+function Client:onMouseMove(pos)
     -- TODO: use mouse move event to show the user where the tower will be placed on the grid
     -- and show the radius of the tower being placed
     self.cursorPos = self.map:gridToScreenSpace(pos)
     if self.hoverCircle and not self.map:isTileSelected() then
         self.hoverCircle:setPos(self.cursorPos[1], self.cursorPos[2])
     end
-end
-
-function VersusGame:handleData(text)
-  local data = JSON:decode(text)
-  if data.message ~= nil then
-    self:submitText(data.message, true)
-  end
-  if data.tower_place ~= nil then
-    --call place tower function
-  end
 end
