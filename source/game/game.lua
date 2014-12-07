@@ -95,10 +95,11 @@ function Game:getPopupSize()
 end
 
 -- Initializes the game to run by turning on the spawning of enemies
-function Game:run()
-    
+function Game:run()    
     self.enemies = {}
     self.enemiesToSpawn = {}
+    
+    self:paused(true)
     
     flower.Executors.callLoop(self.loop, self)
 end
@@ -106,6 +107,9 @@ end
 
 -- Main game loop which updates all of the entities in the game
 function Game:loop()
+    while self:paused() do
+        coroutine.yield()
+    end
     
     --if self.enemiesKilled == self.map:getWaves()[self.currentWave].length then
     if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
@@ -151,10 +155,6 @@ function Game:loop()
     end
     
     self:updateGUI()
-    
-    while self:paused() do
-        coroutine.yield()
-    end
     
     return self:stopped()
 end
@@ -243,7 +243,7 @@ function Game:paused(p)
         end
         
         self.isPaused = p
-        updatePauseButton(not p)
+        updatePauseButton(not p, self.currentWave.number)
     else
         return self.isPaused
     end

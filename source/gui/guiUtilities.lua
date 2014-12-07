@@ -37,15 +37,15 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
     if parentObj.paused then
         pauseButton = widget.Button {
             size = buttonSize,
-            text = "Pause Wave",
+            text = "Start Game",
             parent = view,
             onClick = function()
-                if parentObj:paused() then
-                    parentObj:paused(false)
-                    pauseButton:setText("Pause Wave")
-                else
+                if not parentObj:paused() then
                     parentObj:paused(true)
                     pauseButton:setText("Start Wave")
+                else
+                    parentObj:paused(false)
+                    pauseButton:setText("Pause Wave")
                 end
             end,
             enabled = true,
@@ -229,8 +229,8 @@ function updateChatText(text)
     chatLogTextbox:setText(text)
 end
 
-function updatePauseButton(paused)
-    pauseButton:setText((paused and "Pause" or "Start") .. " Wave")
+function updatePauseButton(paused, waveNum)
+    pauseButton:setText((paused and "Pause" or "Start") .. (waveNum == 0 and " Game" or " Wave"))
 end
 
 function generateMsgBox(position, size, msg, parentView)

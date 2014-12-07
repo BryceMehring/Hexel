@@ -55,7 +55,6 @@ function createMenuList()
             textColor = {0.8, 0.8, 0.8, 1},
             normalTexture = item.image,
             onClick = function()
-                print("K")
                 onClickCallback(item)
             end,
             parent = mapGroup,
