@@ -299,6 +299,4 @@ function Server:submitText(text, recieve)
     end
     
     self.chatQueue:push(text)
-
-    self:updateGUI()
 end
