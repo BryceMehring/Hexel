@@ -125,12 +125,6 @@ function Game:loop()
     end
         
     -- TODO: move the laser into its own class
-    for i = #self.attacks, 1, -1 do
-        self.attacks[i]:setLayer(nil)
-        self.attacks[i]:setVisible(false)
-        table.remove(self.attacks, i)
-    end
-    
     for i = #self.enemies, 1, -1 do
         local enemy = self.enemies[i]
         local enemyStatus = enemy:update()
@@ -157,7 +151,10 @@ function Game:loop()
             attack:setColor(1,1,1,1)
             attack:setLayer(self.layer)
             attack:setVisible(true)
-            table.insert(self.attacks, #self.attacks, attack)
+            flower.Executors.callLaterFrame(0.1, function()
+                attack:setLayer(nil)
+                attack:setVisible(false)
+            end)
         end
     end
     
