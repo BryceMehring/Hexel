@@ -43,7 +43,6 @@ function Enemy:spawn(layer, map)
     self.map = map
 end
 
-
 function Enemy:isDead()
     return self.dead or self.dying
 end
@@ -82,7 +81,7 @@ function Enemy:updatePos()
     
     -- Update speed
     if self.moveAction and self.moveAction:isActive() then
-        local newSpeed = (self.type.speed * (self.type.speedRecovery)) + self.stats.speed
+        local newSpeed = self.moveSpeed:getPos()
         self.stats.speed = math.min(newSpeed, self.type.speed)
     elseif self.moveAction then
         self.moveAction = nil
@@ -127,13 +126,11 @@ function Enemy:damage(params)
 end
 
 function Enemy:slow(params)
-    local oldSpeed = self.stats.speed
-    
     self.stats.speed = math.max(1, self.stats.speed * params.slowAmount)
     
     self.moveSpeed = flower.DisplayObject()
     self.moveSpeed:setPos(self.stats.speed, 0)
-    self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * oldSpeed, 0, 0, params.time, MOAIEaseType.SHARP_EASE_OUT)
+    self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * self.type.speed, 0, 0, params.time * (1 / self.type.speedRecovery), MOAIEaseType.SHARP_EASE_OUT)
 end
 
 function Enemy:remove()

@@ -10,7 +10,7 @@ YellowTower.damage = {
     func = "slow",
     params = {
         slowAmount = 0.4,
-        time = 10,
+        time = 5,
     }
 }
 YellowTower.range = 5
