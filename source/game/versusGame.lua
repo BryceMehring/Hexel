@@ -15,6 +15,7 @@ require "source/utilities/circularQueue"
 require "assets/enemies/enemyTypes"
 
 local Towers = require "assets/towers/towers"
+local JSON = require "source/libraries/JSON"
 
 -- import
 local flower = flower
@@ -61,11 +62,21 @@ function VersusGame:generateStatus()
    return "Welcome to Multiplayer:\n " .. self.nfe.theirIP .. ""
 end
 
+function VersusGame:handleData(text)
+  local data = JSON:decode(text)
+  if data.message ~= nil then
+    self:submitText(data.message, true)
+  end
+end
+
 -- TODO: this could be cleaned up, I don't really like using the bool `recieve` here
 function VersusGame:submitText(text, recieve)
     
     if not recieve then
-        self.nfe:talker(text)
+        local data = {}
+        data.message = text
+        jsonString = JSON:encode(data)
+        self.nfe:talker(jsonString)
         text = "You: " .. text
     else
         text = "Them: " .. text
@@ -127,7 +138,7 @@ function VersusGame:loop()
     
     local data = self.nfe:listener()
     if data then
-        self:submitText(data, true)
+        self:handleData(data)
     elseif not self.nfe:isConnected() then
         self:showEndGameMessage("Disconnected from server")
     end
