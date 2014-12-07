@@ -18,35 +18,30 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
-    self.nfe = NetworkFrameworkEntity{}
-    local connected, networkError = self.nfe:isConnected()
+    local my_nfe = NetworkFrameworkEntity{}
+    local connected, networkError = my_nfe:isConnected()
     if not connected then
         return
-    end        
-    
-    if self.nfe.isServer() then
-        multiplayerGame =  Server {
-            layer = layer,
-            view = e.data.view
-            nfe = self.nfe,
-        }
-    else
-        multiplayerGame = Client {
-            layer = layer,
-            view = e.data.view
-            nfe = self.nfe,
-        }
     end
     
---    multiPlayerGame = VersusGame {
---        layer = layer,
---        view = e.data.view,
---        -- TODO: fill this out
---    }
-
-    view = e.data.view
-    buildUI("SinglePlayer", e.data.view,
-        multiPlayerGame)
+    if my_nfe:isServer() then
+        multiPlayerGame =  Server {
+            layer = layer,
+            view = e.data.view,
+            nfe = my_nfe,
+        }
+        print("server")
+        view = e.data.view
+    else
+        multiPlayerGame = Client {
+            layer = layer,
+            view = e.data.view,
+            nfe = my_nfe,
+        }
+        print("client")
+        view = e.data.view
+        buildUI("SinglePlayer", e.data.view, multiPlayerGame)
+    end
 
     flower.Runtime:addEventListener("resize", onResize)
     

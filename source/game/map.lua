@@ -16,7 +16,11 @@ function Map:init(t)
     
     -- Try to load the map
     if not self:load() then
-        print("Cannot Load Map: " .. self.file)
+        if self.file ~= nil then
+            print("Cannot Load Map: " .. self.file)
+        else
+            print("Cannot Load Map: nil")
+        end
     end
 end
 

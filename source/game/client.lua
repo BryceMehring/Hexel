@@ -12,6 +12,7 @@ require "source/pathfinder"
 require "source/game/map"
 require "source/sound/sound"
 require "assets/enemies/enemyTypes"
+require "source/utilities/circularQueue"
 
 local Towers = require "assets/towers/towers"
 local JSON = require "source/libraries/JSON"
@@ -48,24 +49,16 @@ function Client:init(t)
     }
     self.soundManager:randomizedPlay()
     
-    -- BEGIN Necessary Client Data
+    self.chatQueue = CircularQueue(12)
+    self.chatQueue:push("Hello")
+    
+    
     self.currentLives = 20
     self.currentCash = 5000
     self.currentInterest = 0
     
     self.towers = {}
     self.attacks = {}
-    
-    self.map = Map {
-        file = self.mapFile,
-        texture = self.texture,
-        width = self.width,
-        height = self.height,
-        tileWidth = self.tileWidth,
-        tileHeight = self.tileHeight,
-        radius = self.radius,
-        layer = self.layer,
-    }
     
     self.difficulty = 1
     self.currentWave = Wave {
@@ -74,10 +67,6 @@ function Client:init(t)
         --layer = self.layer, 
         --map = self.map
     }
-    -- END Necessary Client Data
-    
-    self.chatQueue = CircularQueue(12)
-    self.chatQueue:push("Hello")
     
     self.nfe = t.nfe
     local connected, networkError = self.nfe:isConnected()
