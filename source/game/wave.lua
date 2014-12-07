@@ -16,9 +16,17 @@ function Wave:init(t)
     self.difficulty = t.difficulty or 1
 end
 
+function Wave:increment()
+    self.number = self.number + 1
+end
+
+function Wave:currentNumber()
+    return self.number
+end
+
 function Wave:setup()
     self.time = 9 + self.number *.75
-    self.powerSpawnRate = 25 + .50 * self.number * math.log10(self.number)
+    self.powerSpawnRate = 25 + .50 * self.number * math.log(self.number, 2)
     self.totalPower = self.powerSpawnRate * self.time
 end
 
@@ -42,7 +50,6 @@ function Wave:getEnemies()
             }
             table.insert(enemies, newEnemy)
         end
-        
     end
     
     math.shuffle(enemies)

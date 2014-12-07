@@ -161,9 +161,10 @@ end
 
 function Game:setupNextWave()
     self:paused(true)
-    self.currentWave.number = self.currentWave.number + 1
+    self.currentWave:increment()
     
-    if self.currentWave.number > 50 then
+    -- TODO: add an option so that the game keeps on going, like a survival mode, issue #51
+    if self.currentWave:currentNumber() > 50 then
         self:showEndGameMessage("You've Won the main game")
     end
     
@@ -209,7 +210,7 @@ end
 
 function Game:startSpawnLoop()    
     local spawnRate = self.currentWave.time / #self.enemiesToSpawn
-    print("SpawnRate = " .. spawnRate .. " seconds per enemy")
+    print("Number of Enemies: " .. #self.enemiesToSpawn .. "  " .. "SpawnRate = " .. spawnRate .. " seconds per enemy")
     local spawnTimer = flower.Executors.callLoopTime(spawnRate, self.spawnLoop, self)
     self.timers = {
         spawnTimer = spawnTimer,
