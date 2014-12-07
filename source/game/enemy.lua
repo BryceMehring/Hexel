@@ -43,6 +43,10 @@ function Enemy:spawn(layer, map)
     self.map = map
 end
 
+function Enemy:isSlowed()
+    return self.moveAction and self.moveAction:isActive()
+end
+
 function Enemy:isDead()
     return self.dead or self.dying
 end
@@ -80,9 +84,9 @@ function Enemy:updatePos()
     end
     
     -- Update speed
-    if self.moveAction and self.moveAction:isActive() then
+    if self:isSlowed() then
         local newSpeed = self.moveSpeed:getPos()
-        self.stats.speed = math.min(newSpeed, self.type.speed)
+        self.stats.speed = math.clamp(newSpeed, self.type.minSpeed, self.type.speed)
     elseif self.moveAction then
         self.moveAction = nil
         self.moveSpeed = nil
@@ -126,11 +130,22 @@ function Enemy:damage(params)
 end
 
 function Enemy:slow(params)
-    self.stats.speed = math.max(1, self.stats.speed * params.slowAmount)
     
+    local speedDiff = -self.stats.speed * params.slowAmount
+    local easeInTime = math.max(1, self.type.speed / 2)
+    
+    -- slow down
     self.moveSpeed = flower.DisplayObject()
     self.moveSpeed:setPos(self.stats.speed, 0)
-    self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * self.type.speed, 0, 0, params.time * (1 / self.type.speedRecovery), MOAIEaseType.SHARP_EASE_OUT)
+    self.moveAction = self.moveSpeed:moveLoc(speedDiff, 0, 0, easeInTime, MOAIEaseType.SHARP_EASE_IN)
+    
+    flower.Executors.callLaterTime(easeInTime + 0.1, function()
+        -- speed up
+        self.moveSpeed = flower.DisplayObject()
+        self.moveSpeed:setPos(self.stats.speed, 0)
+        self.moveAction = self.moveSpeed:moveLoc((1 - params.slowAmount) * self.type.speed,
+            0, 0, params.time * (1 / self.type.speedRecovery), MOAIEaseType.SHARP_EASE_OUT)
+    end)
 end
 
 function Enemy:remove()
