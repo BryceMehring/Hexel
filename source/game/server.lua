@@ -13,6 +13,7 @@ require "source/sound/sound"
 require "assets/enemies/enemyTypes"
 
 local Towers = require "assets/towers/towers"
+local JSON = require "source/libraries/JSON"
 
 -- import
 local flower = flower
