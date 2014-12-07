@@ -1,7 +1,6 @@
 --------------------------------------------------------------------------------
--- game.lua - Defines a game which(for now) manages the game logic for a single player game
+-- server.lua - Defines a game which(for now) manages the game logic for a single player game
 --------------------------------------------------------------------------------
--- TODO: clean this up!
 
 require "source/utilities/vector"
 require "source/utilities/extensions/math"
@@ -22,15 +21,17 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-Game = flower.class()
+Server = flower.class()
 --Add 3% to the interest rate each turn
-Game.INTEREST_INCREMENT = 3 
+Server.INTEREST_INCREMENT = 3 
 
-function Game:init(t)
+function Server:init(t)
     -- TODO: pass is variables instead of hardcoding them
     self.texture = "hex-tiles.png"
     self.tileWidth = 128
     self.tileHeight = 111
+    self.width = 50
+    self.height = 100
     self.radius = 24
     self.default_tile = 0
     self.direction = 1
@@ -40,14 +41,7 @@ function Game:init(t)
     self.view = t.view
     self.popupView = t.popupView
     
-    self.soundManager = SoundManager {
-       soundDir = "assets/sounds/soundtrack/",
-    }
-    self.soundManager:randomizedPlay()
-    
     -- BEGIN Necessary Client Data
-    self.width = 50
-    self.height = 100
     self.currentLives = 20
     self.currentCash = 5000
     self.currentInterest = 0
@@ -77,7 +71,7 @@ function Game:init(t)
 end
 
 -- Initializes the game to run by turning on the spawning of enemies
-function Game:run()    
+function Server:run()    
     self.enemies = {}
     self.enemiesToSpawn = {}
     
@@ -88,48 +82,51 @@ end
 
 
 -- Main game loop which updates all of the entities in the game
-function Game:loop()
-    while self:paused() do
-        coroutine.yield()
-    end
-    
-    if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
-        if self.currentWave.number > 0 then
-            self.currentInterest = self.currentInterest + Game.INTEREST_INCREMENT
-            self.currentCash = math.floor(self.currentCash * (1+self.currentInterest/100))
-        end
-        
-        -- increment to the next wave
-        self:setupNextWave()
-    end
-        
-    -- TODO: move the laser into its own class
-    for i = #self.enemies, 1, -1 do
-        local enemy = self.enemies[i]
-        local enemyStatus = enemy:update()
-        if enemyStatus ~= Enemy.CONTINUE then
-            self.enemiesKilled = self.enemiesKilled + 1
-            if enemyStatus == Enemy.DIED then
-                self.currentCash = self.currentCash + enemy:getCost()
-            else
-                self:loseLife()
+function Server:loop()
+    -- DO FRAME
+    while not self:paused() do
+        if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
+            if self.currentWave.number > 0 then
+                self.currentInterest = self.currentInterest + Server.INTEREST_INCREMENT
+                self.currentCash = math.floor(self.currentCash * (1+self.currentInterest/100))
             end
             
-            enemy:remove()
-            table.remove(self.enemies, i)
+            -- increment to the next wave
+            self:setupNextWave()
+        end
+            
+        -- TODO: move the laser into its own class
+        for i = #self.enemies, 1, -1 do
+            local enemy = self.enemies[i]
+            local enemyStatus = enemy:update()
+            if enemyStatus ~= Enemy.CONTINUE then
+                self.enemiesKilled = self.enemiesKilled + 1
+                if enemyStatus == Enemy.DIED then
+                    self.currentCash = self.currentCash + enemy:getCost()
+                else
+                    self:loseLife()
+                end
+                
+                enemy:remove()
+                table.remove(self.enemies, i)
+            end
+        end
+        
+        for key, tower in pairs(self.towers) do
+            tower:fire(self.enemies)
         end
     end
     
-    for key, tower in pairs(self.towers) do
-        tower:fire(self.enemies)
-    end
+    -- CONSUME INPUTS
     
-    self:updateGUI()
+    -- SEND STATE TO CLIENTS
     
-    return self:stopped()
+    --COMMAND NEEDED: Send enemies map towers etc
+    
+    return self:stopped() -- Needed?
 end
 
-function Game:setupNextWave()
+function Server:setupNextWave()
     self:paused(true)
     
     self.currentWave:increment()
@@ -164,7 +161,7 @@ function Game:setupNextWave()
     end)
 end
 
-function Game:spawnLoop()
+function Server:spawnLoop()
     if self:stopped() then
         return
     end
@@ -180,7 +177,7 @@ function Game:spawnLoop()
     self.spawnedEnemies = self.spawnedEnemies + 1
 end
 
-function Game:startSpawnLoop()    
+function Server:startSpawnLoop()    
     local spawnRate = self.currentWave.time / #self.enemiesToSpawn
     print("Number of Enemies: " .. #self.enemiesToSpawn .. "  " .. "SpawnRate = " .. spawnRate .. " seconds per enemy")
     local spawnTimer = flower.Executors.callLoopTime(spawnRate, self.spawnLoop, self)
@@ -193,7 +190,7 @@ end
 
 -- COMMAND NEEDED: PLAYERS LOSE LIFE!
 -- Looses a life and ends the game if the lives count reaches 0
-function Game:loseLife()
+function Server:loseLife()
     self.currentLives = self.currentLives - 1
     if self.currentLives <= 0 then
         self:showEndGameMessage("Game Over!")
@@ -201,7 +198,7 @@ function Game:loseLife()
 end
 
 -- Shows a message box with a message just before ending the game
-function Game:showEndGameMessage(msg)
+function Server:showEndGameMessage(msg)
     --COMMAND NEEDED: SEND END OF GAME NOTIFICATION
     local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.popupView)
     msgBox:showPopup()
@@ -214,7 +211,7 @@ end
 
 -- Pauses the game if p is true, unpauses the game if p is false
 -- If p is nil, paused() return true if the game is paused
-function Game:paused(p)
+function Server:paused(p)
     if p ~= nil then
 
         if self.timers then
@@ -236,7 +233,7 @@ end
 
 -- Stops the game if s is true
 -- Returns true if the game if s is nil
-function Game:stopped(s)
+function Server:stopped(s)
     if s ~= nil then
         
         if s == true then
