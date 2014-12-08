@@ -15,7 +15,7 @@ local view = nil
 
 -- MapEditor singleton
 MapEditor = {}
-MapEditor.texture = "hex-tiles.png"
+MapEditor.texture = "tiles.png"
 MapEditor.width = 10
 MapEditor.height = 35
 MapEditor.tileWidth = 128

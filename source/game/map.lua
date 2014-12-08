@@ -28,12 +28,15 @@ function Map:load(file)
     
     self.map = dofile(self.file)
     
+    enableDebugging()
+    
     self.width = self.map.width or self.width
     self.height = self.map.height or self.height
     
     self.grid = flower.MapImage(self.texture, self.width,
                                 self.height, self.tileWidth,
-                                self.tileHeight, self.radius)                          
+                                self.tileHeight, self.radius)
+    self.grid:setTextureAtlas("tiles.lua")
     self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
     self.grid:setLayer(self.layer)
     

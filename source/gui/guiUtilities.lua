@@ -139,12 +139,12 @@ function buildUI(gameMode, view, parentObj, saveGrid, loadGrid, setColor)
             parent = view,
         }
         
-        for i, item in ipairs(TOWERS) do
+        for k, item in pairs(TOWERS) do
             tower = widget.SheetButton{
                 size = buttonSize,
                 normalTexture = item.texture,
                 onClick = function() 
-                    setColor(i)
+                    setColor(k)
                     statusUI:setText( parentObj:generateStatus()) 
                 end,
                 parent = towerGroup,

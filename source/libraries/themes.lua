@@ -43,7 +43,7 @@ M.NORMAL = {
         textPadding = {10, 5, 10, 5},
     },
     SheetButton = {
-        textureSheets = "hex-tiles",--"skins/texture_sheets",
+        textureSheets = "tiles",--"skins/texture_sheets",
         normalTexture = "gb-up.png",
         selectedTexture = "gb-down.png",
         disabledTexture = "gb-up.png",
@@ -125,7 +125,10 @@ M.NORMAL = {
     },
 }
 
+
 -- initial theme
 widget.setTheme(M.NORMAL)
+
+
 
 return M

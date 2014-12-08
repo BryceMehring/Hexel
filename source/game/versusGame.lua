@@ -27,7 +27,7 @@ VersusGame = flower.class()
 
 function VersusGame:init(t)
     -- TODO: pass is variables instead of hardcoding them
-    self.texture = "hex-tiles.png"
+    self.texture = "tiles.png"
     self.width = 50
     self.height = 100
     self.tileWidth = 128
