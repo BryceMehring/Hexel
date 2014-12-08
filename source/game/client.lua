@@ -148,19 +148,20 @@ function Client:handleData(text)
         print("game data received")
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
-        self.currentInterest   = data.game_data.currentLives
+        self.currentInterest   = data.game_data.currentInterest
         self.towers            = data.game_data.towers
         self.attacks           = data.game_data.attacks
         self.difficulty        = data.game_data.difficulty
         self.currentWave       = data.game_data.currentWave
         
-        self.map.resetTiles(self.towers)
+        self.map:resetTowers(self.towers)
     end
 
     if data.map_data ~= nil then
         print("map data received")
+        print(text)
         self.map = Map {
-            file = data.map_data.mapFile,
+            file = data.map_data.file,
             texture = data.map_data.texture,
             width = data.map_data.width,
             height = data.map_data.height,
