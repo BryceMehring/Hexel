@@ -167,13 +167,13 @@ function ServerGame:loop()
     end
     
     -- CONSUME INPUTS
---    local data = self.server:listener()
---    if data then
---        self:handleData(data)
---    elseif not self.server:isConnected() then
-----        self:showEndGameMessage("Disconnected from server")
---        return
---    end
+    local data = self.server:listener()
+    if data then
+        self:handleData(data)
+    elseif not self.server:isConnected() then
+--        self:showEndGameMessage("Disconnected from server")
+        return
+    end
     
     --if not self:stopped() then--not self:paused() and not self:stopped() then
         -- SEND STATE TO CLIENTS
@@ -407,26 +407,30 @@ end
 
 
 function ServerGame:handleData(text)
-    local data = JSON:decode(text)
-    if data.message ~= nil then
-        self:submitText(data.message, true)
-    end
-    if data.tower_place ~= nil then
-        self:attemptToPlaceTower(data.tower_place)
-    end
-    
-    if data.tower_sell ~= nil then
-        self:attemptToSellTower(data.tower_sell)
-    end
-    
-    if data.pause ~= nil then
-        local bool
-        if data.pause == "true" then
-            bool = true
-        elseif data.pause == "false" then
-            bool = false
+    enableDebugging()
+    for i, rawData in ipairs(text) do
+        
+        local data = JSON:decode(rawData)
+        if data.message ~= nil then
+            self:submitText(data.message, true)
         end
-        self:attemptToPause(bool)
+        if data.tower_place ~= nil then
+            self:attemptToPlaceTower(data.tower_place)
+        end
+        
+        if data.tower_sell ~= nil then
+            self:attemptToSellTower(data.tower_sell)
+        end
+        
+        if data.pause ~= nil then
+            local bool
+            if data.pause == "true" then
+                bool = true
+            elseif data.pause == "false" then
+                bool = false
+            end
+            self:attemptToPause(bool)
+        end
     end
 end
 

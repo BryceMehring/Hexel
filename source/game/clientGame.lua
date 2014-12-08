@@ -201,7 +201,7 @@ function ClientGame:handleData(text)
     end
 
     if data.map_data ~= nil then
-        --print("map data received")
+        print("map data received")
         self.map = Map {
             file = data.map_data.file,
             texture = data.map_data.texture,
@@ -215,7 +215,7 @@ function ClientGame:handleData(text)
     end
 
     if data.pause ~= nil then
-        --print("pause data received")
+        print("pause data received")
         local bool
         if data.pause == "true" then
             bool = true
@@ -226,7 +226,7 @@ function ClientGame:handleData(text)
     end
 
     if data.display ~= nil then
-        --print("display data received")
+        print("display data received")
         local msgBox = generateMsgBox(
             self:getPopupPos(), 
             self:getPopupSize(), 

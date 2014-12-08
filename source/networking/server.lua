@@ -85,3 +85,17 @@ function Server:talker(text)
         --self:stopIfClosed(e)
     end
 end
+
+function Server:listener()
+    enableDebugging()
+    local l = {}
+    local e = nil
+    if self:isConnected() then
+        for client, _ in pairs(self.client) do
+            local tempData = client:receive()
+            table.insert(l, tempData)
+            --self:stopIfClosed(e)
+        end
+        return l
+    end
+end
