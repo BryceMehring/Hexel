@@ -167,10 +167,7 @@ function Client:handleData(text)
         self.currentWave       = data.game_data.currentWave
         
         for key, tower in pairs(data.game_data.towers) do
-            self.towers[key] = Tower {
-                type = tower.type,
-                pos = tower.pos
-            }
+            self.towers[key] = Tower(tower.type, tower.pos)
             self.towers[key].level = tower.level
             self.towers[key].killCount = tower.killCount
         end
