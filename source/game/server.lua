@@ -380,9 +380,9 @@ end
 function Server:sendPauseToClients(isPaused)
     local object = {}
     if isPaused then
-        object.game_data = {pause="true"}
+        object.pause = {pause="true"}
     else
-        object.game_data = {pause="false"}
+        object.pause = {pause="false"}
     end
     local temp = JSON:encode(object)
     self.nfe:talker(temp)

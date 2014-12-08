@@ -226,7 +226,7 @@ function Client:handleData(text)
         elseif data.pause == "false" then
             bool = false
         end
-        self.paused(bool, false)
+        self:paused(bool, false)
     end
 end
 
