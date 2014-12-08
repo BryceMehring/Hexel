@@ -147,8 +147,9 @@ function Client:handleData(text)
 
     if data.game_data ~= nil then
         print("game data received")
-        for i, enemy in ipairs(self.enemies) do
-            enemy:remove()
+        for i = #self.enemies, 1, -1 do
+            self.enemies[i]:remove()
+            table.remove(self.enemies, i)
         end
         
         self.currentLives      = data.game_data.currentLives
