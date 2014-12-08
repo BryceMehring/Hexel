@@ -326,6 +326,7 @@ function Server:stopped(s)
                     enemy:remove()
                 end
             end
+            self:sendStopToClients()
         end
         
         self.isStopped = s
@@ -386,6 +387,13 @@ function Server:sendPauseToClients(isPaused)
     else
         object.pause = {pause="false"}
     end
+    local temp = JSON:encode(object)
+    self.nfe:talker(temp)
+end
+
+function Server:sendStopToClients()
+    local object = {}
+    object.stop = {stop}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
 end
