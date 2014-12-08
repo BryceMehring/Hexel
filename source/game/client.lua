@@ -151,15 +151,27 @@ function Client:handleData(text)
             self.enemies[i]:remove()
             table.remove(self.enemies, i)
         end
+        for i = #self.towers, 1, -1 do
+            table.remove(self.towers, i)
+        end
         
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
         self.currentInterest   = data.game_data.currentInterest
-        self.towers            = data.game_data.towers
+        self.towers            = {}
         self.enemies           = {}
         self.attacks           = data.game_data.attacks
         self.difficulty        = data.game_data.difficulty
         self.currentWave       = data.game_data.currentWave
+        
+        for i, tower in ipairs(data.game_data.towers) do
+            self.towers[i] = Tower {
+                type = tower.type,
+                pos = tower.pos
+            }
+            self.towers[i].level = tower.level
+            self.towers[i].killCount = tower.killCount
+        end
         
         self.map:resetTowers(self.towers)
         for i, enemy in ipairs(data.game_data.enemies) do

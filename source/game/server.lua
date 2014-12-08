@@ -163,8 +163,12 @@ function Server:loop()
     for i, enemy in ipairs(self.enemies) do
         jsonEnemies[i] = enemy:getJSONData()
     end
+    local jsonTowers = {}
+    for i, tower in ipairs(self.towers) do
+        jsonTowers[i] = tower:getJSONData()
+    end
     local object = {}
-    object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
+    object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=jsonTowers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
     --COMMAND NEEDED: Send enemies map towers etc
