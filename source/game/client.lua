@@ -116,7 +116,7 @@ function Client:run()
     self.enemies = {}
     self.enemiesToSpawn = {}
     
-    self:paused(false)
+    self:paused(true)
     
     flower.Executors.callLoop(self.loop, self)
 end
@@ -171,9 +171,9 @@ function Client:handleData(text)
             table.remove(self.towers, i)
         end
         
-        for i, attackData in ipairs(data.game_data.attacks) do
-            print(attackData[1], attackData[2])
-        end
+        --for i, attackData in ipairs(data.game_data.attacks) do
+        ---    print(attackData[1], attackData[2])
+        --end
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
         self.currentInterest   = data.game_data.currentInterest
@@ -220,13 +220,19 @@ function Client:handleData(text)
 
     if data.pause ~= nil then
         print("pause data received")
-        self.paused(data.pause, false)
+        local bool
+        if data.pause == "true" then
+            bool = true
+        elseif data.pause == "false" then
+            bool = false
+        end
+        self.paused(bool, false)
     end
 end
 
 -- Pauses the game if p is true, unpauses the game if p is false
 -- If p is nil, paused() return true if the game is paused
-function Client:paused(p, sendMessage = true)
+function Client:paused(p, sendMessage)
     if p ~= nil then
 
         if self.timers then
@@ -242,8 +248,8 @@ function Client:paused(p, sendMessage = true)
         self.isPaused = p
         updatePauseButton(not p, self.currentWave.number)
         
-        if sendMessage then
-            sendPauseMessage(p)
+        if sendMessage == nil or sendMessage == true then
+            self:sendPauseMessage(p)
         end
     else
         return self.isPaused
@@ -397,7 +403,12 @@ function Client:sendTowerSellMessage(pos)
 end
 
 function Client:sendPauseMessage(p)
-    local data = {pause=p}
+    local data = {}
+    if p then
+        data = {pause="true"}
+    else
+        data = {pause="false"}
+    end
     jsonString = JSON:encode(data)
     self.nfe:talker(jsonString)
 end

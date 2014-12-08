@@ -85,7 +85,7 @@ function Server:run()
     self.enemiesToSpawn = {}
     
     self:paused(true)
-    self.sendPauseToClients(true)
+    self:sendPauseToClients(true)
     
     self:waitForClient()
     self:sendMapInfo()
@@ -103,7 +103,7 @@ function Server:waitForClient()
         end
     end
     self:paused(false)
-    self.sendPauseToClients(false)
+    self:sendPauseToClients(false)
     print("Client Found")
 end
 
@@ -148,21 +148,21 @@ function Server:loop()
         
         -- Fire lasers
         for key, tower in pairs(self.towers) do
-        local result = tower:fire(self.enemies)
-        if result ~= nil then
-            local v1 = self.map:gridToScreenSpace(tower.pos)
-            local v2 = vector{self.enemies[result].group:getPos()}
-            local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
-            attack:setColor(1,1,1,1)
-            attack:setLayer(self.layer)
-            attack:setVisible(true)
-            table.insert(self.attacks, {v1, v2})
-            flower.Executors.callLaterFrame(0.1, function()
-                attack:setLayer(nil)
-                attack:setVisible(false)
-            end)
+            local result = tower:fire(self.enemies)
+            if result ~= nil then
+                local v1 = self.map:gridToScreenSpace(tower.pos)
+                local v2 = vector{self.enemies[result].group:getPos()}
+                local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
+                attack:setColor(1,1,1,1)
+                attack:setLayer(self.layer)
+                attack:setVisible(true)
+                table.insert(self.attacks, {v1, v2})
+                flower.Executors.callLaterFrame(0.1, function()
+                    attack:setLayer(nil)
+                    attack:setVisible(false)
+                end)
+            end
         end
-    end
 --        for key, tower in pairs(self.towers) do
 --            tower:fire(self.enemies)
 --        end
@@ -177,28 +177,30 @@ function Server:loop()
         return
     end
     
-    -- SEND STATE TO CLIENTS
-    local jsonEnemies = {}
-    for i, enemy in ipairs(self.enemies) do
-        jsonEnemies[i] = enemy:getJSONData()
+    if not self:paused() then
+        -- SEND STATE TO CLIENTS
+        local jsonEnemies = {}
+        for i, enemy in ipairs(self.enemies) do
+            jsonEnemies[i] = enemy:getJSONData()
+        end
+        local jsonTowers = {}
+        for key, tower in pairs(self.towers) do
+            jsonTowers[key] = tower:getJSONData()
+        end
+        local object = {}
+        object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=jsonTowers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
+        local temp = JSON:encode(object)
+        self.nfe:talker(temp)
+        
+        self.attacks = {}
     end
-    local jsonTowers = {}
-    for key, tower in pairs(self.towers) do
-        jsonTowers[key] = tower:getJSONData()
-    end
-    local object = {}
-    object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=jsonTowers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
-    local temp = JSON:encode(object)
-    self.nfe:talker(temp)
-    
-    self.attacks = {}
     
     return self:stopped() -- Needed?
 end
 
 function Server:setupNextWave()
     self:paused(true)
-    self.sendPauseToClients(true)
+    self:sendPauseToClients(true)
     --SEND PAUSED COMMAND (3 seconds, "Wave: " .. self.currentWave.number)
     
     self.currentWave:increment()
@@ -232,7 +234,7 @@ function Server:setupNextWave()
         --self.popupView:removeChild(msgBox)
         self:startSpawnLoop()
         self:paused(false)
-        self.sendPauseToClients(false)
+        self:sendPauseToClients(false)
     end)
 end
 
@@ -370,14 +372,18 @@ end
 --   return self.chatQueue:toString()
 --end
 
-function Server.attemptToPause(pause)
-    Server:paused(pause)
-    Server.sendPauseToClients(pause)
+function Server:attemptToPause(pause)
+    self:paused(pause)
+    self:sendPauseToClients(pause)
 end
 
-function Server.sendPauseToClients(isPaused)
+function Server:sendPauseToClients(isPaused)
     local object = {}
-    object.game_data = {pause=isPaused}
+    if isPaused then
+        object.game_data = {pause="true"}
+    else
+        object.game_data = {pause="false"}
+    end
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
 end
@@ -396,7 +402,13 @@ function Server:handleData(text)
     end
     
     if data.pause ~= nil then
-        self:attemptToPause(data.pause)
+        local bool
+        if data.pause == "true" then
+            bool = true
+        elseif data.pause == "false" then
+            bool = false
+        end
+        self:attemptToPause(bool)
     end
 end
 
