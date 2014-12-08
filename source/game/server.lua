@@ -158,7 +158,7 @@ function Server:loop()
     
     -- SEND STATE TO CLIENTS
     local object = {}
-    object.game_data = {currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave}
+    object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
     --COMMAND NEEDED: Send enemies map towers etc
