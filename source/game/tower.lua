@@ -90,3 +90,7 @@ function Tower:upgrade(type)
     -- TODO: Change stats
     self.level = self.level + 1
 end
+
+function Tower:getJSONData()
+    return {type=self.type, pos=self.pos, level=self.level, killCount=self.killCount}
+end

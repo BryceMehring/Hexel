@@ -308,6 +308,7 @@ function Client:onTouchDown(pos, inputType)
             ----------------------------------------------------
             -- Send tower place command
             ----------------------------------------------------
+            self:sendTowerPlaceMessage(pos, self.towerSelected.type)
             
             self:updateGUI()
         else
@@ -343,4 +344,10 @@ function Client:onMouseMove(pos)
     if self.hoverCircle and not self.map:isTileSelected() then
         self.hoverCircle:setPos(self.cursorPos[1], self.cursorPos[2])
     end
+end
+
+function Client:sendTowerPlaceMessage(pos, type)
+    local data = {tower_place={coordinate=pos, type=type}}
+    jsonString = JSON:encode(data)
+    self.nfe:talker(jsonString)
 end
