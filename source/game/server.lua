@@ -154,7 +154,7 @@ function Server:loop()
             attack:setColor(1,1,1,1)
             attack:setLayer(self.layer)
             attack:setVisible(true)
-            attacks.insert(0, {v1=v1, v2=v2})
+            table.insert(self.attacks, {v1, v2})
             flower.Executors.callLaterFrame(0.1, function()
                 attack:setLayer(nil)
                 attack:setVisible(false)
@@ -188,7 +188,8 @@ function Server:loop()
     object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=jsonTowers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
-    --COMMAND NEEDED: Send enemies map towers etc
+    
+    self.attacks = {}
     
     return self:stopped() -- Needed?
 end

@@ -134,6 +134,20 @@ function Client:loop()
         self:showEndGameMessage("Disconnected from server")
     end
     
+    for i, attackData in ipairs(self.attacks) do
+        local v1 = attackData[1]
+        local v2 = attackData[2]
+        local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
+        attack:setColor(1,1,1,1)
+        attack:setLayer(self.layer)
+        attack:setVisible(true)
+        flower.Executors.callLaterFrame(0.1, function()
+            attack:setLayer(nil)
+            attack:setVisible(false)
+        end)
+    end
+    self.attacks = {}
+    
     self:updateGUI()
     
     return self:stopped()
@@ -157,6 +171,9 @@ function Client:handleData(text)
             table.remove(self.towers, i)
         end
         
+        for i, attackData in ipairs(data.game_data.attacks) do
+            print(attackData[1], attackData[2])
+        end
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
         self.currentInterest   = data.game_data.currentInterest
