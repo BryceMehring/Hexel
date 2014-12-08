@@ -105,7 +105,8 @@ function Server:waifForClient()
 end
 
 function Server:sendMapInfo()
-    local object = {file = self.mapFile, texture = self.texture, width = self.width, height = self.height}
+    local object = {}
+    object.map_data = {file = self.mapFile, texture = self.texture, width = self.width, height = self.height}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
 end
@@ -156,7 +157,8 @@ function Server:loop()
     end
     
     -- SEND STATE TO CLIENTS
-   local object = {currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave}
+    local object = {}
+    object.game_data = {currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
     --COMMAND NEEDED: Send enemies map towers etc
