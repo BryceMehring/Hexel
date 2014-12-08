@@ -26,6 +26,7 @@ function onCreate(e)
     
     if my_nfe:isServer() then
         multiPlayerGame =  Server {
+            mapFile = "assets/maps/map1.lua",
             layer = layer,
             view = e.data.view,
             nfe = my_nfe,

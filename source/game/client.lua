@@ -74,7 +74,7 @@ function Client:init(t)
         self:showEndGameMessage("Cannot connect to server: " .. networkError)
     end
     
-    self.sendConnectMessage()
+    self:sendConnectMessage()
 end
 
 function Client:sendConnectMessage()
@@ -137,14 +137,15 @@ function Client:loop()
 end
 
 function Client:handleData(text)
-    print("packet received")
     local data = JSON:decode(text)
 
     if data.message ~= nil then
+        print("message received")
         self:submitText(data.message, true)
     end
 
     if data.game_data ~= nil then
+        print("game data received")
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
         self.currentInterest   = data.game_data.currentLives
@@ -157,6 +158,7 @@ function Client:handleData(text)
     end
 
     if data.map_data ~= nil then
+        print("map data received")
         self.map = Map {
             file = data.map_data.mapFile,
             texture = data.map_data.texture,

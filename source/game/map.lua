@@ -204,8 +204,8 @@ function Map:resetTowers(towers)
         for j = 1,self.height do
             local pos = {i, j}
             local tile = self.getTile(pos)
-            if towers[Tower.serialize_pos(pos)] == nil
-                if tile == TOWER_TYPES.YELLOW or TOWER_TYPES.RED or TOWER_TYPES.GREEN or TOWER_TYPES.BLUE
+            if towers[Tower.serialize_pos(pos)] == nil then
+                if tile == TOWER_TYPES.YELLOW or TOWER_TYPES.RED or TOWER_TYPES.GREEN or TOWER_TYPES.BLUE then
                     self.setTile(pos, TOWER_TYPES.EMPTY)
                 end
             else
