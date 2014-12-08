@@ -86,9 +86,28 @@ function Server:run()
     
     self:paused(true)
     
+    waitForClient()
+    
     flower.Executors.callLoop(self.loop, self)
 end
 
+function Server:waifForClient()
+    local data = nil
+    while data == nil do
+        data = self.nfe:listener()
+        data = JSON:decode(text)
+        if data.message == "Connected" then
+            break
+        end
+    end
+    self:sendMapInfo()
+end
+
+function Server:sendMapInfo()
+    local object = {file = self.mapFile, texture = self.texture, width = self.width, height = self.height}
+    local temp = JSON:encode(object)
+    self.nfe:talker(temp)
+end
 
 -- Main game loop which updates all of the entities in the game
 function Server:loop()
@@ -131,12 +150,12 @@ function Server:loop()
     if data then
         self:handleData(data)
     elseif not self.nfe:isConnected() then
-        self:showEndGameMessage("Disconnected from server")
+--        self:showEndGameMessage("Disconnected from server")
+        return
     end
     
     -- SEND STATE TO CLIENTS
-    local object = {}
-    object = {currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave}
+   local object = {currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
     --COMMAND NEEDED: Send enemies map towers etc
