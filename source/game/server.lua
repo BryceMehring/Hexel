@@ -180,8 +180,8 @@ function Server:loop()
         jsonEnemies[i] = enemy:getJSONData()
     end
     local jsonTowers = {}
-    for i, tower in ipairs(self.towers) do
-        jsonTowers[i] = tower:getJSONData()
+    for key, tower in pairs(self.towers) do
+        jsonTowers[key] = tower:getJSONData()
     end
     local object = {}
     object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=jsonTowers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
