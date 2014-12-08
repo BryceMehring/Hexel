@@ -144,9 +144,25 @@ function Server:loop()
             end
         end
         
+        -- Fire lasers
         for key, tower in pairs(self.towers) do
-            tower:fire(self.enemies)
+        local result = tower:fire(self.enemies)
+        if result ~= nil then
+            local v1 = self.map:gridToScreenSpace(tower.pos)
+            local v2 = vector{self.enemies[result].group:getPos()}
+            local attack = Line({{x=v1[1], y=v1[2]}, {x=v2[1], y=v2[2]}})
+            attack:setColor(1,1,1,1)
+            attack:setLayer(self.layer)
+            attack:setVisible(true)
+            flower.Executors.callLaterFrame(0.1, function()
+                attack:setLayer(nil)
+                attack:setVisible(false)
+            end)
         end
+    end
+--        for key, tower in pairs(self.towers) do
+--            tower:fire(self.enemies)
+--        end
     end
     
     -- CONSUME INPUTS
