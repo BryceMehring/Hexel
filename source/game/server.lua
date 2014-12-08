@@ -86,21 +86,22 @@ function Server:run()
     
     self:paused(true)
     
-    waitForClient()
+    waitForClient("Connected")
+    self:sendMapInfo()
     
     flower.Executors.callLoop(self.loop, self)
 end
 
-function Server:waifForClient()
+function Server:waifForClientMessage(msg)
     local data = nil
     while data == nil do
         data = self.nfe:listener()
         data = JSON:decode(text)
-        if data.message == "Connected" then
+        if data.message == msg then
             break
         end
     end
-    self:sendMapInfo()
+    
 end
 
 function Server:sendMapInfo()
