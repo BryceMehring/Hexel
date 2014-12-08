@@ -304,6 +304,31 @@ function Server:stopped(s)
     end
 end
 
+function Server:attemptToPlaceTower(tower)
+--    tower.coordinate : pos
+--    tower.type : towerSelected.type
+    local tile = self.map:getTile(tower.coordinate)
+    
+    -- The user clicked a tile that we want to ignore
+    if tile == 0 then
+        return
+    end
+    
+    if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil then
+        -- Try to place new tower down
+        if self.currentCash >= self.towerSelected.type.cost then
+            
+            -- Decrease cash amount
+            self.currentCash = self.currentCash - self.towerSelected.type.cost
+            
+            -- Place tower on map
+            self.map:setTile(pos, tower.type.id)
+            self.towers[Tower.serialize_pos(pos)] = Tower(tower.type, pos)
+        else
+            -- TODO: alert for insufficient funds
+        end
+end
+
 -- The chat queue needs to be handled similarly to this
 --function VersusGame:generateItemInfo()
 --   return self.chatQueue:toString()
@@ -315,7 +340,7 @@ function Server:handleData(text)
         self:submitText(data.message, true)
     end
     if data.tower_place ~= nil then
-        --call place tower function
+        self:attemptToPlaceTower(data.tower_place)
     end
     
     if data.tower_sell ~= nil then
