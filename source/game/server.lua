@@ -177,7 +177,7 @@ function Server:loop()
         return
     end
     
-    if not self:paused() and not self:stopped() then
+    if not self:stopped() then--not self:paused() and not self:stopped() then
         -- SEND STATE TO CLIENTS
         local jsonEnemies = {}
         for i, enemy in ipairs(self.enemies) do
