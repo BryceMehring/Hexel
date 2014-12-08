@@ -85,6 +85,7 @@ function Server:run()
     self.enemiesToSpawn = {}
     
     self:paused(true)
+    self.sendPauseToClients(true)
     
     self:waitForClient()
     self:sendMapInfo()
@@ -102,6 +103,7 @@ function Server:waitForClient()
         end
     end
     self:paused(false)
+    self.sendPauseToClients(false)
     print("Client Found")
 end
 
@@ -196,6 +198,7 @@ end
 
 function Server:setupNextWave()
     self:paused(true)
+    self.sendPauseToClients(true)
     --SEND PAUSED COMMAND (3 seconds, "Wave: " .. self.currentWave.number)
     
     self.currentWave:increment()
@@ -229,6 +232,7 @@ function Server:setupNextWave()
         --self.popupView:removeChild(msgBox)
         self:startSpawnLoop()
         self:paused(false)
+        self.sendPauseToClients(false)
     end)
 end
 
@@ -366,6 +370,18 @@ end
 --   return self.chatQueue:toString()
 --end
 
+function Server.attemptToPause(pause)
+    Server:paused(pause)
+    Server.sendPauseToClients(pause)
+end
+
+function Server.sendPauseToClients(isPaused)
+    local object = {}
+    object.game_data = {pause=isPaused}
+    local temp = JSON:encode(object)
+    self.nfe:talker(temp)
+end
+
 function Server:handleData(text)
     local data = JSON:decode(text)
     if data.message ~= nil then
@@ -377,6 +393,10 @@ function Server:handleData(text)
     
     if data.tower_sell ~= nil then
         self:attemptToSellTower(data.tower_sell)
+    end
+    
+    if data.pause ~= nil then
+        self:attemptToPause(data.pause)
     end
 end
 
