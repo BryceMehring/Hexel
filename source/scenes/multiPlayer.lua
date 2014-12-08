@@ -24,6 +24,14 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
+    local popupView = widget.UIView {
+        scene = scene,
+        layout = widget.BoxLayout {
+            align = {"center", "center"},
+        },
+    }
+    
+    
     local my_nfe = NetworkFrameworkEntity{}
     local connected, networkError = my_nfe:isConnected()
     if not connected then
@@ -44,6 +52,7 @@ function onCreate(e)
             layer = layer,
             view = e.data.view,
             nfe = my_nfe,
+            popupView = popupView,
         }
         print("client")
         view = e.data.view

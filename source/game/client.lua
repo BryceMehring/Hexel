@@ -228,6 +228,21 @@ function Client:handleData(text)
         end
         self:paused(bool, false)
     end
+
+    if data.display ~= nil then
+        print("display data received")
+        local msgBox = generateMsgBox(
+            self:getPopupPos(), 
+            self:getPopupSize(), 
+            display.message,
+            self.popupView)
+    
+        msgBox:showPopup()
+        flower.Executors.callLaterTime(display.duration, function()
+            msgBox:hidePopup()
+            self.popupView:removeChild(msgBox)
+        end)
+    end
 end
 
 -- Pauses the game if p is true, unpauses the game if p is false
