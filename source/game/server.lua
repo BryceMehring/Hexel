@@ -272,6 +272,7 @@ function Server:loseLife()
     self.currentLives = self.currentLives - 1
     if self.currentLives <= 0 then
         self:sendMessageToClient("Game Over!", 3)
+        self:stopped(true)
 --        self:showEndGameMessage("Game Over!")
     end
 end
