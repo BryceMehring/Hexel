@@ -208,7 +208,7 @@ function Server:setupNextWave()
     -- TODO: add an option so that the game keeps on going, like a survival mode, issue #51
     if self.currentWave:currentNumber() > 50 then
         -- TODO: command needed
-        --self:showEndGameMessage("You've Won the main game")
+        self:sendMessageToClient("You've won!", 3)
     end
     
     self.enemiesKilled = 0
@@ -229,6 +229,7 @@ function Server:setupNextWave()
     
 --    msgBox:showPopup()
 -- TODO: message command here
+    self:sendMessageToClient("Wave: " .. self.currentWave.number, 3)
     flower.Executors.callLaterTime(3, function()
         --msgBox:hidePopup()
         --self.popupView:removeChild(msgBox)
@@ -270,7 +271,8 @@ end
 function Server:loseLife()
     self.currentLives = self.currentLives - 1
     if self.currentLives <= 0 then
-        self:showEndGameMessage("Game Over!")
+        self:sendMessageToClient("Game Over!", 3)
+--        self:showEndGameMessage("Game Over!")
     end
 end
 
@@ -387,6 +389,14 @@ function Server:sendPauseToClients(isPaused)
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
 end
+
+function Server:sendMessageToClient(msg, dur)
+   local object = {}
+   object.display = {message=msg, duration=dur}
+   local temp = JSON:encode(object)
+   self.nfe:talker(temp)
+end
+
 
 function Server:handleData(text)
     local data = JSON:decode(text)
