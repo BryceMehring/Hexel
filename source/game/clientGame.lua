@@ -24,11 +24,11 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-Client = flower.class()
+ClientGame = flower.class()
 --Add 3% to the interest rate each turn
-Client.INTEREST_INCREMENT = 3 
+ClientGame.INTEREST_INCREMENT = 3 
 
-function Client:init(t)
+function ClientGame:init(t)
     -- TODO: pass is variables instead of hardcoding them
     self.texture = "hex-tiles.png"
     self.width = 50
@@ -71,8 +71,8 @@ function Client:init(t)
         --map = self.map
     }
     
-    self.nfe = t.nfe
-    local connected, networkError = self.nfe:isConnected()
+    self.client = t.client
+    local connected, networkError = self.client:isConnected()
     if not connected then
         self:showEndGameMessage("Cannot connect to server: " .. networkError)
     end
@@ -80,19 +80,19 @@ function Client:init(t)
     self:sendConnectMessage()
 end
 
-function Client:sendConnectMessage()
+function ClientGame:sendConnectMessage()
     local data = {connected=true}
     jsonString = JSON:encode(data)
-    self.nfe:talker(jsonString)
+    self.client:talker(jsonString)
 end
 
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
-function Client:generateItemInfo()
+function ClientGame:generateItemInfo()
     return self.towerSelected and self.towerSelected:getDescription() or ""
 end
 
-function Client:generateStatus()
+function ClientGame:generateStatus()
    return "Wave: " .. self.currentWave.number ..
           "  Lives: " .. self.currentLives ..
           "\nCash: " .. self.currentCash ..
@@ -100,11 +100,11 @@ function Client:generateStatus()
 end
 
 
-function Client:getPopupPos()
+function ClientGame:getPopupPos()
     return {flower.viewWidth / 5, flower.viewHeight / 2}
 end 
 
-function Client:getPopupSize()
+function ClientGame:getPopupSize()
     return {flower.viewWidth / 2, 100}
 end
 
@@ -112,7 +112,7 @@ end
 -- CHANGE
 ------------------------------------------------------------------------------------------------------------
 -- Initializes the game to run by turning on the spawning of enemies
-function Client:run()    
+function ClientGame:run()    
     self.enemies = {}
     self.enemiesToSpawn = {}
     
@@ -123,14 +123,14 @@ end
 
 
 -- Main game loop which updates all of the entities in the game
-function Client:loop()
+function ClientGame:loop()
     ------------------------------------------------------------------
     -- Get Network updates
     ------------------------------------------------------------------
-    local data = self.nfe:listener()
+    local data = self.client:listener()
     if data then
         self:handleData(data)
-    elseif not self.nfe:isConnected() then
+    elseif not self.client:isConnected() then
         self:showEndGameMessage("Disconnected from server")
     end
     
@@ -153,7 +153,7 @@ function Client:loop()
     return self:stopped()
 end
 
-function Client:handleData(text)
+function ClientGame:handleData(text)
     local data = JSON:decode(text)
 
     if data.message ~= nil then
@@ -254,7 +254,7 @@ end
 
 -- Pauses the game if p is true, unpauses the game if p is false
 -- If p is nil, paused() return true if the game is paused
-function Client:paused(p, sendMessage)
+function ClientGame:paused(p, sendMessage)
     if p ~= nil then
 
         if self.timers then
@@ -280,7 +280,7 @@ end
 
 -- Stops the game if s is true
 -- Returns true if the game if s is nil
-function Client:stopped(s)
+function ClientGame:stopped(s)
     if s ~= nil then
         if s == true then
             self.currentLives = 0
@@ -304,14 +304,14 @@ function Client:stopped(s)
     end
 end
 
-function Client:updateGUI()
+function ClientGame:updateGUI()
     updateStatusText(self:generateStatus())
     updateItemText(self:generateItemInfo())
 end
 
 -- not self.map:isTileSelected() mouse has the circle
 -- Updates the current tower selected
-function Client:selectTower(tower)
+function ClientGame:selectTower(tower)
     self.towerSelected = tower
 
     if self.hoverCircle and self.hoverCircle.layer ~= nil then
@@ -342,7 +342,7 @@ function Client:selectTower(tower)
     self:updateGUI()
 end
 
-function Client:drawCircle(range, screenPos)
+function ClientGame:drawCircle(range, screenPos)
     self.hoverCircle = flower.Circle(range, 100)
     self.hoverCircle:setPos(screenPos[1], screenPos[2])
     self.hoverCircle:setColor(0.6, 0.4, 0.4, 0.1)
@@ -350,13 +350,13 @@ function Client:drawCircle(range, screenPos)
 end
 
 -- Returns the selected tower
-function Client:getSelectedTower()
+function ClientGame:getSelectedTower()
     return self.towerSelected
 end
 
 -- Event callback for mouse touch input
 --TODO: clean this up
-function Client:onTouchDown(pos, inputType)
+function ClientGame:onTouchDown(pos, inputType)
     if self:stopped() then
         flower.closeScene({animation = "fade"})
     end
@@ -405,7 +405,7 @@ function Client:onTouchDown(pos, inputType)
     end
 end
 
-function Client:onMouseMove(pos)
+function ClientGame:onMouseMove(pos)
     -- TODO: use mouse move event to show the user where the tower will be placed on the grid
     -- and show the radius of the tower being placed
     self.cursorPos = self.map:gridToScreenSpace(pos)
@@ -414,19 +414,19 @@ function Client:onMouseMove(pos)
     end
 end
 
-function Client:sendTowerPlaceMessage(pos, type)
+function ClientGame:sendTowerPlaceMessage(pos, type)
     local data = {tower_place={pos=pos, type=type}}
     jsonString = JSON:encode(data)
-    self.nfe:talker(jsonString)
+    self.client:talker(jsonString)
 end
 
-function Client:sendTowerSellMessage(pos)
+function ClientGame:sendTowerSellMessage(pos)
     local data = {tower_sell={pos=pos}}
     jsonString = JSON:encode(data)
-    self.nfe:talker(jsonString)
+    self.client:talker(jsonString)
 end
 
-function Client:sendPauseMessage(p)
+function ClientGame:sendPauseMessage(p)
     local data = {}
     if p then
         data = {pause="true"}
@@ -434,5 +434,5 @@ function Client:sendPauseMessage(p)
         data = {pause="false"}
     end
     jsonString = JSON:encode(data)
-    self.nfe:talker(jsonString)
+    self.client:talker(jsonString)
 end

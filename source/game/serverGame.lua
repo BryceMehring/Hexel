@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- server.lua - Defines a game which(for now) manages the game logic for a single player game
+-- ServerGame.lua - Defines a game which(for now) manages the game logic for a single player game
 --------------------------------------------------------------------------------
 
 require "source/utilities/vector"
@@ -22,11 +22,11 @@ local vector = vector
 local MOAIGridSpace = MOAIGridSpace
 local ipairs = ipairs
 
-Server = flower.class()
+ServerGame = flower.class()
 --Add 3% to the interest rate each turn
-Server.INTEREST_INCREMENT = 3 
+ServerGame.INTEREST_INCREMENT = 3 
 
-function Server:init(t)
+function ServerGame:init(t)
     -- TODO: pass is variables instead of hardcoding them
     self.texture = "hex-tiles.png"
     self.tileWidth = 128
@@ -72,53 +72,54 @@ function Server:init(t)
     self.chatQueue = CircularQueue(12)
     self.chatQueue:push("Hello")
     
-    self.nfe = t.nfe
-    local connected, networkError = self.nfe:isConnected()
-    if not connected then
-        return
-    end 
+    self.server = t.server
+--    local connected, networkError = self.server:isConnected()
+--    if not connected then
+--        return
+--    end 
 end
 
 -- Initializes the game to run by turning on the spawning of enemies
-function Server:run()    
+function ServerGame:run()    
+    enableDebugging()
     self.enemies = {}
     self.enemiesToSpawn = {}
     
     self:paused(true)
     self:sendPauseToClients(true)
     
+    --flower.Executors.callLoop(self.waitForClient, self)
     self:waitForClient()
     self:sendMapInfo()
     
     flower.Executors.callLoop(self.loop, self)
 end
 
-function Server:waitForClient()
-    local data = nil
-    while data == nil do
-        local text = self.nfe:listener()
-        data = JSON:decode(text)
-        if data.connected == true then
+function ServerGame:waitForClient()
+    enableDebugging()
+    while 1 do
+        if self.server:isConnected() then
             break
-        end
+        end    
+        --coroutine.yield()
     end
-    --print("Client Found")
+    print("Client Found")
 end
 
-function Server:sendMapInfo()
+function ServerGame:sendMapInfo()
     local object = {}
     object.map_data = {file = self.mapFile, texture = self.texture, width = self.width, height = self.height}
     local temp = JSON:encode(object)
-    self.nfe:talker(temp)
+    self.server:talker(temp)
 end
 
 -- Main game loop which updates all of the entities in the game
-function Server:loop()
+function ServerGame:loop()
     -- DO FRAME
     if not self:paused() then
         if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
             if self.currentWave.number > 0 then
-                self.currentInterest = self.currentInterest + Server.INTEREST_INCREMENT
+                self.currentInterest = self.currentInterest + ServerGame.INTEREST_INCREMENT
                 self.currentCash = math.floor(self.currentCash * (1+self.currentInterest/100))
             end
             
@@ -166,13 +167,13 @@ function Server:loop()
     end
     
     -- CONSUME INPUTS
-    local data = self.nfe:listener()
-    if data then
-        self:handleData(data)
-    elseif not self.nfe:isConnected() then
---        self:showEndGameMessage("Disconnected from server")
-        return
-    end
+--    local data = self.server:listener()
+--    if data then
+--        self:handleData(data)
+--    elseif not self.server:isConnected() then
+----        self:showEndGameMessage("Disconnected from server")
+--        return
+--    end
     
     --if not self:stopped() then--not self:paused() and not self:stopped() then
         -- SEND STATE TO CLIENTS
@@ -189,7 +190,7 @@ function Server:loop()
         local object = {}
         object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=jsonTowers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
         local temp = JSON:encode(object)
-        self.nfe:talker(temp)
+        self.server:talker(temp)
         
         self.attacks = {}
     --end
@@ -197,7 +198,7 @@ function Server:loop()
     return self:stopped() -- Needed?
 end
 
-function Server:setupNextWave()
+function ServerGame:setupNextWave()
     self:paused(true)
     self:sendPauseToClients(true)
     --SEND PAUSED COMMAND (3 seconds, "Wave: " .. self.currentWave.number)
@@ -238,7 +239,7 @@ function Server:setupNextWave()
     end)
 end
 
-function Server:spawnLoop()
+function ServerGame:spawnLoop()
     if self:stopped() then
         return
     end
@@ -254,7 +255,7 @@ function Server:spawnLoop()
     self.spawnedEnemies = self.spawnedEnemies + 1
 end
 
-function Server:startSpawnLoop()    
+function ServerGame:startSpawnLoop()    
     local spawnRate = self.currentWave.time / #self.enemiesToSpawn
     local spawnTimer = flower.Executors.callLoopTime(spawnRate, self.spawnLoop, self)
     self.timers = {
@@ -266,7 +267,7 @@ end
 
 -- COMMAND NEEDED: PLAYERS LOSE LIFE!
 -- Looses a life and ends the game if the lives count reaches 0
-function Server:loseLife()
+function ServerGame:loseLife()
     self.currentLives = self.currentLives - 1
     if self.currentLives <= 0 then
         self:sendMessageToClient("Game Over!", 3)
@@ -276,7 +277,7 @@ function Server:loseLife()
 end
 
 -- Shows a message box with a message just before ending the game
-function Server:showEndGameMessage(msg)
+function ServerGame:showEndGameMessage(msg)
     --COMMAND NEEDED: SEND END OF GAME NOTIFICATION
     local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.popupView)
     msgBox:showPopup()
@@ -289,7 +290,7 @@ end
 
 -- Pauses the game if p is true, unpauses the game if p is false
 -- If p is nil, paused() return true if the game is paused
-function Server:paused(p)
+function ServerGame:paused(p)
     if p ~= nil then
 
         if self.timers then
@@ -311,7 +312,7 @@ end
 
 -- Stops the game if s is true
 -- Returns true if the game if s is nil
-function Server:stopped(s)
+function ServerGame:stopped(s)
     if s ~= nil then
         
         if s == true then
@@ -334,7 +335,7 @@ function Server:stopped(s)
     end
 end
 
-function Server:attemptToPlaceTower(tower)
+function ServerGame:attemptToPlaceTower(tower)
 --    tower.coordinate : pos
 --    tower.type : towerSelected.type
     local tile = self.map:getTile(tower.pos)
@@ -358,7 +359,7 @@ function Server:attemptToPlaceTower(tower)
     end
 end
 
-function Server:attemptToSellTower(tower)
+function ServerGame:attemptToSellTower(tower)
     -- tower.pos
     local key = Tower.serialize_pos(tower.pos)
     local towerInfo = self.towers[key]
@@ -374,12 +375,12 @@ end
 --   return self.chatQueue:toString()
 --end
 
-function Server:attemptToPause(pause)
+function ServerGame:attemptToPause(pause)
     self:paused(pause)
     self:sendPauseToClients(pause)
 end
 
-function Server:sendPauseToClients(isPaused)
+function ServerGame:sendPauseToClients(isPaused)
     local object = {}
     if isPaused then
         object.pause = {pause="true"}
@@ -387,25 +388,25 @@ function Server:sendPauseToClients(isPaused)
         object.pause = {pause="false"}
     end
     local temp = JSON:encode(object)
-    self.nfe:talker(temp)
+    self.server:talker(temp)
 end
 
-function Server:sendStopToClients()
+function ServerGame:sendStopToClients()
     local object = {}
     object.stop = {stop}
     local temp = JSON:encode(object)
-    self.nfe:talker(temp)
+    self.server:talker(temp)
 end
 
-function Server:sendMessageToClient(msg, dur)
+function ServerGame:sendMessageToClient(msg, dur)
    local object = {}
    object.display = {message=msg, duration=dur}
    local temp = JSON:encode(object)
-   self.nfe:talker(temp)
+   self.server:talker(temp)
 end
 
 
-function Server:handleData(text)
+function ServerGame:handleData(text)
     local data = JSON:decode(text)
     if data.message ~= nil then
         self:submitText(data.message, true)
@@ -430,13 +431,13 @@ function Server:handleData(text)
 end
 
 -- TODO: this could be cleaned up, I don't really like using the bool `recieve` here
-function Server:submitText(text, recieve)
+function ServerGame:submitText(text, recieve)
     
     if not recieve then
         local data = {}
         data.message = text
         jsonString = JSON:encode(data)
-        self.nfe:talker(jsonString)
+        self.server:talker(jsonString)
         text = "You: " .. text
     else
         text = "Them: " .. text

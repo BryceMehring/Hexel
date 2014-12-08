@@ -17,45 +17,31 @@ local mouseEvents = {
 
 local flower = flower
 
-local multiPlayerGame = nil
+local serverGame = nil
 local view = nil
 
 function onCreate(e)
     enableDebugging()
-    layer = flower.Layer()
-    layer:setTouchEnabled(true)
-    scene:addChild(layer)
+    --layer = flower.Layer()
+    --layer:setTouchEnabled(true)
+    --scene:addChild(layer)
     
-    local popupView = widget.UIView {
-        scene = scene,
-        layout = widget.BoxLayout {
-            align = {"center", "center"},
-        },
-    }
-    
-    
-    local my_client = Client{}
+    local my_server = Server{}
 --    local connected, networkError = my_server:isConnected()
 --    if not connected then
 --        return
 --    end
+    
 
-    multiPlayerGame = ClientGame {
-        layer = layer,
+    serverGame =  ServerGame {
+        mapFile = "assets/maps/map1.lua",
+        --layer = layer,
         view = e.data.view,
-        client = my_client,
-        popupView = popupView,
+        server = my_server,
     }
     view = e.data.view
-    buildUI("SinglePlayer", e.data.view, multiPlayerGame)
-
-    for i, v in ipairs(mouseEvents) do
-        flower.InputMgr:addEventListener(v, onMouseEvent)
-    end
 
     flower.Runtime:addEventListener("resize", onResize)
-    
-    --flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
 end
 
 function updateLayout()
@@ -67,17 +53,17 @@ function onResize(e)
 end
 
 function onStart(e)
-    multiPlayerGame:stopped(false)
-    multiPlayerGame:run()
+    serverGame:stopped(false)
+    serverGame:run()
 end
 
 function onStop(e)
     for i, v in ipairs(mouseEvents) do
         flower.InputMgr:removeEventListener(v, onMouseEvent)
     end
-    multiPlayerGame:paused(false)
-    multiPlayerGame:stopped(true)
-    multiPlayerGame = nil
+    serverGame:paused(false)
+    serverGame:stopped(true)
+    serverGame = nil
 end
 
 function item_onTouchDown(e)
@@ -97,19 +83,19 @@ function item_onTouchDown(e)
 end
 
 function onMouseEvent(e)
-    if multiPlayerGame.map then
+    if serverGame.map then
         if e.type ~= "mouseMove" then
             if not e.down then
                 return
             end
         end
         
-        local pos = multiPlayerGame.map:screenToGridSpace(e.x, e.y, layer)
+        local pos = serverGame.map:screenToGridSpace(e.x, e.y, layer)
         
         if e.type == "mouseClick" or e.type == "mouseRightClick" then
-            multiPlayerGame:onTouchDown(pos, e.type)
+            serverGame:onTouchDown(pos, e.type)
         elseif e.type == "mouseMove" then
-            multiPlayerGame:onMouseMove(pos)
+            serverGame:onMouseMove(pos)
         else
             error("Unknown input event: " .. e.type)
         end
