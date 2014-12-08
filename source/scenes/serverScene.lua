@@ -21,7 +21,6 @@ local serverGame = nil
 local view = nil
 
 function onCreate(e)
-    enableDebugging()
     --layer = flower.Layer()
     --layer:setTouchEnabled(true)
     --scene:addChild(layer)

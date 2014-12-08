@@ -11,7 +11,6 @@ function Client:init(t)
 end
 
 function Client:run()
-    enableDebugging()
     self.client = nil
     
     self.client, self.servError = socket.connect(self.serverIP, self.port)

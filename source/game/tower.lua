@@ -28,7 +28,6 @@ function Tower:init(towerType, pos)
     self.killCount = 0
     self.fire_tick = self.type.speed
     
-    --enableDebugging()
     self.damageFunct = Enemy[self.type.damage.func]
     assert(self.damageFunct, "Invalid damage function")
     

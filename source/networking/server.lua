@@ -5,7 +5,6 @@ local socket = require("socket")
 Server = flower.class()
 
 function Server:init(t)
-    enableDebugging()
     self.port = t.port or 48310
     self.server, self.servError = socket.bind("*", self.port)
     
@@ -23,7 +22,6 @@ function Server:init(t)
 end
 
 function Server:run()
-    enableDebugging()
 
     if self.server then
         local set = {self.server}
@@ -77,7 +75,6 @@ function Server:stopIfClosed(e)
 end
 
 function Server:talker(text)
-    enableDebugging()
     if self:isConnected() then
         for client, _ in pairs(self.client) do
             local b, e = client:send(text .. "\n")
@@ -87,7 +84,6 @@ function Server:talker(text)
 end
 
 function Server:listener()
-    enableDebugging()
     local l = {}
     local e = nil
     if self:isConnected() then

@@ -81,7 +81,6 @@ end
 
 -- Initializes the game to run by turning on the spawning of enemies
 function ServerGame:run()    
-    enableDebugging()
     self.enemies = {}
     self.enemiesToSpawn = {}
     
@@ -96,7 +95,6 @@ function ServerGame:run()
 end
 
 function ServerGame:waitForClient()
-    enableDebugging()
     while 1 do
         if self.server:isConnected() then
             break
@@ -407,7 +405,6 @@ end
 
 
 function ServerGame:handleData(text)
-    enableDebugging()
     for i, rawData in ipairs(text) do
         
         local data = JSON:decode(rawData)
