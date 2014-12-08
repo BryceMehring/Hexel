@@ -344,6 +344,7 @@ function Client:onTouchDown(pos, inputType)
             ------------------------------------------------------
             -- Send tower sell command
             ------------------------------------------------------
+            self:sendTowerSellMessage(pos)
         end        
     end
 end
@@ -359,6 +360,12 @@ end
 
 function Client:sendTowerPlaceMessage(pos, type)
     local data = {tower_place={pos=pos, type=type}}
+    jsonString = JSON:encode(data)
+    self.nfe:talker(jsonString)
+end
+
+function Client:sendTowerSellMessage(pos)
+    local data = {tower_place={pos=pos}}
     jsonString = JSON:encode(data)
     self.nfe:talker(jsonString)
 end
