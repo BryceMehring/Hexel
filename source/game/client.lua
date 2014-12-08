@@ -234,14 +234,25 @@ function Client:handleData(text)
         local msgBox = generateMsgBox(
             self:getPopupPos(), 
             self:getPopupSize(), 
-            display.message,
+            data.display.message,
             self.popupView)
     
         msgBox:showPopup()
-        flower.Executors.callLaterTime(display.duration, function()
+        flower.Executors.callLaterTime(data.display.duration, function()
             msgBox:hidePopup()
             self.popupView:removeChild(msgBox)
         end)
+    end
+
+    if data.stop ~= nil then
+        print("stop data received")
+        local bool
+        if data.stop == "true" then
+            bool = true
+        elseif data.stop == "false" then
+            bool = false
+        end
+        self:stopped(bool, false)
     end
 end
 
