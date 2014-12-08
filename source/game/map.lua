@@ -34,6 +34,8 @@ function Map:load(file)
     
     self.width = self.map.width or self.width
     self.height = self.map.height or self.height
+    print(self.width)
+    print(self.height)
     
     self.grid = flower.MapImage(self.texture, self.width,
                                 self.height, self.tileWidth,
@@ -197,5 +199,23 @@ function Map:setLayer(layer)
     self.layer = layer
     self.grid:setLayer(self.layer)
     self.selectedImage:setLayer(self.layer)
+end
+
+function Map:resetTowers(towers)
+    print(self.width)
+    print(self.height)
+    for i = 1,self.width do
+        for j = 1,self.height do
+            local pos = {i, j}
+            local tile = self:getTile(pos)
+            if towers[Tower.serialize_pos(pos)] == nil then
+                if tile == TOWER_TYPES.YELLOW or tile == TOWER_TYPES.RED or tile == TOWER_TYPES.GREEN or tile == TOWER_TYPES.BLUE then
+                    self:setTile(pos, TOWER_TYPES.EMPTY)
+                end
+            else
+                self:setTile(pos, towers[Tower.serialize_pos(pos)])
+            end
+        end
+    end
 end
     
