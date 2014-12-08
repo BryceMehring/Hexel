@@ -177,11 +177,13 @@ function Server:loop()
         return
     end
     
-    if not self:paused() then
+    if not self:paused() and not self:stopped() then
         -- SEND STATE TO CLIENTS
         local jsonEnemies = {}
         for i, enemy in ipairs(self.enemies) do
-            jsonEnemies[i] = enemy:getJSONData()
+            if not enemy:isDead() then
+                jsonEnemies[i] = enemy:getJSONData()
+            end
         end
         local jsonTowers = {}
         for key, tower in pairs(self.towers) do
@@ -317,7 +319,7 @@ function Server:stopped(s)
     if s ~= nil then
         
         if s == true then
-            self.soundManager:stop()
+            --self.soundManager:stop()
             if self.timers then
                 for k, timer in pairs(self.timers) do
                     flower.Executors.cancel(timer)

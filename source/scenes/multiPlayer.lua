@@ -82,7 +82,9 @@ function onStart(e)
 end
 
 function onStop(e)
-    flower.InputMgr:removeEventListener("mouseClick", item_onTouchDown)
+    for i, v in ipairs(mouseEvents) do
+        flower.InputMgr:removeEventListener(v, onMouseEvent)
+    end
     multiPlayerGame:paused(false)
     multiPlayerGame:stopped(true)
     multiPlayerGame = nil

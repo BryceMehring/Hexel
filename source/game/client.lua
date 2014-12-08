@@ -286,8 +286,8 @@ end
 -- Returns true if the game if s is nil
 function Client:stopped(s)
     if s ~= nil then
-        
         if s == true then
+            self.currentLives = 0
             self.soundManager:stop()
             if self.timers then
                 for k, timer in pairs(self.timers) do
@@ -298,6 +298,8 @@ function Client:stopped(s)
             for i, enemy in ipairs(self.enemies) do
                 enemy:remove()
             end
+            
+            self:updateGUI()
         end
         
         self.isStopped = s
