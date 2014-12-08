@@ -52,6 +52,8 @@ function Client:init(t)
     self.chatQueue = CircularQueue(12)
     self.chatQueue:push("Hello")
     
+    self.map = nil
+    
     
     self.currentLives = 20
     self.currentCash = 5000
@@ -264,6 +266,9 @@ function Client:selectTower(tower)
     end
     
     if self.towerSelected then
+        print(self.towerSelected and self.towerSelected.pos)
+        print(self.map:gridToScreenSpace(self.towerSelected.pos))
+        print(self.cursorPos)
         local screenPos = (self.towerSelected and self.towerSelected.pos) and self.map:gridToScreenSpace(self.towerSelected.pos) or self.cursorPos
         local range = self.map:gridToScreenSpace(tower.type.range) / 1.7 -- TODO: where does this number come from?
         
@@ -353,13 +358,14 @@ function Client:onMouseMove(pos)
     -- TODO: use mouse move event to show the user where the tower will be placed on the grid
     -- and show the radius of the tower being placed
     self.cursorPos = self.map:gridToScreenSpace(pos)
+    print(self.cursorPos)
     if self.hoverCircle and not self.map:isTileSelected() then
         self.hoverCircle:setPos(self.cursorPos[1], self.cursorPos[2])
     end
 end
 
 function Client:sendTowerPlaceMessage(pos, type)
-    local data = {tower_place={coordinate=pos, type=type}}
+    local data = {tower_place={pos=pos, type=type}}
     jsonString = JSON:encode(data)
     self.nfe:talker(jsonString)
 end

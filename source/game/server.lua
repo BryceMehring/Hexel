@@ -311,27 +311,32 @@ end
 function Server:attemptToPlaceTower(tower)
 --    tower.coordinate : pos
 --    tower.type : towerSelected.type
-    local tile = self.map:getTile(tower.coordinate)
+    local tile = self.map:getTile(tower.pos)
+    print(tile)
     
     -- The user clicked a tile that we want to ignore
     if tile == 0 then
         return
     end
     
-    if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil then
+    print("we made it")
+    if tile == TOWER_TYPES.EMPTY then
+        print("farther")
         -- Try to place new tower down
-        if self.currentCash >= self.towerSelected.type.cost then
-            
+        if self.currentCash >= tower.type.cost then
+            print("almost there")
             -- Decrease cash amount
-            self.currentCash = self.currentCash - self.towerSelected.type.cost
-            
+            self.currentCash = self.currentCash - tower.type.cost
+            print(self.currentCash)
             -- Place tower on map
-            self.map:setTile(pos, tower.type.id)
-            self.towers[Tower.serialize_pos(pos)] = Tower(tower.type, pos)
+            print(tower.type.id)
+            self.map:setTile(tower.pos, tower.type.id)
+            self.towers[Tower.serialize_pos(tower.pos)] = Tower(tower.type, tower.pos)
         else
             -- TODO: alert for insufficient funds
         end
     end
+    print("goodbye")
 end
 
 -- The chat queue needs to be handled similarly to this
@@ -345,6 +350,8 @@ function Server:handleData(text)
         self:submitText(data.message, true)
     end
     if data.tower_place ~= nil then
+        print("YO DAWG")
+        print(data)
         self:attemptToPlaceTower(data.tower_place)
     end
     

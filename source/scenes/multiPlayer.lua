@@ -8,6 +8,12 @@ require "source/game/server"
 require "source/game/client"
 require "source/gui/guiUtilities"
 
+local mouseEvents = {
+    "mouseClick",
+    "mouseMove",
+    "mouseRightClick",
+}
+
 local flower = flower
 
 local multiPlayerGame = nil
@@ -42,11 +48,15 @@ function onCreate(e)
         print("client")
         view = e.data.view
         buildUI("SinglePlayer", e.data.view, multiPlayerGame)
+    
+        for i, v in ipairs(mouseEvents) do
+            flower.InputMgr:addEventListener(v, onMouseEvent)
+        end
     end
 
     flower.Runtime:addEventListener("resize", onResize)
     
-    flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
+    --flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
 end
 
 function updateLayout()
@@ -83,4 +93,24 @@ function item_onTouchDown(e)
     
 
 
+end
+
+function onMouseEvent(e)
+    if multiPlayerGame.map then
+        if e.type ~= "mouseMove" then
+            if not e.down then
+                return
+            end
+        end
+        
+        local pos = multiPlayerGame.map:screenToGridSpace(e.x, e.y, layer)
+        
+        if e.type == "mouseClick" or e.type == "mouseRightClick" then
+            multiPlayerGame:onTouchDown(pos, e.type)
+        elseif e.type == "mouseMove" then
+            multiPlayerGame:onMouseMove(pos)
+        else
+            error("Unknown input event: " .. e.type)
+        end
+    end
 end
