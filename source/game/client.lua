@@ -129,6 +129,7 @@ function Client:loop()
 end
 
 function Client:handleData(text)
+    print("packet received")
     local data = JSON:decode(text)
 
     if data.message ~= nil then
@@ -141,10 +142,21 @@ function Client:handleData(text)
         self.currentInterest   = data.game_data.currentLives
         self.towers            = data.game_data.towers
         self.attacks           = data.game_data.attacks
-        self.map               = data.game_data.map
         self.difficulty        = data.game_data.difficulty
         self.currentWave       = data.game_data.currentWave
-        self.map.setLayer(self.layer)
+    end
+
+    if data.map_data ~= nil then
+        self.map = Map {
+            file = self.mapFile,
+            texture = self.texture,
+            width = self.width,
+            height = self.height,
+            tileWidth = self.tileWidth,
+            tileHeight = self.tileHeight,
+            radius = self.radius,
+            layer = self.layer,
+        }
     end
 end
 
