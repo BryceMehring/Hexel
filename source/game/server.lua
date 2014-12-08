@@ -115,7 +115,8 @@ end
 -- Main game loop which updates all of the entities in the game
 function Server:loop()
     -- DO FRAME
-    while not self:paused() do
+    if not self:paused() then
+        print("checking!")
         if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
             if self.currentWave.number > 0 then
                 self.currentInterest = self.currentInterest + Server.INTEREST_INCREMENT
@@ -123,6 +124,7 @@ function Server:loop()
             end
             
             -- increment to the next wave
+            print("about to setup")
             self:setupNextWave()
         end
             
@@ -158,8 +160,12 @@ function Server:loop()
     end
     
     -- SEND STATE TO CLIENTS
+    local jsonEnemies = {}
+    for i, enemy in ipairs(self.enemies) do
+        jsonEnemies[i] = enemy:getJSONData()
+    end
     local object = {}
-    object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=self.enemies}
+    object.game_data = {currentLives=self.currentLives, currentCash=self.currentCash, currentInterest=self.currentInterest, towers=self.towers, attacks=self.attacks, difficulty=self.difficulty, currentWave=self.currentWave, enemies=jsonEnemies}
     local temp = JSON:encode(object)
     self.nfe:talker(temp)
     --COMMAND NEEDED: Send enemies map towers etc
@@ -196,12 +202,13 @@ function Server:setupNextWave()
 --        self.popupView)
     
 --    msgBox:showPopup()
---    flower.Executors.callLaterTime(3, function()
---        msgBox:hidePopup()
---        self.popupView:removeChild(msgBox)
---        self:startSpawnLoop()
---        self:paused(false)
---    end)
+-- TODO: message command here
+    flower.Executors.callLaterTime(3, function()
+        --msgBox:hidePopup()
+        --self.popupView:removeChild(msgBox)
+        self:startSpawnLoop()
+        self:paused(false)
+    end)
 end
 
 function Server:spawnLoop()

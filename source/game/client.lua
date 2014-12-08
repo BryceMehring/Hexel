@@ -59,6 +59,7 @@ function Client:init(t)
     
     self.towers = {}
     self.attacks = {}
+    self.enemies = {}
     
     self.difficulty = 1
     self.currentWave = Wave {
@@ -113,7 +114,7 @@ function Client:run()
     self.enemies = {}
     self.enemiesToSpawn = {}
     
-    self:paused(true)
+    self:paused(false)
     
     flower.Executors.callLoop(self.loop, self)
 end
@@ -146,15 +147,30 @@ function Client:handleData(text)
 
     if data.game_data ~= nil then
         print("game data received")
+        for i, enemy in ipairs(self.enemies) do
+            enemy:remove()
+        end
+        
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
         self.currentInterest   = data.game_data.currentInterest
         self.towers            = data.game_data.towers
+        self.enemies           = {}
         self.attacks           = data.game_data.attacks
         self.difficulty        = data.game_data.difficulty
         self.currentWave       = data.game_data.currentWave
         
         self.map:resetTowers(self.towers)
+        for i, enemy in ipairs(data.game_data.enemies) do
+            enemy[i] = Enemy {
+                type = enemy.type
+            }
+            enemy[i].stats = enemy.stats
+            enemy[i].dead = enemy.dead
+            enemy[i].dying = enemy.dying
+            enemy[i]:renderEnemy(enemy.position, self.layer, self.map)
+        end
+            
     end
 
     if data.map_data ~= nil then

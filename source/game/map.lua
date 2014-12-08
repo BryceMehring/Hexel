@@ -202,8 +202,6 @@ function Map:setLayer(layer)
 end
 
 function Map:resetTowers(towers)
-    print(self.width)
-    print(self.height)
     for i = 1,self.width do
         for j = 1,self.height do
             local pos = {i, j}

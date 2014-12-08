@@ -27,6 +27,7 @@ end
 -- @param the map in which the enemy will spawn on
 -- TODO: remove layer as a parameter
 function Enemy:spawn(layer, map)
+    print("spawning")
     local pos = map:randomStartingPosition()
     
     self.group = flower.Group(layer, self.type.size, self.type.size)
@@ -44,6 +45,28 @@ function Enemy:spawn(layer, map)
     }
     
     self.currentPos = 1
+    self.map = map
+end
+
+--- Places the enemy on the map at a random starting location specified by the map.
+-- @param the layer in which the enemy shall spawn on
+-- @param the map in which the enemy will spawn on
+-- TODO: remove layer as a parameter
+function Enemy:renderEnemy(pos, layer, map)
+    self.group = flower.Group(layer, self.type.size, self.type.size)
+    self.group:setPos(pos[1], pos[2])
+    
+    self.rectangle = flower.Rect(self.type.size, self.type.size)
+    self.rectangle:setColor(self.type.color[1], self.type.color[2], self.type.color[3], self.type.color[4])
+    self.group:addChild(self.rectangle)
+    
+    self.healthBar = HealthBar {
+        parent = self.group,
+        width = self.type.size,
+        height = self.type.size,
+        moveSclTime = 0.1
+    }
+    
     self.map = map
 end
 
@@ -105,6 +128,7 @@ function Enemy:remove()
     if self.group then
         self.group:setVisible(false)
         self.group:setLayer(nil)
+        self.group = nil
     end
 end
 
@@ -197,4 +221,8 @@ end
 
 function Enemy:healthBarCallback()
     self.dead = true
+end
+
+function Enemy:getJSONData()
+    return {type = self.type, stats = self.stats, dying = self.dying, dead = self.dead, position = vector{self.group:getPos()}}
 end
