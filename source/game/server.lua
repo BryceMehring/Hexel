@@ -102,8 +102,6 @@ function Server:waitForClient()
             break
         end
     end
-    self:paused(false)
-    self:sendPauseToClients(false)
     print("Client Found")
 end
 
