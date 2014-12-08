@@ -163,13 +163,14 @@ function Client:handleData(text)
         
         self.map:resetTowers(self.towers)
         for i, enemy in ipairs(data.game_data.enemies) do
-            enemy[i] = Enemy {
+            self.enemies[i] = Enemy {
                 type = enemy.type
             }
-            enemy[i].stats = enemy.stats
-            enemy[i].dead = enemy.dead
-            enemy[i].dying = enemy.dying
-            enemy[i]:renderEnemy(enemy.position, self.layer, self.map)
+            self.enemies[i].stats = enemy.stats
+            self.enemies[i].dead = enemy.dead
+            self.enemies[i].dying = enemy.dying
+            self.enemies[i]:renderEnemy(enemy.position, self.layer, self.map)
+            self.enemies[i]:updateHealthBar()
         end
             
     end

@@ -116,7 +116,6 @@ end
 function Server:loop()
     -- DO FRAME
     if not self:paused() then
-        print("checking!")
         if #self.enemiesToSpawn == 0 and #self.enemies == 0 then
             if self.currentWave.number > 0 then
                 self.currentInterest = self.currentInterest + Server.INTEREST_INCREMENT
