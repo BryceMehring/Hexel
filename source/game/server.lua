@@ -327,6 +327,7 @@ function Server:attemptToPlaceTower(tower)
         else
             -- TODO: alert for insufficient funds
         end
+    end
 end
 
 -- The chat queue needs to be handled similarly to this
@@ -362,5 +363,4 @@ function Server:submitText(text, recieve)
     end
     
     self.chatQueue:push(text)
-
 end
