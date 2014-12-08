@@ -30,10 +30,10 @@ function Server:run()
 
         local readable = socket.select(set)
         for i, input in ipairs(readable) do
-            input:settimeout(2)
+            input:settimeout(0)
             local new = input:accept()
             if new then
-                new:settimeout(2)
+                new:settimeout(0)
                 self.client[new] = new
                 self.connected = true
             end
