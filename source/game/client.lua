@@ -148,7 +148,7 @@ function Client:handleData(text)
     end
 
     if data.game_data ~= nil then
-        print("game data received")
+        --print("game data received")
         for i = #self.enemies, 1, -1 do
             self.enemies[i]:remove()
             table.remove(self.enemies, i)
@@ -166,13 +166,13 @@ function Client:handleData(text)
         self.difficulty        = data.game_data.difficulty
         self.currentWave       = data.game_data.currentWave
         
-        for i, tower in ipairs(data.game_data.towers) do
-            self.towers[i] = Tower {
+        for key, tower in pairs(data.game_data.towers) do
+            self.towers[key] = Tower {
                 type = tower.type,
                 pos = tower.pos
             }
-            self.towers[i].level = tower.level
-            self.towers[i].killCount = tower.killCount
+            self.towers[key].level = tower.level
+            self.towers[key].killCount = tower.killCount
         end
         
         self.map:resetTowers(self.towers)
@@ -266,9 +266,6 @@ function Client:selectTower(tower)
     end
     
     if self.towerSelected then
-        print(self.towerSelected and self.towerSelected.pos)
-        print(self.map:gridToScreenSpace(self.towerSelected.pos))
-        print(self.cursorPos)
         local screenPos = (self.towerSelected and self.towerSelected.pos) and self.map:gridToScreenSpace(self.towerSelected.pos) or self.cursorPos
         local range = self.map:gridToScreenSpace(tower.type.range) / 1.7 -- TODO: where does this number come from?
         
@@ -358,7 +355,6 @@ function Client:onMouseMove(pos)
     -- TODO: use mouse move event to show the user where the tower will be placed on the grid
     -- and show the radius of the tower being placed
     self.cursorPos = self.map:gridToScreenSpace(pos)
-    print(self.cursorPos)
     if self.hoverCircle and not self.map:isTileSelected() then
         self.hoverCircle:setPos(self.cursorPos[1], self.cursorPos[2])
     end

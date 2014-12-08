@@ -67,7 +67,7 @@ end
 
 function Tower:calculate_targets()
     print(self.pos[1], self.pos[2])
-    self.targets[Tower.serialize_pos(self.pos)] = self.pos
+    self.targets[Tower.serialize_pos(self.pos)] = vector(self.pos)
     for i=1, self.type.range do
         local temp_targets = flower.table.copy(self.targets)
         for key, pos in pairs(temp_targets) do

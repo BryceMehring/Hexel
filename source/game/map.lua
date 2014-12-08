@@ -202,15 +202,18 @@ function Map:setLayer(layer)
 end
 
 function Map:resetTowers(towers)
+    print(#towers)
     for i = 1,self.width do
         for j = 1,self.height do
-            local pos = {i, j}
+            local pos = vector({j, i})
             local tile = self:getTile(pos)
             if towers[Tower.serialize_pos(pos)] == nil then
                 if tile == TOWER_TYPES.YELLOW or tile == TOWER_TYPES.RED or tile == TOWER_TYPES.GREEN or tile == TOWER_TYPES.BLUE then
+                    print("test1")
                     self:setTile(pos, TOWER_TYPES.EMPTY)
                 end
             else
+                print("test2")
                 self:setTile(pos, towers[Tower.serialize_pos(pos)])
             end
         end
