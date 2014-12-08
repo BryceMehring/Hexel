@@ -27,7 +27,6 @@ end
 -- @param the map in which the enemy will spawn on
 -- TODO: remove layer as a parameter
 function Enemy:spawn(layer, map)
-    print("spawning")
     local pos = map:randomStartingPosition()
     
     self.group = flower.Group(layer, self.type.size, self.type.size)

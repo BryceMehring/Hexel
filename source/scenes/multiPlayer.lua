@@ -45,7 +45,6 @@ function onCreate(e)
             view = e.data.view,
             nfe = my_nfe,
         }
-        print("server")
         view = e.data.view
     else
         multiPlayerGame = Client {
@@ -54,7 +53,6 @@ function onCreate(e)
             nfe = my_nfe,
             popupView = popupView,
         }
-        print("client")
         view = e.data.view
         buildUI("SinglePlayer", e.data.view, multiPlayerGame)
     

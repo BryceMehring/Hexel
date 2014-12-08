@@ -217,7 +217,6 @@ end
 
 function Game:startSpawnLoop()    
     local spawnRate = self.currentWave.time / #self.enemiesToSpawn
-    print("Number of Enemies: " .. #self.enemiesToSpawn .. "  " .. "SpawnRate = " .. spawnRate .. " seconds per enemy")
     local spawnTimer = flower.Executors.callLoopTime(spawnRate, self.spawnLoop, self)
     self.timers = {
         spawnTimer = spawnTimer,

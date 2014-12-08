@@ -102,7 +102,7 @@ function Server:waitForClient()
             break
         end
     end
-    print("Client Found")
+    --print("Client Found")
 end
 
 function Server:sendMapInfo()
@@ -123,7 +123,6 @@ function Server:loop()
             end
             
             -- increment to the next wave
-            print("about to setup")
             self:setupNextWave()
         end
             
@@ -175,11 +174,11 @@ function Server:loop()
         return
     end
     
-    if not self:stopped() then--not self:paused() and not self:stopped() then
+    --if not self:stopped() then--not self:paused() and not self:stopped() then
         -- SEND STATE TO CLIENTS
         local jsonEnemies = {}
         for i, enemy in ipairs(self.enemies) do
-            if not enemy:isDead() then
+            if enemy.group then
                 jsonEnemies[i] = enemy:getJSONData()
             end
         end
@@ -193,7 +192,7 @@ function Server:loop()
         self.nfe:talker(temp)
         
         self.attacks = {}
-    end
+    --end
     
     return self:stopped() -- Needed?
 end
@@ -257,7 +256,6 @@ end
 
 function Server:startSpawnLoop()    
     local spawnRate = self.currentWave.time / #self.enemiesToSpawn
-    print("Number of Enemies: " .. #self.enemiesToSpawn .. "  " .. "SpawnRate = " .. spawnRate .. " seconds per enemy")
     local spawnTimer = flower.Executors.callLoopTime(spawnRate, self.spawnLoop, self)
     self.timers = {
         spawnTimer = spawnTimer,

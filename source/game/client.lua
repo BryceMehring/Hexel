@@ -157,7 +157,7 @@ function Client:handleData(text)
     local data = JSON:decode(text)
 
     if data.message ~= nil then
-        print("message received")
+        --print("message received")
         self:submitText(data.message, true)
     end
 
@@ -171,9 +171,6 @@ function Client:handleData(text)
             table.remove(self.towers, i)
         end
         
-        --for i, attackData in ipairs(data.game_data.attacks) do
-        ---    print(attackData[1], attackData[2])
-        --end
         self.currentLives      = data.game_data.currentLives
         self.currentCash       = data.game_data.currentCash
         self.currentInterest   = data.game_data.currentInterest
@@ -204,8 +201,7 @@ function Client:handleData(text)
     end
 
     if data.map_data ~= nil then
-        print("map data received")
-        print(text)
+        --print("map data received")
         self.map = Map {
             file = data.map_data.file,
             texture = data.map_data.texture,
@@ -219,7 +215,7 @@ function Client:handleData(text)
     end
 
     if data.pause ~= nil then
-        print("pause data received")
+        --print("pause data received")
         local bool
         if data.pause == "true" then
             bool = true
@@ -230,7 +226,7 @@ function Client:handleData(text)
     end
 
     if data.display ~= nil then
-        print("display data received")
+        --print("display data received")
         local msgBox = generateMsgBox(
             self:getPopupPos(), 
             self:getPopupSize(), 

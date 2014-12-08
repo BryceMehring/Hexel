@@ -34,8 +34,6 @@ function Map:load(file)
     
     self.width = self.map.width or self.width
     self.height = self.map.height or self.height
-    print(self.width)
-    print(self.height)
     
     self.grid = flower.MapImage(self.texture, self.width,
                                 self.height, self.tileWidth,
