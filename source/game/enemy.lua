@@ -62,7 +62,7 @@ function Enemy:renderEnemy(pos, layer, map)
     
     self.healthBar = HealthBar {
         parent = self.group,
-        width = self.type.size,
+        width = self.type.size * self.stats.health * 1.0 / self.type.health,
         height = self.type.size,
         moveSclTime = 0.1
     }

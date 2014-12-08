@@ -329,34 +329,27 @@ function Server:attemptToPlaceTower(tower)
 --    tower.coordinate : pos
 --    tower.type : towerSelected.type
     local tile = self.map:getTile(tower.pos)
-    print(tile)
     
     -- The user clicked a tile that we want to ignore
     if tile == 0 then
         return
     end
     
-    print("we made it")
     if tile == TOWER_TYPES.EMPTY then
-        print("farther")
         -- Try to place new tower down
         if self.currentCash >= tower.type.cost then
-            print("almost there")
             -- Decrease cash amount
             self.currentCash = self.currentCash - tower.type.cost
-            print(self.currentCash)
             -- Place tower on map
-            print(tower.type.id)
             self.map:setTile(tower.pos, tower.type.id)
             self.towers[Tower.serialize_pos(tower.pos)] = Tower(tower.type, tower.pos)
         else
             -- TODO: alert for insufficient funds
         end
     end
-    print("goodbye")
 end
 
-function Server:self:attemptToSellTower(tower)
+function Server:attemptToSellTower(tower)
     -- tower.pos
     local key = Tower.serialize_pos(tower.pos)
     local towerInfo = self.towers[key]

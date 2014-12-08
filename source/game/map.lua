@@ -208,11 +208,9 @@ function Map:resetTowers(towers)
             local tile = self:getTile(pos)
             if towers[Tower.serialize_pos(pos)] == nil then
                 if tile == TOWER_TYPES.YELLOW or tile == TOWER_TYPES.RED or tile == TOWER_TYPES.GREEN or tile == TOWER_TYPES.BLUE then
-                    print("test1")
                     self:setTile(pos, TOWER_TYPES.EMPTY)
                 end
             else
-                print("test2")
                 self:setTile(pos, towers[Tower.serialize_pos(pos)].type.id)
             end
         end

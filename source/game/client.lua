@@ -365,7 +365,7 @@ function Client:sendTowerPlaceMessage(pos, type)
 end
 
 function Client:sendTowerSellMessage(pos)
-    local data = {tower_place={pos=pos}}
+    local data = {tower_sell={pos=pos}}
     jsonString = JSON:encode(data)
     self.nfe:talker(jsonString)
 end
