@@ -101,6 +101,7 @@ function Server:waitForClient()
             break
         end
     end
+    self:paused(false)
     print("Client Found")
 end
 
@@ -174,7 +175,8 @@ function Server:setupNextWave()
     
     -- TODO: add an option so that the game keeps on going, like a survival mode, issue #51
     if self.currentWave:currentNumber() > 50 then
-        self:showEndGameMessage("You've Won the main game")
+        -- TODO: command needed
+        --self:showEndGameMessage("You've Won the main game")
     end
     
     self.enemiesKilled = 0
@@ -184,22 +186,22 @@ function Server:setupNextWave()
     self.currentWave:setup()
     self.enemiesToSpawn = self.currentWave:getEnemies()
     
-    self:updateGUI()
+    --self:updateGUI()
     
     --COMMAND NEEDED: Send end of wave msg
-    local msgBox = generateMsgBox(
-        self:getPopupPos(), 
-        self:getPopupSize(), 
-        "Wave: " .. self.currentWave.number, 
-        self.popupView)
+--    local msgBox = generateMsgBox(
+--        self:getPopupPos(), 
+--        self:getPopupSize(), 
+--        "Wave: " .. self.currentWave.number, 
+--        self.popupView)
     
-    msgBox:showPopup()
-    flower.Executors.callLaterTime(3, function()
-        msgBox:hidePopup()
-        self.popupView:removeChild(msgBox)
-        self:startSpawnLoop()
-        self:paused(false)
-    end)
+--    msgBox:showPopup()
+--    flower.Executors.callLaterTime(3, function()
+--        msgBox:hidePopup()
+--        self.popupView:removeChild(msgBox)
+--        self:startSpawnLoop()
+--        self:paused(false)
+--    end)
 end
 
 function Server:spawnLoop()
