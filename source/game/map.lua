@@ -198,4 +198,20 @@ function Map:setLayer(layer)
     self.grid:setLayer(self.layer)
     self.selectedImage:setLayer(self.layer)
 end
+
+function Map:resetTowers(towers)
+    for i = 1,self.width do
+        for j = 1,self.height do
+            local pos = {i, j}
+            local tile = self.getTile(pos)
+            if towers[Tower.serialize_pos(pos)] == nil
+                if tile == TOWER_TYPES.YELLOW or TOWER_TYPES.RED or TOWER_TYPES.GREEN or TOWER_TYPES.BLUE
+                    self.setTile(pos, TOWER_TYPES.EMPTY)
+                end
+            else
+                self.setTile(pos, towers[Tower.serialize_pos(pos)])
+            end
+        end
+    end
+end
     

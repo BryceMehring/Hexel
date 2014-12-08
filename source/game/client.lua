@@ -72,7 +72,15 @@ function Client:init(t)
     local connected, networkError = self.nfe:isConnected()
     if not connected then
         self:showEndGameMessage("Cannot connect to server: " .. networkError)
-    end 
+    end
+    
+    self.sendConnectMessage()
+end
+
+function Client:sendConnectMessage()
+    local data = {connected=true}
+    jsonString = JSON:encode(data)
+    self.nfe:talker(jsonString)
 end
 
 -- This function is used by the guiUtilities file to generate
@@ -144,14 +152,16 @@ function Client:handleData(text)
         self.attacks           = data.game_data.attacks
         self.difficulty        = data.game_data.difficulty
         self.currentWave       = data.game_data.currentWave
+        
+        self.map.resetTiles(self.towers)
     end
 
     if data.map_data ~= nil then
         self.map = Map {
-            file = self.mapFile,
-            texture = self.texture,
-            width = self.width,
-            height = self.height,
+            file = data.map_data.mapFile,
+            texture = data.map_data.texture,
+            width = data.map_data.width,
+            height = data.map_data.height,
             tileWidth = self.tileWidth,
             tileHeight = self.tileHeight,
             radius = self.radius,
