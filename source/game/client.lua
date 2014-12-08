@@ -217,11 +217,16 @@ function Client:handleData(text)
             layer = self.layer,
         }
     end
+
+    if data.pause ~= nil then
+        print("pause data received")
+        self.paused(data.pause, false)
+    end
 end
 
 -- Pauses the game if p is true, unpauses the game if p is false
 -- If p is nil, paused() return true if the game is paused
-function Client:paused(p)
+function Client:paused(p, sendMessage = true)
     if p ~= nil then
 
         if self.timers then
@@ -236,6 +241,10 @@ function Client:paused(p)
         
         self.isPaused = p
         updatePauseButton(not p, self.currentWave.number)
+        
+        if sendMessage then
+            sendPauseMessage(p)
+        end
     else
         return self.isPaused
     end
@@ -383,6 +392,12 @@ end
 
 function Client:sendTowerSellMessage(pos)
     local data = {tower_sell={pos=pos}}
+    jsonString = JSON:encode(data)
+    self.nfe:talker(jsonString)
+end
+
+function Client:sendPauseMessage(p)
+    local data = {pause=p}
     jsonString = JSON:encode(data)
     self.nfe:talker(jsonString)
 end
