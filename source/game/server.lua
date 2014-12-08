@@ -355,6 +355,17 @@ function Server:attemptToPlaceTower(tower)
     print("goodbye")
 end
 
+function Server:self:attemptToSellTower(tower)
+    -- tower.pos
+    local key = Tower.serialize_pos(tower.pos)
+    local towerInfo = self.towers[key]
+
+    -- Sell the tower
+    self.currentCash = self.currentCash + towerInfo.type.cost / 2
+    self.map:clearTile(tower.pos)
+    self.towers[key] = nil
+end
+
 -- The chat queue needs to be handled similarly to this
 --function VersusGame:generateItemInfo()
 --   return self.chatQueue:toString()
@@ -366,13 +377,11 @@ function Server:handleData(text)
         self:submitText(data.message, true)
     end
     if data.tower_place ~= nil then
-        print("YO DAWG")
-        print(data)
         self:attemptToPlaceTower(data.tower_place)
     end
     
     if data.tower_sell ~= nil then
-        --call sell tower function
+        self:attemptToSellTower(data.tower_sell)
     end
 end
 
