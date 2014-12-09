@@ -9,12 +9,14 @@ function Server:init(t)
     self.server, self.servError = socket.bind("*", self.port)
     
     if self.server then
-        self.client = {}
         self.server:settimeout(0)
+        self.client = {}
         local serverThread = MOAIThread.new()
         serverThread:run(function()
-            self:run()
-            coroutine.yield()
+            while 1 do
+                self:run()
+                coroutine.yield()
+            end
         end)
         print("Network connection info:")
         print(self.server:getsockname())
@@ -22,31 +24,17 @@ function Server:init(t)
 end
 
 function Server:run()
-
-    if self.server then
-        local set = {self.server}
-
-        local readable = socket.select(set)
-        for i, input in ipairs(readable) do
-            input:settimeout(0)
-            local new = input:accept()
-            if new then
-                new:settimeout(0)
-                self.client[new] = new
-                self.connected = true
-            end
-        end
-
---        local newClient = self.server:accept()
---        table.insert(self.client, newClient)
-
-        --print(#tempClients .. " client(s) connected")
+    local new = self.server:accept()
+    if new then
+        print("New client connected")
+        new:settimeout(0)
+        table.insert(self.client, new)
     end
 end
 
 function Server:stop()
     if self:isConnected() then
-        for client, _ in pairs(self.client) do
+        for i, client in ipairs(self.client) do
             client:close()
         end
         
@@ -59,9 +47,10 @@ function Server:stop()
     self.server = nil
 end
 
-function Server:isConnected() 
-    if self.connected then
-        return self.connected
+function Server:isConnected(connections)
+    connections = connections or 1
+    if #self.client >= connections then
+        return true
     end
     return false, (self.servError or "Unknown error")
 end
@@ -76,7 +65,7 @@ end
 
 function Server:talker(text)
     if self:isConnected() then
-        for client, _ in pairs(self.client) do
+        for i, client in ipairs(self.client) do
             local b, e = client:send(text .. "\n")
         end
         --self:stopIfClosed(e)
@@ -87,7 +76,7 @@ function Server:listener()
     local l = {}
     local e = nil
     if self:isConnected() then
-        for client, _ in pairs(self.client) do
+        for i, client in ipairs(self.client) do
             local tempData = client:receive()
             table.insert(l, tempData)
             --self:stopIfClosed(e)
