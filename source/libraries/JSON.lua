@@ -565,10 +565,11 @@ function OBJDEF:decode(text, etc)
       if self.assert then
          self.assert(false, value)
       else
-         assert(false, value)
+         print("We failed: ", value)
+--         assert(false, value)
       end
       -- and if we're still here, return a nil and throw the error message on as a second arg
-      return nil, value
+      return nil, {}
    end
 end
 

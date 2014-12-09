@@ -74,7 +74,8 @@ function ClientGame:init(t)
     self.client = t.client
     local connected, networkError = self.client:isConnected()
     if not connected then
-        self:showEndGameMessage("Cannot connect to server: " .. networkError)
+        self:showPopupMessage("Cannot connect to server: " .. networkError)
+        self:stopped(true)
     end
     
     self:sendConnectMessage()
@@ -131,7 +132,8 @@ function ClientGame:loop()
     if data then
         self:handleData(data)
     elseif not self.client:isConnected() then
-        self:showEndGameMessage("Disconnected from server")
+        self:showPopupMessage("Disconnected from server")
+        self:stopped(true)
     end
     
     for i, attackData in ipairs(self.attacks) do
@@ -153,9 +155,22 @@ function ClientGame:loop()
     return self:stopped()
 end
 
+-- Shows a message box with a message just before ending the game
+function ClientGame:showPopupMessage(msg)
+    local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.popupView)
+    msgBox:showPopup()
+    flower.Executors.callLaterTime(3, function()
+        msgBox:hidePopup()
+        self.popupView:removeChild(msgBox)
+    end)
+end
+
 function ClientGame:handleData(text)
     local data = JSON:decode(text)
-
+    if data == nil then
+        print("Caught error")
+        return nil
+    end
     if data.message ~= nil then
         --print("message received")
         self:submitText(data.message, true)
