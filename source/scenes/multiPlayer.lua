@@ -25,6 +25,8 @@ function onCreate(e)
     layer:setTouchEnabled(true)
     scene:addChild(layer)
     
+    view = e.data.view
+    
     local popupView = widget.UIView {
         scene = scene,
         layout = widget.BoxLayout {
@@ -32,29 +34,40 @@ function onCreate(e)
         },
     }
     
+    local params = e.data.params
     
-    local my_client = Client{}
---    local connected, networkError = my_server:isConnected()
---    if not connected then
---        return
---    end
+    if params.mode == "client" then
+        local my_client = Client{}
+--        local connected, networkError = my_client:isConnected()
+--        if not connected then
+--            -- TODO: go back a scene
+--            return
+--        end
 
-    multiPlayerGame = ClientGame {
-        layer = layer,
-        view = e.data.view,
-        client = my_client,
-        popupView = popupView,
-    }
-    view = e.data.view
-    buildUI("SinglePlayer", e.data.view, multiPlayerGame)
+        multiPlayerGame = ClientGame {
+            layer = layer,
+            view = e.data.view,
+            client = my_client,
+            popupView = popupView,
+        }
+    
+        buildUI("SinglePlayer", view, multiPlayerGame)
 
-    for i, v in ipairs(mouseEvents) do
-        flower.InputMgr:addEventListener(v, onMouseEvent)
+        for i, v in ipairs(mouseEvents) do
+            flower.InputMgr:addEventListener(v, onMouseEvent)
+        end
+    elseif params.mode == "server" then
+        local my_server = Server{}
+        
+        multiPlayerGame =  ServerGame {
+            layer = layer,
+            mapFile = "assets/maps/map1.lua",
+            view = e.data.view,
+            server = my_server,
+        }
     end
 
     flower.Runtime:addEventListener("resize", onResize)
-    
-    --flower.InputMgr:addEventListener("mouseClick", item_onTouchDown)
 end
 
 function updateLayout()
@@ -90,9 +103,6 @@ function item_onTouchDown(e)
     local y = e.y
     x, y = layer:wndToWorld(x, y)
     --x, y = prop:worldToModel(x, y)
-    
-
-
 end
 
 function onMouseEvent(e)
