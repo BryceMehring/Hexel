@@ -87,7 +87,6 @@ function ServerGame:run()
     self:paused(true)
     self:sendPauseToClients(true)
     
-    --flower.Executors.callLoop(self.waitForClient, self)
     self:waitForClient()
     self:sendMapInfo()
     
@@ -96,12 +95,11 @@ end
 
 function ServerGame:waitForClient()
     while 1 do
-        if self.server:isConnected() then
+        if self.server:isConnected(2) then
             break
-        end    
-        --coroutine.yield()
+        end
+        coroutine.yield()
     end
-    print("Client Found")
 end
 
 function ServerGame:sendMapInfo()
