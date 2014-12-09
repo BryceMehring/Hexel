@@ -11,7 +11,7 @@ function Server:init(t)
     if self.server then
         self.server:settimeout(0)
         self.client = {}
-        local serverThread = MOAIThread.new()
+        local serverThread = MOAICoroutine.new()
         serverThread:run(function()
             while 1 do
                 self:run()
