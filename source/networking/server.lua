@@ -47,11 +47,20 @@ function Server:stop()
     self.server = nil
 end
 
-function Server:isConnected(connections)
+function Server:isConnected()
+    if self.server then
+        return true
+    end
+    
+    return false, (self.servError or "Unknown error")
+end
+
+function Server:isClientsConnected(connections)
     connections = connections or 1
     if #self.client >= connections then
         return true
     end
+    
     return false, (self.servError or "Unknown error")
 end
 

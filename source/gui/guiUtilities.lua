@@ -234,6 +234,8 @@ function updatePauseButton(paused, waveNum)
 end
 
 function generateMsgBox(position, size, msg, parentView)
+    position = position or {flower.viewWidth / 5, flower.viewHeight / 2}
+    size = size or {flower.viewWidth / 2, 100}
     return widget.MsgBox {
         size = size,
         pos = position,

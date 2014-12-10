@@ -19,6 +19,7 @@ local flower = flower
 
 local multiPlayerGame = nil
 local view = nil
+local params = nil
 
 function onCreate(e)
     layer = flower.Layer()
@@ -27,22 +28,33 @@ function onCreate(e)
     
     view = e.data.view
     
-    local popupView = widget.UIView {
+    popupView = widget.UIView {
         scene = scene,
         layout = widget.BoxLayout {
             align = {"center", "center"},
         },
     }
     
-    local params = e.data.params
-    
+    params = e.data.params  
+end
+
+function updateLayout()
+    _resizeComponents(view)
+end
+
+function onResize(e)
+    updateLayout()
+end
+
+function onStart(e)
     if params.mode == "client" then
         local my_client = Client{}
---        local connected, networkError = my_client:isConnected()
---        if not connected then
---            -- TODO: go back a scene
---            return
---        end
+        local connected, networkError = my_client:isConnected()
+        if not connected then
+            local box = generateMsgBox(nil, nil, "Cannot connect to server", popupView)
+            box:showPopup()
+            return
+        end
 
         multiPlayerGame = ClientGame {
             layer = layer,
@@ -59,6 +71,12 @@ function onCreate(e)
     elseif params.mode == "server" then
         local my_server = Server{}
         
+        if not my_server:isConnected() then
+            local box = generateMsgBox(nil, nil, "Cannot create server")
+            box:showPopup()
+            return
+        end
+        
         multiPlayerGame =  ServerGame {
             layer = layer,
             mapFile = "assets/maps/map1.lua",
@@ -66,19 +84,9 @@ function onCreate(e)
             server = my_server,
         }
     end
-
+    
     flower.Runtime:addEventListener("resize", onResize)
-end
-
-function updateLayout()
-    _resizeComponents(view)
-end
-
-function onResize(e)
-    updateLayout()
-end
-
-function onStart(e)
+    
     multiPlayerGame:stopped(false)
     multiPlayerGame:run()
 end
@@ -87,9 +95,12 @@ function onStop(e)
     for i, v in ipairs(mouseEvents) do
         flower.InputMgr:removeEventListener(v, onMouseEvent)
     end
-    multiPlayerGame:paused(false)
-    multiPlayerGame:stopped(true)
-    multiPlayerGame = nil
+    
+    if multiPlayerGame then
+        multiPlayerGame:paused(false)
+        multiPlayerGame:stopped(true)
+        multiPlayerGame = nil
+    end
 end
 
 function item_onTouchDown(e)

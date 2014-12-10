@@ -95,7 +95,7 @@ end
 
 function ServerGame:waitForClient()
     while 1 do
-        if self.server:isConnected(2) then
+        if self.server:isClientsConnected(2) then
             break
         end
         coroutine.yield()

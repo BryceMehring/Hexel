@@ -89,17 +89,8 @@ function Game:generateStatus()
           "  Interest: " .. self.currentInterest .. "%"
 end
 
-
-function Game:getPopupPos()
-    return {flower.viewWidth / 5, flower.viewHeight / 2}
-end 
-
-function Game:getPopupSize()
-    return {flower.viewWidth / 2, 100}
-end
-
 -- Initializes the game to run by turning on the spawning of enemies
-function Game:run()    
+function Game:run()
     self.enemies = {}
     self.enemiesToSpawn = {}
     
@@ -286,7 +277,7 @@ end
 
 -- Shows a message box with a message just before ending the game
 function Game:showEndGameMessage(msg)
-    local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.popupView)
+    local msgBox = generateMsgBox(msg, self.popupView)
     msgBox:showPopup()
     flower.Executors.callLaterTime(3, function()
         msgBox:hidePopup()
