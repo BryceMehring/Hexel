@@ -209,7 +209,7 @@ function ClientGame:handleData(text)
             self.enemies[i].stats = enemy.stats
             self.enemies[i].dead = enemy.dead
             self.enemies[i].dying = enemy.dying
-            self.enemies[i]:renderEnemy(enemy.position, self.layer, self.map)
+            self.enemies[i]:spawn(self.layer, self.map, enemy.position)
             self.enemies[i]:updateHealthBar()
         end
             
