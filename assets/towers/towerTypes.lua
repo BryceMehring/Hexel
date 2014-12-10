@@ -7,5 +7,5 @@ TOWER_TYPES = {
     ["BLUE"] = 4,
     ["EMPTY"] = 5,
     ["ENEMY"] = 6,
-    ["VOID"] = 7,
+    ["VOID"] = MOAIGridSpace.TILE_HIDE,
 }
