@@ -58,9 +58,9 @@ function Map:load(file)
             end
         end
         
-        for i, data in ipairs(self.map.tiles) do
+        for k, data in pairs(self.map.tiles) do
             for j, pos in ipairs(data) do
-                self.grid.grid:setTile(pos[1], pos[2], i)
+                self.grid.grid:setTile(pos[1], pos[2], k)
             end
         end
     elseif type(self.map.tiles) == "string" then
