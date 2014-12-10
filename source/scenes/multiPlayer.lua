@@ -72,7 +72,7 @@ function onStart(e)
         local my_server = Server{}
         
         if not my_server:isConnected() then
-            local box = generateMsgBox(nil, nil, "Cannot create server")
+            local box = generateMsgBox(nil, nil, "Cannot create server", popupView)
             box:showPopup()
             return
         end
