@@ -205,12 +205,13 @@ function Map:resetTowers(towers)
         for j = 1,self.height do
             local pos = vector({i, j})
             local tile = self:getTile(pos)
-            if towers[Tower.serialize_pos(pos)] == nil then
+            local key = Tower.serialize_pos(pos)
+            if towers[key] == nil then
                 if tile ~= TILE_TYPES.EMPTY and tile ~= TILE_TYPES.ENEMY and tile ~= TILE_TYPES.VOID then
                     self:setTile(pos, TILE_TYPES.EMPTY)
                 end
             else
-                self:setTile(pos, towers[Tower.serialize_pos(pos)].type.id)
+                self:setTile(pos, towers[key].type.id)
             end
         end
     end
