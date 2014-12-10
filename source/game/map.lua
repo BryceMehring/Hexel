@@ -206,7 +206,7 @@ function Map:resetTowers(towers)
             local pos = vector({i, j})
             local tile = self:getTile(pos)
             if towers[Tower.serialize_pos(pos)] == nil then
-                if tile == TILE_TYPES.YELLOW or tile == TILE_TYPES.RED or tile == TILE_TYPES.GREEN or tile == TILE_TYPES.BLUE then
+                if tile ~= TILE_TYPES.EMPTY and tile ~= TILE_TYPES.ENEMY and tile ~= TILE_TYPES.VOID then
                     self:setTile(pos, TILE_TYPES.EMPTY)
                 end
             else
