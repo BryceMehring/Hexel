@@ -1,0 +1,22 @@
+TILE_TYPES = {
+    ["YELLOW"] = 1,
+    ["SPAWN"] = 1,
+    ["RED"] = 2,
+    ["TARGET"] = 2,
+    ["GREEN"] = 3,
+    ["BLUE"] = 4,
+    ["EMPTY"] = 5,
+    ["ENEMY"] = 6,
+    ["VOID"] = MOAIGridSpace.TILE_HIDE,
+    
+    ["BASIC1"] = 7,
+    ["BASIC2"] = 8,
+    ["BASIC3"] = 9,
+    ["POSION1"] = 13,
+    ["POSION2"] = 14,
+    ["FIRE1"] = 15,
+    ["FIRE2"] = 16,
+    ["SLOW1"] = 10,
+    ["SLOW2"] = 11,
+    ["SLOW3"] = 12,
+}

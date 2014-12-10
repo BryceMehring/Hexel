@@ -354,7 +354,7 @@ function Game:onTouchDown(pos, inputType)
         return
     end
     
-    if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil and inputType == "mouseClick" then
+    if tile == TILE_TYPES.EMPTY and self.towerSelected ~= nil and inputType == "mouseClick" then
         -- Try to place new tower down
         if self.currentCash >= self.towerSelected.type.cost then
             
@@ -369,7 +369,7 @@ function Game:onTouchDown(pos, inputType)
         else
             -- TODO: alert for insufficient funds
         end
-    elseif tile ~= TOWER_TYPES.EMPTY and tile ~= TOWER_TYPES.ENEMY then
+    elseif tile ~= TILE_TYPES.EMPTY and tile ~= TILE_TYPES.ENEMY then
         local key = Tower.serialize_pos(pos)
         local tower = self.towers[key]
         -- Select already placed tower

@@ -38,6 +38,7 @@ function Map:load(file)
     self.grid = flower.MapImage(self.texture, self.width,
                                 self.height, self.tileWidth,
                                 self.tileHeight, self.radius)
+                            
     self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
     self.grid:setLayer(self.layer)
     
@@ -58,9 +59,9 @@ function Map:load(file)
             end
         end
         
-        for i, data in ipairs(self.map.tiles) do
+        for k, data in pairs(self.map.tiles) do
             for j, pos in ipairs(data) do
-                self.grid.grid:setTile(pos[1], pos[2], i)
+                self.grid.grid:setTile(pos[1], pos[2], k)
             end
         end
     elseif type(self.map.tiles) == "string" then
@@ -79,9 +80,9 @@ function Map:load(file)
         for i = 1,self.width do
             for j = 1,self.height do
                 local tile = self.grid.grid:getTile(i, j)
-                if tile == TOWER_TYPES.TARGET then
+                if tile == TILE_TYPES.TARGET then
                     self.targetPosition[1], self.targetPosition[2] = i, j
-                elseif tile == TOWER_TYPES.SPAWN then
+                elseif tile == TILE_TYPES.SPAWN then
                     table.insert(self.spawnTiles, {i, j})
                 end
             end
@@ -92,7 +93,7 @@ function Map:load(file)
     
     -- TODO: make this a bit more dynamic
     local function validTileCallback(tile)
-        return tile == TOWER_TYPES.ENEMY or tile == TOWER_TYPES.TARGET or tile == TOWER_TYPES.SPAWN
+        return tile == TILE_TYPES.ENEMY or tile == TILE_TYPES.TARGET or tile == TILE_TYPES.SPAWN
     end
     
     -- Find path in the map
@@ -165,7 +166,7 @@ function Map:isPathDynamic()
 end
 
 function Map:clearTile(pos)
-    self:setTile(pos, TOWER_TYPES.EMPTY)
+    self:setTile(pos, TILE_TYPES.EMPTY)
 end
 
 function Map:setTile(pos, index)
@@ -205,8 +206,8 @@ function Map:resetTowers(towers)
             local pos = vector({i, j})
             local tile = self:getTile(pos)
             if towers[Tower.serialize_pos(pos)] == nil then
-                if tile == TOWER_TYPES.YELLOW or tile == TOWER_TYPES.RED or tile == TOWER_TYPES.GREEN or tile == TOWER_TYPES.BLUE then
-                    self:setTile(pos, TOWER_TYPES.EMPTY)
+                if tile == TILE_TYPES.YELLOW or tile == TILE_TYPES.RED or tile == TILE_TYPES.GREEN or tile == TILE_TYPES.BLUE then
+                    self:setTile(pos, TILE_TYPES.EMPTY)
                 end
             else
                 self:setTile(pos, towers[Tower.serialize_pos(pos)].type.id)

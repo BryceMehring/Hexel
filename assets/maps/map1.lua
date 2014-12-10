@@ -1,16 +1,16 @@
 local map = {}
 
-map.default_tile = TOWER_TYPES.EMPTY
+map.default_tile = TILE_TYPES.EMPTY
 map.width = 8
 map.height = 35
 
 local tiles = {}
-tiles[TOWER_TYPES.YELLOW] = {}
-tiles[TOWER_TYPES.RED] = {}
-tiles[TOWER_TYPES.GREEN] = {}
-tiles[TOWER_TYPES.BLUE] = {}
-tiles[TOWER_TYPES.EMPTY] = {}
-tiles[TOWER_TYPES.ENEMY] = {
+tiles[TILE_TYPES.YELLOW] = {}
+tiles[TILE_TYPES.RED] = {}
+tiles[TILE_TYPES.GREEN] = {}
+tiles[TILE_TYPES.BLUE] = {}
+tiles[TILE_TYPES.EMPTY] = {}
+tiles[TILE_TYPES.ENEMY] = {
     {2,1},{2,3},{2,5},{2,7},{2,9},{2,11},{2,13},{2,15},{2,17},{2,19},{2,21},{2,23},{2,25},{2,27},{2,28},
     {3,8},{3,9},{3,11},{3,13},{3,15},{3,17},{3,18},{3,20},{3,21},{3,23},{3,25},{3,26},{3,29},{3,30},
     {4,6},{4,7},{4,10},{4,11},{4,13},{4,15},{4,16},{4,18},{4,19},{4,20},{4,26},{4,27},{4,30},{4,31},
@@ -18,7 +18,7 @@ tiles[TOWER_TYPES.ENEMY] = {
     {6,7},{6,8},{6,11},{6,13},{6,15},{6,19},{6,21},{6,23},{6,25},{6,27},
     {7,9},{7,11},{7,13},{7,15},{7,17},{7,19},{7,21},{7,23},{7,25},{7,27},{7,29},{7,31},{7,33},{7,35}
 }
-tiles[TOWER_TYPES.VOID] = {
+tiles[TILE_TYPES.VOID] = {
     {1,1},{1,31},{1,32},{1,33},{1,34},{1,35},
     {2,33},{2,34},{2,35},
     {3,1},{3,2},{3,35},

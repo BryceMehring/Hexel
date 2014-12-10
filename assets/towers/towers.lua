@@ -1,65 +1,64 @@
-require "assets/towers/towerTypes"
+require "assets/tileTypes"
 
 local towers = {}
 
-local YellowTower = {}
-YellowTower.id = TOWER_TYPES.YELLOW
-YellowTower.name = "Yellow Tower"
-YellowTower.cost = 200
-YellowTower.damage = {
+local SlowTower = {}
+SlowTower.id = TILE_TYPES.SLOW1
+SlowTower.name = "Slow Tower"
+SlowTower.cost = 200
+SlowTower.damage = {
     func = "slow",
     params = {
         slowAmount = 0.4,
         time = 5,
     }
 }
-YellowTower.range = 5
-YellowTower.speed = 100
-YellowTower.description = "Yellow Description"
-YellowTower.texture = "yellow_tower.png"
-towers[TOWER_TYPES.YELLOW] = YellowTower
+SlowTower.range = 5
+SlowTower.speed = 100
+SlowTower.description = ""
+SlowTower.texture = "slow1_tower.png"
+towers[SlowTower.id] = SlowTower
 
-local RedTower = {}
-RedTower.id = TOWER_TYPES.RED
-RedTower.name = "Red Tower"
-RedTower.cost = 150
-RedTower.damage = {
+local BasicTower = {}
+BasicTower.id = TILE_TYPES.BASIC1
+BasicTower.name = "Basic Tower"
+BasicTower.cost = 150
+BasicTower.damage = {
     func = "damage",
     params = { damage = 20 }
 }
-RedTower.range = 3
-RedTower.speed = 30
-RedTower.description = "Red Description"
-RedTower.texture = "red_tower.png"
-towers[TOWER_TYPES.RED] = RedTower
+BasicTower.range = 3
+BasicTower.speed = 30
+BasicTower.description = ""
+BasicTower.texture = "basic1_tower.png"
+towers[BasicTower.id] = BasicTower
 
-
-local GreenTower = {}
-GreenTower.id = TOWER_TYPES.GREEN
-GreenTower.name = "Green Tower"
-GreenTower.cost = 100
-GreenTower.damage = {
-    func = "damage",
-    params = { damage = 5 }
-}
-GreenTower.range = 2
-GreenTower.speed = 2
-GreenTower.description = "Green Description"
-GreenTower.texture = "green_tower.png"
-towers[TOWER_TYPES.GREEN] = GreenTower
-
-local BlueTower = {}
-BlueTower.id = TOWER_TYPES.BLUE
-BlueTower.name = "Blue Tower"
-BlueTower.cost = 100
-BlueTower.damage = {
+local PoisonTower = {}
+PoisonTower.id = TILE_TYPES.POSION1
+PoisonTower.name = "Poison Tower"
+PoisonTower.cost = 100
+PoisonTower.damage = {
     func = "damage",
     params = { damage = 25 }
 }
-BlueTower.range = 1
-BlueTower.speed = 15
-BlueTower.description = "Blue Description"
-BlueTower.texture = "blue_tower.png"
-towers[TOWER_TYPES.BLUE] = BlueTower
+PoisonTower.range = 1
+PoisonTower.speed = 15
+PoisonTower.description = ""
+PoisonTower.texture = "poison1_tower.png"
+towers[PoisonTower.id] = PoisonTower
+
+local TowerFire1 = {}
+TowerFire1.id = TILE_TYPES.FIRE1
+TowerFire1.name = "Fire Tower"
+TowerFire1.cost = 120
+TowerFire1.damage = {
+    func = "damage",
+    params = { damage = 25 }
+    }
+TowerFire1.range = 9
+TowerFire1.speed = 35
+TowerFire1.description = ""
+TowerFire1.texture = "fire1_tower.png"
+towers[TowerFire1.id] = TowerFire1
 
 return towers

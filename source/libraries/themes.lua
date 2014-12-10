@@ -125,7 +125,10 @@ M.NORMAL = {
     },
 }
 
+
 -- initial theme
 widget.setTheme(M.NORMAL)
+
+
 
 return M
