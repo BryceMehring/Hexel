@@ -38,6 +38,7 @@ function Map:load(file)
     self.grid = flower.MapImage(self.texture, self.width,
                                 self.height, self.tileWidth,
                                 self.tileHeight, self.radius)
+                            
     self.grid:setShape(MOAIGridSpace.HEX_SHAPE)
     self.grid:setLayer(self.layer)
     
