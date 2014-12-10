@@ -176,8 +176,8 @@ function Game:setupNextWave()
     self:updateGUI()
     
     local msgBox = generateMsgBox(
-        self:getPopupPos(), 
-        self:getPopupSize(), 
+        nil, 
+        nil, 
         "Wave: " .. self.currentWave.number, 
         self.popupView)
     
@@ -188,14 +188,6 @@ function Game:setupNextWave()
         self:startSpawnLoop()
         self:paused(false)
     end)
-end
-
-function Game:getPopupPos()
-    return {flower.viewWidth / 5, flower.viewWidth / 2}
-end
-
-function Game:getPopupSize()
-    return {flower.viewWidth / 2, 100}
 end
 
 function Game:spawnLoop()
@@ -285,7 +277,7 @@ end
 
 -- Shows a message box with a message just before ending the game
 function Game:showEndGameMessage(msg)
-    local msgBox = generateMsgBox(self:getPopupPos(), self:getPopupSize(), msg, self.popupView)
+    local msgBox = generateMsgBox(nil, nil, msg, self.popupView)
     msgBox:showPopup()
     flower.Executors.callLaterTime(3, function()
         msgBox:hidePopup()
