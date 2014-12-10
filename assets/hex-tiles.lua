@@ -7,15 +7,18 @@
 local fileWidth = 512
 local fileHeight = 512
 
-local entityHeight = 112
+local entityHeight = 111
 local entityWidth = 128
 
 local norm_asset_width = entityWidth/fileWidth
 local norm_asset_height = entityHeight/fileHeight
 
-local sprites_per_line = 4
+local sprites_per_line = 6
 
-local tower_names = {"yellow_tower.png", "red_tower.png", "green_tower.png", "blue_tower.png", "black_space.png", "brown_space.png", "void_space.png"}
+local tower_names = 
+    {"yellow_tower.png", "red_tower.png", "green_tower.png", "blue_tower.png", "black_space.png", "brown_space.png", 
+    "basic1_tower.png", "basic2_tower.png", "basic3_tower.png", "slow1_tower.png", "slow2_tower.png", "slow3_tower.png", 
+    "poison1_tower.png", "poison2_tower.png", "fire1_tower.png", "fire2_tower.png"}
 local tower_size = 39
 
 local map_names = {"map_1.png", "map_2.png"}
