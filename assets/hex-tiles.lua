@@ -15,7 +15,7 @@ local tower_names =
     "poison1_tower.png", "poison2_tower.png", "fire1_tower.png", "fire2_tower.png"}
 local tower_size = 39
 
-local map_names = {"map_1.png", "map_2.png"}
+local map_names = {"map_2.png", "map_1.png"}
 local map_size = 128
 
 local images = {}
