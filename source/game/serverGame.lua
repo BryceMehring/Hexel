@@ -341,7 +341,7 @@ function ServerGame:attemptToPlaceTower(tower)
         return
     end
     
-    if tile == TOWER_TYPES.EMPTY then
+    if tile == TILE_TYPES.EMPTY then
         -- Try to place new tower down
         if self.currentCash >= tower.type.cost then
             -- Decrease cash amount

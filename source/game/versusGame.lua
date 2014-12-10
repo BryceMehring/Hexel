@@ -236,7 +236,7 @@ function VersusGame:onTouchDown(pos)
     
     local tile = self.map:getGrid():getTile(pos[1], pos[2])
     
-    if tile == TOWER_TYPES.EMPTY and self.towerSelected ~= nil then
+    if tile == TILE_TYPES.EMPTY and self.towerSelected ~= nil then
         -- Try to place new tower down
         if self.currentCash >= self.towerSelected.type.cost then
             
@@ -251,7 +251,7 @@ function VersusGame:onTouchDown(pos)
         else
             -- TODO: alert for insufficient funds
         end
-    elseif tile ~= TOWER_TYPES.EMPTY and tile ~= TOWER_TYPES.ENEMY then
+    elseif tile ~= TILE_TYPES.EMPTY and tile ~= TILE_TYPES.ENEMY then
         -- Select already placed tower
         -- TODO: upgrade and sell options appear
         self:selectTower(self.towers[Tower.serialize_pos(pos)])

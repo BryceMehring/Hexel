@@ -1,4 +1,4 @@
-TOWER_TYPES = {
+TILE_TYPES = {
     ["YELLOW"] = 1,
     ["SPAWN"] = 1,
     ["RED"] = 2,
