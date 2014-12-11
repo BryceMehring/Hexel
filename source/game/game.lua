@@ -79,7 +79,7 @@ end
 -- This function is used by the guiUtilities file to generate
 -- the status field in the UI
 function Game:generateItemInfo()
-    return self.towerSelected and self.towerSelected:getDescription() or ""
+    return self.guiTowerSelected and self.guiTowerSelected:getDescription() or ""
 end
 
 function Game:generateStatus()
@@ -290,6 +290,7 @@ end
 -- Updates the current tower selected
 function Game:selectTower(tower)
     self.towerSelected = tower
+    self.guiTowerSelected = tower
 
     if self.hoverCircle and self.hoverCircle.layer ~= nil then
         self.hoverCircle:setLayer(nil)
