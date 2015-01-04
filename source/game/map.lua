@@ -177,6 +177,10 @@ function Map:getTile(pos)
     return self:getGrid():getTile(pos[1], pos[2])
 end
 
+function Map:getWaveLimit()
+    return self.map.waveLimit and self.map.waveLimit or math.huge
+end
+
 function Map:getPath()
     return self.path
 end

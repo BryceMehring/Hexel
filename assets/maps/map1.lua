@@ -60,5 +60,7 @@ map.waves = {
                 spawnRate = 5, length = 5},
 }
 
+map.waveLimit = 50
+
 return map
 

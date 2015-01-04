@@ -161,8 +161,7 @@ function Game:setupNextWave()
     
     self.currentWave:increment()
     
-    -- TODO: add an option so that the game keeps on going, like a survival mode, issue #51
-    if self.currentWave:currentNumber() > 50 then
+    if self.currentWave:currentNumber() > self.map:getWaveLimit() then
         self:showEndGameMessage("You've Won the main game")
     end
     
@@ -380,7 +379,7 @@ function Game:onTouchDown(pos, inputType)
             self.currentCash = self.currentCash + tower.type.cost / 2
             self.map:clearTile(pos)
             self.towers[key] = nil
-        end        
+        end
     end
 end
 
