@@ -83,10 +83,11 @@ function Game:generateItemInfo()
 end
 
 function Game:generateStatus()
-   return "Wave: " .. self.currentWave.number ..
-          "  Lives: " .. self.currentLives ..
-          "\nCash: " .. self.currentCash ..
-          "  Interest: " .. self.currentInterest .. "%"
+    local waveLimit = self.map:getWaveLimit()
+    return "Wave: " .. self.currentWave.number .. (waveLimit ~= math.huge and (" / " .. waveLimit) or "") ..
+           "  Lives: " .. self.currentLives ..
+           "\nCash: " .. self.currentCash ..
+           "  Interest: " .. self.currentInterest .. "%"
 end
 
 -- Initializes the game to run by turning on the spawning of enemies
