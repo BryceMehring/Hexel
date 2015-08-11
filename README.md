@@ -1,7 +1,7 @@
 Hexel
 =====
 
-[![Build Status](http://ci.brycemehring.me/buildStatus/icon?job=Hexel)](http://ci.brycemehring.me/job/Hexel/)
+[![Build Status](https://drone.io/github.com/BryceMehring/Hexel/status.png)](https://drone.io/github.com/BryceMehring/Hexel/latest)
 
 Retro Tower Defense Game
 
